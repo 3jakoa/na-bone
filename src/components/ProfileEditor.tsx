@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { LogOut, Camera } from "lucide-react";
+import { logoutAction } from "@/app/actions";
+import { validateFacePhoto } from "@/lib/validateFace";
 
 interface Props {
   profile: Profile;
@@ -29,11 +30,21 @@ export default function ProfileEditor({ profile }: Props) {
   const [faculty, setFaculty] = useState(profile.faculty);
   const [city, setCity] = useState<City>(profile.city as City);
   const [photos, setPhotos] = useState<string[]>(profile.photos);
+  const [topRestaurants, setTopRestaurants] = useState<string[]>(
+    profile.top_restaurants.length > 0 ? profile.top_restaurants : ["", "", ""]
+  );
   const [saving, setSaving] = useState(false);
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    const faceResult = await validateFacePhoto(file);
+    if (!faceResult.valid) {
+      toast.error(faceResult.error ?? "Neveljavna slika.");
+      e.target.value = "";
+      return;
+    }
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -45,21 +56,29 @@ export default function ProfileEditor({ profile }: Props) {
     if (error) { toast.error("Napaka pri nalaganju."); return; }
 
     const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
-    setPhotos((prev) => [...prev, publicUrl].slice(0, 6));
-  }
-
-  function removePhoto(index: number) {
-    setPhotos((prev) => prev.filter((_, i) => i !== index));
+    setPhotos([publicUrl]);
   }
 
   async function save() {
     if (!name.trim()) { toast.error("Ime je obvezno."); return; }
-    if (photos.length === 0) { toast.error("Dodaj vsaj eno fotografijo."); return; }
+    if (photos.length === 0) { toast.error("Dodaj profilno fotografijo."); return; }
+    if (!bio.trim()) { toast.error("Bio je obvezen."); return; }
+    if (topRestaurants.filter((r) => r.trim()).length < 3) { toast.error("Vnesi vse 3 najljubše restavracije."); return; }
     setSaving(true);
 
     const { error } = await supabase
       .from("profiles")
-      .update({ name: name.trim(), age: parseInt(age), bio: bio.trim() || null, gender, university, faculty, city, photos })
+      .update({
+        name: name.trim(),
+        age: parseInt(age),
+        bio: bio.trim() || null,
+        gender,
+        university,
+        faculty,
+        city,
+        photos,
+        top_restaurants: topRestaurants.filter((r) => r.trim()),
+      })
       .eq("id", profile.id);
 
     if (error) toast.error(error.message);
@@ -68,31 +87,24 @@ export default function ProfileEditor({ profile }: Props) {
     setSaving(false);
   }
 
-  async function logout() {
-    await supabase.auth.signOut();
-    router.push("/auth/login");
-    router.refresh();
-  }
 
   return (
     <div className="space-y-6">
-      {/* Photos */}
+      {/* Photo */}
       <div className="space-y-2">
-        <Label>Fotografije ({photos.length}/6)</Label>
-        <div className="grid grid-cols-3 gap-2">
-          {photos.map((src, i) => (
-            <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-gray-100">
-              <img src={src} alt="" className="w-full h-full object-cover" />
-              <button
-                onClick={() => removePhoto(i)}
-                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/50 text-white text-xs flex items-center justify-center"
-              >
-                ×
-              </button>
+        <Label>Profilna fotografija</Label>
+        <p className="text-xs text-muted-foreground">Selfie ali jasna slika obraza.</p>
+        <div className="flex justify-center">
+          {photos.length > 0 ? (
+            <div className="relative">
+              <img src={photos[0]} alt="" className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md" />
+              <label className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-brand flex items-center justify-center cursor-pointer shadow hover:bg-brand-dark transition-colors">
+                <Camera className="w-4 h-4 text-white" />
+                <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+              </label>
             </div>
-          ))}
-          {photos.length < 6 && (
-            <label className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center cursor-pointer hover:border-orange-400 transition-colors">
+          ) : (
+            <label className="w-28 h-28 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-brand transition-colors">
               <Camera className="w-6 h-6 text-muted-foreground" />
               <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
             </label>
@@ -118,8 +130,8 @@ export default function ProfileEditor({ profile }: Props) {
                 key={g}
                 type="button"
                 onClick={() => setGender(g)}
-                className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors capitalize ${
-                  gender === g ? "bg-orange-500 text-white border-orange-500" : "border-gray-200 hover:border-orange-300"
+                className={`flex-1 py-2 rounded-full border text-sm font-medium transition-colors capitalize ${
+                  gender === g ? "bg-brand text-white border-brand" : "border-gray-200 hover:border-brand"
                 }`}
               >
                 {g}
@@ -133,11 +145,27 @@ export default function ProfileEditor({ profile }: Props) {
             id="bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Nekaj o sebi..."
+            placeholder="Povej kaj o sebi — zakaj greš na bone, kaj ti je ful dobro..."
             maxLength={300}
             rows={3}
           />
           <p className="text-xs text-muted-foreground text-right">{bio.length}/300</p>
+        </div>
+        <div className="space-y-2">
+          <Label>Top 3 restavracije</Label>
+          {[0, 1, 2].map((i) => (
+            <Input
+              key={i}
+              placeholder={`Restavracija ${i + 1}`}
+              value={topRestaurants[i] ?? ""}
+              onChange={(e) => {
+                const next = [...topRestaurants];
+                next[i] = e.target.value;
+                setTopRestaurants(next);
+              }}
+              maxLength={50}
+            />
+          ))}
         </div>
       </div>
 
@@ -175,14 +203,16 @@ export default function ProfileEditor({ profile }: Props) {
         </div>
       </div>
 
-      <Button onClick={save} disabled={saving} className="w-full bg-orange-500 hover:bg-orange-600">
+      <Button onClick={save} disabled={saving} className="w-full bg-brand hover:bg-brand-dark">
         {saving ? "Shranjujem..." : "Shrani spremembe"}
       </Button>
 
-      <Button variant="outline" onClick={logout} className="w-full gap-2 text-red-500 border-red-200 hover:bg-red-50">
-        <LogOut className="w-4 h-4" />
-        Odjava
-      </Button>
+      <form action={logoutAction}>
+        <Button type="submit" variant="outline" className="w-full gap-2 text-red-500 border-red-200 hover:bg-red-50">
+          <LogOut className="w-4 h-4" />
+          Odjava
+        </Button>
+      </form>
     </div>
   );
 }

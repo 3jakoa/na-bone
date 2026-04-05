@@ -78,14 +78,21 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
     if (!text.trim() || sending) return;
     setSending(true);
 
-    const { error } = await supabase.from("messages").insert({
+    const { data, error } = await supabase.from("messages").insert({
       match_id: matchId,
       sender_id: myProfile.id,
       content: text.trim(),
-    });
+    }).select().single();
 
-    if (error) toast.error("Napaka pri pošiljanju.");
-    else setText("");
+    if (error) {
+      toast.error("Napaka pri pošiljanju.");
+    } else {
+      setText("");
+      setMessages((prev) => {
+        if (prev.find((m) => m.id === data.id)) return prev;
+        return [...prev, data as Message];
+      });
+    }
     setSending(false);
   }
 

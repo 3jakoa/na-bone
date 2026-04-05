@@ -57,7 +57,7 @@ export default async function MatchesPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6">Moji Matchi 🍽️</h1>
+      <h1 className="text-2xl font-extrabold mb-6">Moji Matchi 🍽️</h1>
 
       {enriched.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground">
@@ -71,7 +71,7 @@ export default async function MatchesPage() {
             if (!otherProfile) return null;
             return (
               <Link key={match.id} href={`/matches/${match.id}`}>
-                <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-gray-100">
+                <div className={`flex items-center gap-3 p-3 rounded-xl transition-colors border ${activeBone ? "border-l-2 border-l-brand border-gray-100 hover:bg-brand-light/40" : "border-gray-100 hover:bg-brand-light/30"}`}>
                   <Avatar className="w-14 h-14 shrink-0">
                     <AvatarImage src={otherProfile.photos[0]} />
                     <AvatarFallback>{otherProfile.name[0]}</AvatarFallback>
@@ -80,7 +80,7 @@ export default async function MatchesPage() {
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">{otherProfile.name}</span>
                       {activeBone && (
-                        <Badge className="bg-orange-100 text-orange-700 border-0 text-xs">
+                        <Badge className="bg-brand text-white border-0 text-xs">
                           🍽️ {activeBone.restaurant}
                         </Badge>
                       )}

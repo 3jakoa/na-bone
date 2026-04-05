@@ -10,8 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { validateFacePhoto } from "@/lib/validateFace";
 
-const STEPS = ["Osnovni podatki", "Univerza & Kraj", "Fotografije & Bio"];
+const STEPS = ["Osnovni podatki", "Univerza & Kraj", "Bio & Fotografije"];
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -27,14 +28,22 @@ export default function OnboardingPage() {
   const [faculty, setFaculty] = useState("");
   const [city, setCity] = useState<City | "">("");
   const [bio, setBio] = useState("");
+  const [topRestaurants, setTopRestaurants] = useState<string[]>(["", "", ""]);
   const [photos, setPhotos] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
 
-  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []);
-    const valid = files.slice(0, 6);
-    setPhotos(valid);
-    setPreviews(valid.map((f) => URL.createObjectURL(f)));
+  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError("");
+    const result = await validateFacePhoto(file);
+    if (!result.valid) {
+      setError(result.error ?? "Neveljavna slika.");
+      e.target.value = "";
+      return;
+    }
+    setPhotos([file]);
+    setPreviews([URL.createObjectURL(file)]);
   }
 
   function nextStep() {
@@ -61,7 +70,16 @@ export default function OnboardingPage() {
   async function handleSubmit() {
     setError("");
     if (photos.length === 0) {
-      setError("Dodaj vsaj eno fotografijo.");
+      setError("Dodaj profilno fotografijo.");
+      return;
+    }
+    if (!bio.trim()) {
+      setError("Bio je obvezen. Povej kaj o sebi!");
+      return;
+    }
+    const filledRestaurants = topRestaurants.filter((r) => r.trim());
+    if (filledRestaurants.length < 3) {
+      setError("Vnesi vse 3 najljubše restavracije.");
       return;
     }
     setLoading(true);
@@ -93,8 +111,8 @@ export default function OnboardingPage() {
       uploadedUrls.push(publicUrl);
     }
 
-    // Create profile
-    const { error: insertError } = await supabase.from("profiles").insert({
+    // Create or update profile
+    const { error: insertError } = await supabase.from("profiles").upsert({
       user_id: user.id,
       name: name.trim(),
       age: parseInt(age),
@@ -104,8 +122,9 @@ export default function OnboardingPage() {
       city: city as City,
       bio: bio.trim() || null,
       photos: uploadedUrls,
+      top_restaurants: topRestaurants.filter((r) => r.trim()),
       is_onboarded: true,
-    });
+    }, { onConflict: "user_id" });
 
     if (insertError) {
       setError(insertError.message);
@@ -118,18 +137,22 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-rose-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex gap-2 mb-2">
             {STEPS.map((s, i) => (
               <div
                 key={i}
-                className={`h-1.5 flex-1 rounded-full transition-colors ${i <= step ? "bg-orange-500" : "bg-gray-200"}`}
-              />
+                className="h-1.5 flex-1 rounded-full overflow-hidden bg-gray-200"
+              >
+                {i <= step && (
+                  <div className="h-full w-full rounded-full" style={{background: "linear-gradient(90deg, #44B5E5 0%, #5a9dc3 100%)"}} />
+                )}
+              </div>
             ))}
           </div>
-          <CardTitle>{STEPS[step]}</CardTitle>
+          <CardTitle className="font-extrabold">{STEPS[step]}</CardTitle>
           <CardDescription>Korak {step + 1} od {STEPS.length}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -155,10 +178,10 @@ export default function OnboardingPage() {
                       key={g}
                       type="button"
                       onClick={() => setGender(g)}
-                      className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors capitalize ${
+                      className={`flex-1 py-2 rounded-full border text-sm font-medium transition-colors capitalize ${
                         gender === g
-                          ? "bg-orange-500 text-white border-orange-500"
-                          : "border-gray-200 hover:border-orange-300"
+                          ? "bg-brand text-white border-brand"
+                          : "border-gray-200 hover:border-brand"
                       }`}
                     >
                       {g}
@@ -221,32 +244,51 @@ export default function OnboardingPage() {
           {step === 2 && (
             <>
               <div className="space-y-2">
-                <Label>Fotografije (do 6)</Label>
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 transition-colors">
-                  <span className="text-sm text-muted-foreground">Klikni za dodajanje fotografij</span>
-                  <input type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoChange} />
-                </label>
-                {previews.length > 0 && (
-                  <div className="grid grid-cols-3 gap-2 mt-2">
-                    {previews.map((src, i) => (
-                      <div key={i} className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                        <img src={src} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    ))}
+                <Label>Profilna fotografija</Label>
+                <p className="text-xs text-muted-foreground">Selfie ali jasna slika obraza — iz kamere ali galerije.</p>
+                {previews.length === 0 ? (
+                  <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-brand transition-colors">
+                    <span className="text-2xl mb-1">🤳</span>
+                    <span className="text-sm text-muted-foreground">Klikni za dodajanje slike</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+                  </label>
+                ) : (
+                  <div className="relative w-32 h-32 mx-auto">
+                    <img src={previews[0]} alt="" className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md" />
+                    <label className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-brand flex items-center justify-center cursor-pointer shadow">
+                      <span className="text-white text-xs">✎</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+                    </label>
                   </div>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="bio">Bio (neobvezno)</Label>
+                <Label htmlFor="bio">Bio</Label>
                 <Textarea
                   id="bio"
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  placeholder="Kaj bi rad/a, da drugi vedo o tebi?"
+                  placeholder="Povej kaj o sebi — zakaj greš na bone, kaj ti je ful dobro..."
                   maxLength={300}
                   rows={3}
                 />
                 <p className="text-xs text-muted-foreground text-right">{bio.length}/300</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Top 3 restavracije</Label>
+                {[0, 1, 2].map((i) => (
+                  <Input
+                    key={i}
+                    placeholder={`Restavracija ${i + 1}`}
+                    value={topRestaurants[i] ?? ""}
+                    onChange={(e) => {
+                      const next = [...topRestaurants];
+                      next[i] = e.target.value;
+                      setTopRestaurants(next);
+                    }}
+                    maxLength={50}
+                  />
+                ))}
               </div>
             </>
           )}
@@ -258,11 +300,11 @@ export default function OnboardingPage() {
               </Button>
             )}
             {step < STEPS.length - 1 ? (
-              <Button onClick={nextStep} className="flex-1 bg-orange-500 hover:bg-orange-600">
+              <Button onClick={nextStep} className="flex-1 font-bold" style={{background: "linear-gradient(135deg, #44B5E5 0%, #5a9dc3 100%)"}}>
                 Naprej
               </Button>
             ) : (
-              <Button onClick={handleSubmit} disabled={loading} className="flex-1 bg-orange-500 hover:bg-orange-600">
+              <Button onClick={handleSubmit} disabled={loading} className="flex-1 font-bold" style={{background: "linear-gradient(135deg, #44B5E5 0%, #5a9dc3 100%)"}}>
                 {loading ? "Shranjujem..." : "Začni iskati 🍽️"}
               </Button>
             )}
