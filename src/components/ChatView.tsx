@@ -37,6 +37,11 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -152,7 +157,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
   const isBoneProposedByMe = activeBone?.user_id === myProfile.id;
 
   return (
-    <div className="flex flex-col h-screen max-w-lg mx-auto">
+    <div className="flex flex-col overflow-hidden max-w-lg mx-auto" style={{ height: "calc(100dvh - 4rem)" }}>
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3 border-b bg-white">
         <button onClick={() => router.back()} className="text-muted-foreground hover:text-foreground">
@@ -170,7 +175,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
           <Button
             size="sm"
             onClick={() => setBoneOpen(true)}
-            className="bg-orange-500 hover:bg-orange-600 gap-1"
+            className="bg-brand hover:bg-brand-dark gap-1"
           >
             <Utensils className="w-4 h-4" />
             Na bone
@@ -180,17 +185,17 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
 
       {/* Active bone banner */}
       {activeBone && (
-        <div className="bg-orange-50 border-b border-orange-200 px-4 py-3">
+        <div className="bg-brand-light border-b border-brand/30 px-4 py-3">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <div className="flex items-center gap-1.5 font-semibold text-orange-700 text-sm">
+              <div className="flex items-center gap-1.5 font-semibold text-brand-dark text-sm">
                 <Utensils className="w-4 h-4" />
                 {activeBone.status === "accepted" ? "Dogovorjeno!" : "Povabilo na bone"}
               </div>
-              <div className="text-sm text-orange-600 mt-0.5">
+              <div className="text-sm text-brand-dark mt-0.5">
                 {activeBone.restaurant} · {new Date(activeBone.scheduled_at).toLocaleString("sl-SI")}
               </div>
-              {activeBone.note && <div className="text-xs text-orange-500 mt-0.5">{activeBone.note}</div>}
+              {activeBone.note && <div className="text-xs text-brand mt-0.5">{activeBone.note}</div>}
             </div>
             {activeBone.status === "open" && !isBoneProposedByMe && (
               <div className="flex gap-2 shrink-0">
@@ -230,7 +235,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
                 className={cn(
                   "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
                   isMe
-                    ? "bg-orange-500 text-white rounded-br-sm"
+                    ? "bg-brand text-white rounded-br-sm"
                     : "bg-gray-100 text-gray-900 rounded-bl-sm"
                 )}
               >
@@ -250,7 +255,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
           placeholder="Sporočilo..."
           className="flex-1"
         />
-        <Button type="submit" size="icon" disabled={sending || !text.trim()} className="bg-orange-500 hover:bg-orange-600 shrink-0">
+        <Button type="submit" size="icon" disabled={sending || !text.trim()} className="bg-brand hover:bg-brand-dark shrink-0">
           <Send className="w-4 h-4" />
         </Button>
       </form>
@@ -291,7 +296,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setBoneOpen(false)}>Prekliči</Button>
-            <Button onClick={proposeBone} className="bg-orange-500 hover:bg-orange-600">
+            <Button onClick={proposeBone} className="bg-brand hover:bg-brand-dark">
               Pošlji povabilo
             </Button>
           </DialogFooter>

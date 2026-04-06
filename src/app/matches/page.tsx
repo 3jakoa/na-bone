@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 
 export default async function MatchesPage() {
   const supabase = await createClient();
@@ -18,14 +17,12 @@ export default async function MatchesPage() {
 
   if (!myProfile) redirect("/onboarding");
 
-  // Get all matches with the other person's profile
   const { data: matches } = await supabase
     .from("matches")
     .select("id, created_at, user1_id, user2_id")
     .or(`user1_id.eq.${myProfile.id},user2_id.eq.${myProfile.id}`)
     .order("created_at", { ascending: false });
 
-  // For each match, get the other person's profile and last message
   const enriched = await Promise.all(
     (matches || []).map(async (match) => {
       const otherId = match.user1_id === myProfile.id ? match.user2_id : match.user1_id;
@@ -56,43 +53,55 @@ export default async function MatchesPage() {
   );
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6">
-      <h1 className="text-2xl font-extrabold mb-6">Moji Matchi 🍽️</h1>
+    <div className="max-w-lg mx-auto px-4 pt-10 pb-6">
+      {/* Title */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-white">Boni Buddies</h1>
+        <p className="text-sm text-white/70 mt-0.5">
+          {enriched.length > 0 ? `${enriched.length} ${enriched.length === 1 ? "buddy" : "buddies"}` : "Najdi svojega prvega buddyja!"}
+        </p>
+      </div>
 
       {enriched.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <div className="text-4xl mb-3">💔</div>
-          <p className="font-medium">Še nisi naredil/a nobenih matchev</p>
-          <p className="text-sm mt-1">Pojdi na Iskanje in swipaj!</p>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-10 flex flex-col items-center gap-3 text-center">
+          <div className="text-5xl">💔</div>
+          <p className="font-semibold text-gray-800">Še nisi naredil/a nobenih matchev</p>
+          <p className="text-sm text-gray-500">Pojdi na Išči in swipaj!</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="flex flex-col gap-4">
           {enriched.map(({ match, otherProfile, lastMessage, activeBone }) => {
             if (!otherProfile) return null;
+            const dateStr = new Date(lastMessage?.created_at ?? match.created_at)
+              .toLocaleDateString("sl-SI", { day: "numeric", month: "numeric" });
             return (
               <Link key={match.id} href={`/matches/${match.id}`}>
-                <div className={`flex items-center gap-3 p-3 rounded-xl transition-colors border ${activeBone ? "border-l-2 border-l-brand border-gray-100 hover:bg-brand-light/40" : "border-gray-100 hover:bg-brand-light/30"}`}>
-                  <Avatar className="w-14 h-14 shrink-0">
+                <div className={`bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 transition-all hover:shadow-lg hover:scale-[1.01] ${activeBone ? "border-l-4 border-brand" : ""}`}>
+                  <Avatar className="w-14 h-14 shrink-0 ring-2 ring-white shadow-md">
                     <AvatarImage src={otherProfile.photos[0]} />
-                    <AvatarFallback>{otherProfile.name[0]}</AvatarFallback>
+                    <AvatarFallback className="text-lg font-bold bg-brand-light text-brand-dark">
+                      {otherProfile.name[0].toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold">{otherProfile.name}</span>
-                      {activeBone && (
-                        <Badge className="bg-brand text-white border-0 text-xs">
-                          🍽️ {activeBone.restaurant}
-                        </Badge>
-                      )}
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-bold text-base text-gray-900">{otherProfile.name}</span>
+                      <span className="text-xs text-gray-400 shrink-0 mt-0.5">{dateStr}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground truncate">
+                    <p className="text-sm text-gray-500 truncate mt-0.5">
                       {lastMessage?.content ?? "Pozdravita se! 👋"}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{otherProfile.faculty}</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="bg-brand-light/80 text-brand-dark text-xs px-2 py-0.5 rounded-full font-medium">
+                        {otherProfile.faculty}
+                      </span>
+                      {activeBone && (
+                        <span className="bg-brand text-white text-xs px-2 py-0.5 rounded-full font-medium">
+                          🍽️ {activeBone.restaurant}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <span className="text-xs text-muted-foreground shrink-0">
-                    {new Date(lastMessage?.created_at ?? match.created_at).toLocaleDateString("sl-SI")}
-                  </span>
                 </div>
               </Link>
             );

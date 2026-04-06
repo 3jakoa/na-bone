@@ -19,10 +19,12 @@ export default async function DiscoverPage() {
   if (!myProfile.is_onboarded) redirect("/onboarding");
 
   // Get IDs already swiped on
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { data: swipedRows } = await supabase
     .from("swipes")
     .select("swiped_id")
-    .eq("swiper_id", myProfile.id);
+    .eq("swiper_id", myProfile.id)
+    .gt("created_at", oneWeekAgo);
 
   const swipedIds = (swipedRows || []).map((s) => s.swiped_id);
   const excludeIds = [myProfile.id, ...swipedIds];
@@ -37,8 +39,8 @@ export default async function DiscoverPage() {
     .limit(20);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-      <SwipeDeck profiles={candidates || []} myProfileId={myProfile.id} />
+    <div className="min-h-screen bg-background">
+      <SwipeDeck profiles={candidates || []} myProfile={myProfile} />
     </div>
   );
 }

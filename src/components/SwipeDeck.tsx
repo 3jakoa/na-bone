@@ -85,7 +85,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
   if (!profile) {
     return (
       <div
-        className="flex flex-col items-center justify-center min-h-screen gap-4 text-center px-4"
+        className="flex flex-col items-center justify-center h-screen overflow-hidden gap-4 text-center px-4"
         style={{ background: "linear-gradient(180deg, #44B5E5 0%, #b8dff5 70%, #e8f6fd 100%)" }}
       >
         <div className="text-5xl">🍽️</div>
@@ -105,7 +105,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
 
   return (
     <div
-      className="flex flex-col items-center min-h-screen pb-28 pt-12 px-4"
+      className="flex flex-col items-center h-screen overflow-hidden pb-28 pt-12 px-4"
       style={{ background: "linear-gradient(180deg, #44B5E5 0%, #b8dff5 70%, #e8f6fd 100%)" }}
     >
       {/* Header */}
@@ -117,6 +117,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
       </div>
 
       {/* Card stack */}
+      <div className="flex flex-col items-center w-full">
       <div className="relative w-full max-w-sm select-none">
         {/* Next card peek */}
         {nextProfile && (
@@ -212,6 +213,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
         >
           <Utensils className="w-7 h-7 text-white" />
         </button>
+      </div>
       </div>
     </div>
   );

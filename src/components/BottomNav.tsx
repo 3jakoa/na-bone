@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flame, Heart, User } from "lucide-react";
+import { Search, Utensils, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/discover", icon: Flame, label: "Iskanje" },
-  { href: "/matches", icon: Heart, label: "Matchi" },
-  { href: "/profile", icon: User, label: "Profil" },
+  { href: "/discover", icon: Search, label: "Išči" },
+  { href: "/matches", icon: Utensils, label: "Buddies" },
+  { href: "/profile", icon: UserCheck, label: "Account" },
 ];
 
 export default function BottomNav() {
@@ -18,7 +18,7 @@ export default function BottomNav() {
   if (isAuthPage) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md bg-white/90 border-t border-gray-100/80 safe-area-pb">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-lg safe-area-pb">
       <div className="max-w-lg mx-auto flex">
         {links.map(({ href, icon: Icon, label }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);

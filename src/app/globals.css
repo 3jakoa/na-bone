@@ -5,9 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-brand: #6baed4;
-  --color-brand-dark: #5a9dc3;
-  --color-brand-light: #ddeef8;
+  --color-brand: #00A6F6;
+  --color-brand-dark: #0091d7;
+  --color-brand-light: #e0f6ff;
   --gradient-brand: linear-gradient(135deg, #44B5E5 0%, #6baed4 50%, #5a9dc3 100%);
   --gradient-brand-hover: linear-gradient(135deg, #2fa8e0 0%, #5a9dc3 100%);
   --color-background: var(--background);
@@ -127,7 +127,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: linear-gradient(180deg, #44B5E5 0%, #b8dff5 70%, #e8f6fd 100%) fixed;
   }
   html {
     @apply font-sans;

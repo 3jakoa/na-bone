@@ -17,8 +17,7 @@ export default async function ProfilePage() {
   if (!profile) redirect("/onboarding");
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6">Moj profil</h1>
+    <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
       <ProfileEditor profile={profile} />
     </div>
   );
