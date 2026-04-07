@@ -18,7 +18,7 @@ export default function LandingPage() {
             className="inline-flex items-center justify-center rounded-full px-4 text-base font-bold text-white transition-all hover:opacity-90 active:scale-95 h-12 shadow-md"
             style={{background: "linear-gradient(135deg, #44B5E5 0%, #5a9dc3 100%)"}}
           >
-            Začni brezplačno
+            Ustvari račun
           </Link>
           <Link
             href="/auth/login"
