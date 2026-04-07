@@ -64,7 +64,7 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-rose-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md text-center">
           <CardHeader>
             <div className="text-4xl mb-2">📧</div>
@@ -80,7 +80,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-rose-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">🍽️</div>
@@ -131,12 +131,12 @@ export default function SignupPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
-            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600" disabled={loading}>
+            <Button type="submit" className="w-full bg-brand hover:bg-brand-dark rounded-full" disabled={loading}>
               {loading ? "Ustvarjam račun..." : "Registracija"}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               Že imaš račun?{" "}
-              <Link href="/auth/login" className="text-orange-500 hover:underline font-medium">
+              <Link href="/auth/login" className="text-brand hover:underline font-medium">
                 Prijava
               </Link>
             </p>

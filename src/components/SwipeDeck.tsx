@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/supabase/types";
-import { Utensils, GraduationCap, MapPin } from "lucide-react";
+import { GraduationCap, MapPin, ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -90,7 +90,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
       >
         <div className="text-5xl">🍽️</div>
         <h2 className="text-xl font-bold text-white">Ni več profilov</h2>
-        <p className="text-white/80 text-sm">
+        <p className="text-white text-sm">
           V tvojem mestu ni več novih profilov. Preveri jutri!
         </p>
       </div>
@@ -105,19 +105,19 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
 
   return (
     <div
-      className="flex flex-col items-center h-screen overflow-hidden pb-28 pt-12 px-4"
+      className="flex flex-col h-screen overflow-hidden px-4 pb-20"
       style={{ background: "linear-gradient(180deg, #44B5E5 0%, #b8dff5 70%, #e8f6fd 100%)" }}
     >
       {/* Header */}
-      <div className="w-full max-w-sm text-center mb-8">
+      <div className="w-full max-w-sm mx-auto text-center pt-10 pb-4 shrink-0">
         <h1 className="text-4xl font-extrabold text-white drop-shadow-sm">Greš na bone?</h1>
-        <p className="text-white/80 text-sm mt-1">
+        <p className="text-white text-sm mt-1">
           Spodaj se ti prikazujejo vsi študenti iz {profile.city}
         </p>
       </div>
 
-      {/* Card stack */}
-      <div className="flex flex-col items-center w-full">
+      {/* Card stack — centered in remaining space */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-5 w-full">
       <div className="relative w-full max-w-sm select-none">
         {/* Next card peek */}
         {nextProfile && (
@@ -204,15 +204,16 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
         </div>
       </div>
 
-      {/* Like button */}
-      <div className="mt-8 flex items-center justify-center">
-        <button
-          onClick={() => swipe("right")}
-          className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all active:scale-95"
-          style={{ background: "linear-gradient(135deg, #44B5E5 0%, #5a9dc3 100%)" }}
-        >
-          <Utensils className="w-7 h-7 text-white" />
-        </button>
+      {/* Swipe hints */}
+      <div className="flex items-center justify-between w-full max-w-sm px-2">
+        <div className="flex items-center gap-1.5 text-white">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm">Preskoči</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-white">
+          <span className="text-sm">Na bone</span>
+          <ArrowRight className="w-4 h-4" />
+        </div>
       </div>
       </div>
     </div>

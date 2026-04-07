@@ -38,7 +38,11 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    document.body.style.background = "white";
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.background = "";
+    };
   }, []);
 
   useEffect(() => {
@@ -157,25 +161,25 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
   const isBoneProposedByMe = activeBone?.user_id === myProfile.id;
 
   return (
-    <div className="flex flex-col overflow-hidden max-w-lg mx-auto" style={{ height: "calc(100dvh - 4rem)" }}>
+    <div className="flex flex-col overflow-hidden w-full max-w-lg mx-auto bg-white" style={{ height: "calc(100dvh - 4rem)" }}>
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b bg-white">
-        <button onClick={() => router.back()} className="text-muted-foreground hover:text-foreground">
+      <div className="flex items-center gap-3 px-4 py-3 bg-white shrink-0">
+        <button onClick={() => router.back()} className="text-muted-foreground hover:text-foreground p-1">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <Avatar className="w-10 h-10">
+        <Avatar className="w-10 h-10 shrink-0">
           <AvatarImage src={otherProfile.photos[0]} />
           <AvatarFallback>{otherProfile.name[0]}</AvatarFallback>
         </Avatar>
-        <div className="flex-1">
-          <div className="font-semibold">{otherProfile.name}</div>
-          <div className="text-xs text-muted-foreground">{otherProfile.faculty}</div>
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold truncate">{otherProfile.name}</div>
+          <div className="text-xs text-muted-foreground truncate">{otherProfile.faculty}</div>
         </div>
         {!activeBone && (
           <Button
             size="sm"
             onClick={() => setBoneOpen(true)}
-            className="bg-brand hover:bg-brand-dark gap-1"
+            className="bg-brand hover:bg-brand-dark gap-1 shrink-0"
           >
             <Utensils className="w-4 h-4" />
             Na bone
@@ -185,17 +189,17 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
 
       {/* Active bone banner */}
       {activeBone && (
-        <div className="bg-brand-light border-b border-brand/30 px-4 py-3">
+        <div className="bg-brand-light rounded-2xl mx-4 mb-2 px-4 py-3 shrink-0">
           <div className="flex items-start justify-between gap-2">
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-1.5 font-semibold text-brand-dark text-sm">
-                <Utensils className="w-4 h-4" />
+                <Utensils className="w-4 h-4 shrink-0" />
                 {activeBone.status === "accepted" ? "Dogovorjeno!" : "Povabilo na bone"}
               </div>
-              <div className="text-sm text-brand-dark mt-0.5">
+              <div className="text-sm text-brand-dark mt-0.5 truncate">
                 {activeBone.restaurant} · {new Date(activeBone.scheduled_at).toLocaleString("sl-SI")}
               </div>
-              {activeBone.note && <div className="text-xs text-brand mt-0.5">{activeBone.note}</div>}
+              {activeBone.note && <div className="text-xs text-brand mt-0.5 truncate">{activeBone.note}</div>}
             </div>
             {activeBone.status === "open" && !isBoneProposedByMe && (
               <div className="flex gap-2 shrink-0">
@@ -221,9 +225,9 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
         {messages.length === 0 && (
-          <div className="text-center text-muted-foreground text-sm pt-8">
+          <div className="text-center text-sm pt-8 text-brand/60">
             Match z {otherProfile.name}! Pošlji sporočilo ali predlagaj bone 🍽️
           </div>
         )}
@@ -233,7 +237,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
             <div key={msg.id} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
               <div
                 className={cn(
-                  "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
+                  "max-w-[78%] rounded-2xl px-4 py-2 text-sm break-words",
                   isMe
                     ? "bg-brand text-white rounded-br-sm"
                     : "bg-gray-100 text-gray-900 rounded-bl-sm"
@@ -248,12 +252,12 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
       </div>
 
       {/* Input */}
-      <form onSubmit={sendMessage} className="flex items-center gap-2 px-4 py-3 border-t bg-white">
+      <form onSubmit={sendMessage} className="flex items-center gap-2 px-4 py-3 bg-white shrink-0">
         <Input
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Sporočilo..."
-          className="flex-1"
+          className="flex-1 rounded-[20px]"
         />
         <Button type="submit" size="icon" disabled={sending || !text.trim()} className="bg-brand hover:bg-brand-dark shrink-0">
           <Send className="w-4 h-4" />

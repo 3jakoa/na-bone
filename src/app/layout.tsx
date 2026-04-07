@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 import { Toaster } from "@/components/ui/sonner";
 
-const geist = Geist({
-  variable: "--font-geist-sans",
+const openSans = Open_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sl" className={`${geist.variable} h-full antialiased`}>
+    <html lang="sl" className={`${openSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col pb-16">
         {children}
         <BottomNav />

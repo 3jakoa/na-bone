@@ -34,7 +34,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  if (user && isAuthPage) {
+  if (user && (isAuthPage || isPublicPage)) {
     return NextResponse.redirect(new URL("/discover", request.url));
   }
 

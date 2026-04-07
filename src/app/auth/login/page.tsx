@@ -35,11 +35,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-rose-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="text-4xl mb-2">🍽️</div>
-          <CardTitle className="text-2xl font-bold">Na Bone</CardTitle>
+          <img src="/mascot.svg" alt="Na Bone mascot" className="w-24 h-24 mx-auto mb-4" />
+          <CardTitle className="text-2xl font-bold">Boni Buddy</CardTitle>
           <CardDescription>Prijavi se v svoj račun</CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
@@ -72,12 +72,12 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
-            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600" disabled={loading}>
+            <Button type="submit" className="w-full bg-brand hover:bg-brand-dark rounded-full" disabled={loading}>
               {loading ? "Prijavljam..." : "Prijava"}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               Nimaš računa?{" "}
-              <Link href="/auth/signup" className="text-orange-500 hover:underline font-medium">
+              <Link href="/auth/signup" className="text-brand hover:underline font-medium">
                 Registracija
               </Link>
             </p>

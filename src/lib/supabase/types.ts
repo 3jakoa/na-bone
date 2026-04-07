@@ -27,6 +27,7 @@ export type ProfileRow = {
   city: string;
   gender: Gender;
   photos: string[];
+  top_restaurants: string[];
   is_onboarded: boolean;
   created_at: string;
   updated_at: string;
