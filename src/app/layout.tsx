@@ -11,13 +11,13 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Na Bone",
+  title: "BoniBuddy",
   description: "Najdi sošolca za kosilo ali večerjo",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Na Bone",
+    title: "BoniBuddy",
   },
 };
 
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="sl" className={`${openSans.variable} h-full antialiased`}>
       <head>
-        <link rel="apple-touch-icon" href="/icon.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
