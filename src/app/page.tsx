@@ -4,7 +4,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center" style={{background: "linear-gradient(160deg, #e0f4fd 0%, #c8e8f7 60%, #b8dff5 100%)"}}>
       <div className="w-full max-w-sm bg-white rounded-3xl shadow-md ring-1 ring-brand/20 p-8">
-        <img src="/mascot.svg" alt="Na Bone mascot" className="w-28 h-28 mx-auto mb-4 drop-shadow-md" />
+        <img src="/icon-circle.png" alt="BoniBuddy mascot" className="mx-auto mb-4 drop-shadow-lg" style={{width: 100, height: 100}} />
         <h1 className="text-3xl font-extrabold mb-2 text-gray-900">Boni Buddy</h1>
         <p className="text-base text-gray-700 font-medium mb-1">
           Greš na bone? Ne rabš it sam 😎
