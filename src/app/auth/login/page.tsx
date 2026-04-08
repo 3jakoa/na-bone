@@ -35,8 +35,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-background p-4 flex flex-col justify-center">
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader className="text-center">
           <img src="/mascot.svg" alt="Na Bone mascot" className="w-24 h-24 mx-auto mb-4" />
           <CardTitle className="text-2xl font-bold">Boni Buddy</CardTitle>

@@ -80,8 +80,8 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-background p-4 flex flex-col justify-center">
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">🍽️</div>
           <CardTitle className="text-2xl font-bold">Na Bone</CardTitle>

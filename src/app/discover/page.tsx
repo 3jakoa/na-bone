@@ -18,13 +18,13 @@ export default async function DiscoverPage() {
   if (!myProfile) redirect("/onboarding");
   if (!myProfile.is_onboarded) redirect("/onboarding");
 
-  // Get IDs already swiped on
-  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  // Get IDs already swiped on (reset daily)
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { data: swipedRows } = await supabase
     .from("swipes")
     .select("swiped_id")
     .eq("swiper_id", myProfile.id)
-    .gt("created_at", oneWeekAgo);
+    .gt("created_at", oneDayAgo);
 
   const swipedIds = (swipedRows || []).map((s) => s.swiped_id);
   const excludeIds = [myProfile.id, ...swipedIds];

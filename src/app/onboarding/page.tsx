@@ -137,8 +137,8 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-lg">
+    <div className="min-h-screen bg-background p-4 flex flex-col justify-center">
+      <Card className="w-full max-w-lg mx-auto">
         <CardHeader>
           <div className="flex gap-2 mb-2">
             {STEPS.map((s, i) => (
