@@ -1,17 +1,23 @@
 {
-  "name": "Na Bone",
-  "short_name": "Na Bone",
+  "name": "BoniBuddy",
+  "short_name": "BoniBuddy",
   "description": "Najdi sošolca za kosilo ali večerjo",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#44B5E5",
+  "background_color": "#F0F4F8",
   "theme_color": "#44B5E5",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
