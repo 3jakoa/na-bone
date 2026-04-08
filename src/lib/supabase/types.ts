@@ -62,6 +62,7 @@ export type BoneRow = {
   scheduled_at: string;
   note: string | null;
   status: "open" | "accepted" | "declined" | "done";
+  visibility: "public" | "private";
   created_at: string;
 };
 

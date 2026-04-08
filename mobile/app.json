@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Boni Buddy",
+    "slug": "boni-buddy",
+    "scheme": "bonibuddy",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#00A6F6"
+    },
+    "ios": { "supportsTablet": false, "bundleIdentifier": "si.bonibuddy.app" },
+    "android": { "package": "si.bonibuddy.app" },
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": { "typedRoutes": true }
+  }
+}

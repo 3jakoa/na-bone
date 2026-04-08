@@ -118,6 +118,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
       scheduled_at: new Date(boneDate).toISOString(),
       note: boneNote.trim() || null,
       status: "open",
+      visibility: "private",
     });
 
     if (error) { toast.error(error.message); return; }

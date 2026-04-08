@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 function isStudentEmail(email: string): boolean {
   return STUDENT_EMAIL_DOMAINS.some((domain) => email.toLowerCase().endsWith(`@${domain}`));
@@ -134,6 +135,10 @@ export default function SignupPage() {
             <Button type="submit" className="w-full bg-brand hover:bg-brand-dark rounded-full" disabled={loading}>
               {loading ? "Ustvarjam račun..." : "Registracija"}
             </Button>
+            <div className="flex items-center gap-2 w-full text-xs text-muted-foreground">
+              <div className="flex-1 h-px bg-border" /> ali <div className="flex-1 h-px bg-border" />
+            </div>
+            <GoogleSignInButton />
             <p className="text-sm text-muted-foreground text-center">
               Že imaš račun?{" "}
               <Link href="/auth/login" className="text-brand hover:underline font-medium">
