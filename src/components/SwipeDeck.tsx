@@ -31,9 +31,18 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
     swiping.current = true;
 
     const supabase = createClient();
+    const swipedAt = new Date().toISOString();
     const { error } = await supabase
       .from("swipes")
-      .upsert({ swiper_id: myProfileId, swiped_id: profile.id, direction }, { onConflict: "swiper_id,swiped_id" })
+      .upsert(
+        {
+          swiper_id: myProfileId,
+          swiped_id: profile.id,
+          direction,
+          created_at: swipedAt,
+        },
+        { onConflict: "swiper_id,swiped_id" }
+      )
       .select()
       .single();
 
@@ -194,8 +203,8 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
               <p className="text-xs text-gray-400 text-center mb-2 uppercase tracking-wide">Top restavracije</p>
               {profile.top_restaurants.length > 0 ? (
                 <div className="flex flex-wrap justify-center gap-1.5">
-                  {profile.top_restaurants.slice(0, 3).map((r) => (
-                    <span key={r} className="bg-brand-light text-brand-dark text-xs font-medium px-3 py-1 rounded-full">
+                  {profile.top_restaurants.slice(0, 3).map((r, index) => (
+                    <span key={`${profile.id}-${index}-${r}`} className="bg-brand-light text-brand-dark text-xs font-medium px-3 py-1 rounded-full">
                       🍽️ {r}
                     </span>
                   ))}
