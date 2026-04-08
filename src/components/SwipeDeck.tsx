@@ -22,11 +22,13 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
   const [dragY, setDragY] = useState(0);
   const startX = useRef(0);
   const startY = useRef(0);
+  const swiping = useRef(false);
 
   const profile = queue[current];
 
   async function swipe(direction: "left" | "right") {
-    if (!profile) return;
+    if (!profile || swiping.current) return;
+    swiping.current = true;
 
     const supabase = createClient();
     const { error } = await supabase
@@ -37,6 +39,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
 
     if (error) {
       toast.error("Napaka pri swipu.");
+      swiping.current = false;
       return;
     }
 
@@ -59,6 +62,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
     setCurrent((c) => c + 1);
     setDragX(0);
     setDragY(0);
+    swiping.current = false;
   }
 
   function onPointerDown(e: React.PointerEvent) {
