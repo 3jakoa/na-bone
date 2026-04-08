@@ -107,7 +107,7 @@ end;
 $$ language plpgsql;
 
 create trigger swipe_match_trigger
-  after insert on public.swipes
+  after insert or update on public.swipes
   for each row execute function check_and_create_match();
 
 -- Row Level Security
@@ -142,6 +142,12 @@ create policy "Users can view their own swipes"
 create policy "Users can insert their own swipes"
   on public.swipes for insert
   to authenticated
+  with check (swiper_id = (select id from public.profiles where user_id = auth.uid()));
+
+create policy "Users can update their own swipes"
+  on public.swipes for update
+  to authenticated
+  using (swiper_id = (select id from public.profiles where user_id = auth.uid()))
   with check (swiper_id = (select id from public.profiles where user_id = auth.uid()));
 
 -- Matches policies

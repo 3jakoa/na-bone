@@ -41,6 +41,12 @@ export type SwipeRow = {
   created_at: string;
 };
 
+export type SwipeInsert = Omit<SwipeRow, "id" | "created_at"> & {
+  created_at?: string;
+};
+
+export type SwipeUpdate = Partial<Omit<SwipeRow, "id">>;
+
 export type MatchRow = {
   id: string;
   user1_id: string;
@@ -79,8 +85,8 @@ export type Database = {
       };
       swipes: {
         Row: SwipeRow;
-        Insert: Omit<SwipeRow, "id" | "created_at">;
-        Update: Partial<Omit<SwipeRow, "id" | "created_at">>;
+        Insert: SwipeInsert;
+        Update: SwipeUpdate;
         Relationships: [];
       };
       matches: {
