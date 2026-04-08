@@ -33,7 +33,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
     const supabase = createClient();
     const { error } = await supabase
       .from("swipes")
-      .insert({ swiper_id: myProfileId, swiped_id: profile.id, direction })
+      .upsert({ swiper_id: myProfileId, swiped_id: profile.id, direction }, { onConflict: "swiper_id,swiped_id" })
       .select()
       .single();
 
