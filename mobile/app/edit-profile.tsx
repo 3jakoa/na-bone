@@ -9,6 +9,8 @@ import {
   Image,
   Keyboard,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
@@ -136,22 +138,26 @@ export default function EditProfile() {
   const faculties = university ? (UNIVERSITIES[university] ?? []) : [];
   const allPhotos = [...photos, ...newPhotos];
 
-  if (!me) return <View className="flex-1 bg-gray-50" />;
+  if (!me) return <View className="flex-1 bg-gray-50 dark:bg-neutral-950" />;
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView
-        className="flex-1 bg-gray-50"
-        contentContainerStyle={{ paddingBottom: 40 }}
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="handled"
-      >
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      className="flex-1 bg-gray-50 dark:bg-neutral-950"
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          className="flex-1 bg-gray-50 dark:bg-neutral-950"
+          contentContainerStyle={{ paddingBottom: 120 }}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="handled"
+        >
         {/* Header */}
         <View className="flex-row items-center justify-between px-6 pt-16 pb-4">
           <Pressable onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={28} color="#333" />
+            <Ionicons name="chevron-back" size={28} color="#888" />
           </Pressable>
-          <Text className="text-lg font-bold text-gray-900">Uredi profil</Text>
+          <Text className="text-lg font-bold text-gray-900 dark:text-white">Uredi profil</Text>
           <Pressable onPress={save} disabled={loading}>
             <Text className="text-brand font-bold text-base">
               {loading ? "..." : "Shrani"}
@@ -160,8 +166,8 @@ export default function EditProfile() {
         </View>
 
         {/* Photos grid */}
-        <View className="bg-white mx-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 mb-3">
+        <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
             Slike ({allPhotos.length}/6)
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -186,7 +192,7 @@ export default function EditProfile() {
             {allPhotos.length < 6 && (
               <Pressable
                 onPress={addPhoto}
-                className="w-24 h-24 rounded-2xl bg-gray-100 items-center justify-center border-2 border-dashed border-gray-300"
+                className="w-24 h-24 rounded-2xl bg-gray-100 dark:bg-neutral-800 items-center justify-center border-2 border-dashed border-gray-300 dark:border-neutral-700"
               >
                 <Ionicons name="add" size={28} color="#999" />
               </Pressable>
@@ -195,19 +201,20 @@ export default function EditProfile() {
         </View>
 
         {/* Basic info */}
-        <View className="bg-white mx-4 mt-4 rounded-3xl px-5 py-2 shadow-sm">
+        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-2 shadow-sm">
           <EditRow label="Ime">
             <TextInput
               value={name}
               onChangeText={setName}
               autoCapitalize="words"
               returnKeyType="done"
-              className="flex-1 text-base text-right text-gray-900"
+              placeholderTextColor="#888"
+              className="flex-1 text-base text-right text-gray-900 dark:text-white"
             />
           </EditRow>
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-gray-100 dark:bg-neutral-800" />
           <View className="py-4">
-            <Text className="text-sm text-gray-500 mb-2">Starost</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-2">Starost</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -219,10 +226,10 @@ export default function EditProfile() {
                     <Pressable
                       key={a}
                       onPress={() => setAge(a)}
-                      className={`w-11 h-11 rounded-xl items-center justify-center ${age === a ? "bg-brand" : "bg-gray-100"}`}
+                      className={`w-11 h-11 rounded-xl items-center justify-center ${age === a ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
                     >
                       <Text
-                        className={`text-sm font-semibold ${age === a ? "text-white" : "text-gray-700"}`}
+                        className={`text-sm font-semibold ${age === a ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
                       >
                         {a}
                       </Text>
@@ -232,18 +239,18 @@ export default function EditProfile() {
               </View>
             </ScrollView>
           </View>
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-gray-100 dark:bg-neutral-800" />
           <View className="py-4">
-            <Text className="text-sm text-gray-500 mb-2">Spol</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-2">Spol</Text>
             <View className="flex-row gap-2">
               {(["moški", "ženska", "drugo"] as const).map((g) => (
                 <Pressable
                   key={g}
                   onPress={() => setGender(g)}
-                  className={`flex-1 py-2.5 rounded-2xl items-center ${gender === g ? "bg-brand" : "bg-gray-100"}`}
+                  className={`flex-1 py-2.5 rounded-2xl items-center ${gender === g ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
                 >
                   <Text
-                    className={`text-sm font-semibold ${gender === g ? "text-white" : "text-gray-700"}`}
+                    className={`text-sm font-semibold ${gender === g ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
                   >
                     {g}
                   </Text>
@@ -254,8 +261,8 @@ export default function EditProfile() {
         </View>
 
         {/* Education level */}
-        <View className="bg-white mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 mb-2">
+        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
             Stopnja študija
           </Text>
           <View className="flex-row gap-2">
@@ -271,10 +278,10 @@ export default function EditProfile() {
                 onPress={() =>
                   setEducationLevel(educationLevel === key ? "" : key)
                 }
-                className={`flex-1 py-2.5 rounded-2xl items-center ${educationLevel === key ? "bg-brand" : "bg-gray-100"}`}
+                className={`flex-1 py-2.5 rounded-2xl items-center ${educationLevel === key ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
               >
                 <Text
-                  className={`text-xs font-semibold ${educationLevel === key ? "text-white" : "text-gray-700"}`}
+                  className={`text-xs font-semibold ${educationLevel === key ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
                 >
                   {label}
                 </Text>
@@ -284,14 +291,14 @@ export default function EditProfile() {
         </View>
 
         {/* University */}
-        <View className="bg-white mx-4 mt-4 rounded-3xl px-5 py-2 shadow-sm">
+        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-2 shadow-sm">
           <Pressable
             onPress={() => setShowUniPicker(!showUniPicker)}
             className="flex-row items-center justify-between py-4"
           >
-            <Text className="text-sm text-gray-500">Univerza</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400">Univerza</Text>
             <View className="flex-row items-center">
-              <Text className="text-sm text-gray-900 mr-1" numberOfLines={1}>
+              <Text className="text-sm text-gray-900 dark:text-white mr-1" numberOfLines={1}>
                 {university || "Izberi"}
               </Text>
               <Ionicons
@@ -312,10 +319,10 @@ export default function EditProfile() {
                     setShowUniPicker(false);
                     setShowFacPicker(true);
                   }}
-                  className={`py-3 px-4 rounded-2xl mb-1 ${university === u ? "bg-brand" : "bg-gray-50"}`}
+                  className={`py-3 px-4 rounded-2xl mb-1 ${university === u ? "bg-brand" : "bg-gray-50 dark:bg-neutral-800"}`}
                 >
                   <Text
-                    className={`text-sm ${university === u ? "text-white font-semibold" : "text-gray-700"}`}
+                    className={`text-sm ${university === u ? "text-white font-semibold" : "text-gray-700 dark:text-gray-200"}`}
                   >
                     {u}
                   </Text>
@@ -323,15 +330,15 @@ export default function EditProfile() {
               ))}
             </View>
           )}
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-gray-100 dark:bg-neutral-800" />
           <Pressable
             onPress={() => setShowFacPicker(!showFacPicker)}
             className="flex-row items-center justify-between py-4"
           >
-            <Text className="text-sm text-gray-500">Fakulteta</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400">Fakulteta</Text>
             <View className="flex-row items-center">
               <Text
-                className="text-sm text-gray-900 mr-1 max-w-48"
+                className="text-sm text-gray-900 dark:text-white mr-1 max-w-48"
                 numberOfLines={1}
               >
                 {faculty || "Izberi"}
@@ -352,10 +359,10 @@ export default function EditProfile() {
                     setFaculty(f);
                     setShowFacPicker(false);
                   }}
-                  className={`py-3 px-4 rounded-2xl mb-1 ${faculty === f ? "bg-brand" : "bg-gray-50"}`}
+                  className={`py-3 px-4 rounded-2xl mb-1 ${faculty === f ? "bg-brand" : "bg-gray-50 dark:bg-neutral-800"}`}
                 >
                   <Text
-                    className={`text-sm ${faculty === f ? "text-white font-semibold" : "text-gray-700"}`}
+                    className={`text-sm ${faculty === f ? "text-white font-semibold" : "text-gray-700 dark:text-gray-200"}`}
                   >
                     {f}
                   </Text>
@@ -366,24 +373,26 @@ export default function EditProfile() {
         </View>
 
         {/* Bio */}
-        <View className="bg-white mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 mb-2">Bio</Text>
+        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">Bio</Text>
           <TextInput
             value={bio}
             onChangeText={setBio}
             placeholder="Nekaj o sebi..."
+            placeholderTextColor="#888"
             multiline
             numberOfLines={3}
             textAlignVertical="top"
             maxLength={300}
-            className="text-base text-gray-900 min-h-20 bg-gray-50 rounded-2xl px-4 py-3"
+            className="text-base text-gray-900 dark:text-white min-h-20 bg-gray-50 dark:bg-neutral-800 rounded-2xl px-4 py-3"
           />
-          <Text className="text-xs text-gray-300 text-right mt-1">
+          <Text className="text-xs text-gray-300 dark:text-gray-600 text-right mt-1">
             {bio.length}/300
           </Text>
         </View>
-      </ScrollView>
-    </TouchableWithoutFeedback>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -396,7 +405,7 @@ function EditRow({
 }) {
   return (
     <View className="flex-row items-center justify-between py-4">
-      <Text className="text-sm text-gray-500">{label}</Text>
+      <Text className="text-sm text-gray-500 dark:text-gray-400">{label}</Text>
       {children}
     </View>
   );

@@ -58,12 +58,12 @@ export default function ProfileDetail() {
     })();
   }, [id]);
 
-  if (!profile) return <View className="flex-1 bg-gray-50" />;
+  if (!profile) return <View className="flex-1 bg-gray-50 dark:bg-neutral-950" />;
 
   const photos = profile.photos.length > 0 ? profile.photos : [];
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="absolute top-0 left-0 right-0 z-20 flex-row items-center justify-between px-5 pt-16 pb-3">
         <Pressable
           onPress={() => router.back()}
@@ -112,7 +112,7 @@ export default function ProfileDetail() {
                 {photos.map((_, i) => (
                   <View
                     key={i}
-                    className={`w-2 h-2 rounded-full ${i === photoIdx ? "bg-brand" : "bg-gray-300"}`}
+                    className={`w-2 h-2 rounded-full ${i === photoIdx ? "bg-brand" : "bg-gray-300 dark:bg-neutral-700"}`}
                   />
                 ))}
               </View>
@@ -121,39 +121,39 @@ export default function ProfileDetail() {
         ) : (
           <View
             style={{ width, height: width }}
-            className="bg-brand-light items-center justify-center"
+            className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
           >
-            <Text className="text-8xl font-bold text-brand-dark">
+            <Text className="text-8xl font-bold text-brand-dark dark:text-brand">
               {profile.name[0]}
             </Text>
           </View>
         )}
 
         <View className="px-6 pt-6 pb-10">
-          <Text className="text-3xl font-bold text-gray-900">
+          <Text className="text-3xl font-bold text-gray-900 dark:text-white">
             {profile.name}, {profile.age}
           </Text>
 
           <View className="flex-row items-center mt-2">
             <Ionicons name="school-outline" size={16} color="#999" />
-            <Text className="text-base text-gray-500 ml-1.5">
+            <Text className="text-base text-gray-500 dark:text-gray-400 ml-1.5">
               {profile.faculty}
             </Text>
           </View>
           <View className="flex-row items-center mt-1">
             <Ionicons name="library-outline" size={16} color="#999" />
-            <Text className="text-sm text-gray-400 ml-1.5">
+            <Text className="text-sm text-gray-400 dark:text-gray-500 ml-1.5">
               {profile.university}
             </Text>
           </View>
 
           <View className="flex-row flex-wrap gap-2 mt-3">
-            <View className="bg-gray-100 rounded-full px-3 py-1.5">
-              <Text className="text-sm text-gray-600">{profile.gender}</Text>
+            <View className="bg-gray-100 dark:bg-neutral-800 rounded-full px-3 py-1.5">
+              <Text className="text-sm text-gray-600 dark:text-gray-200">{profile.gender}</Text>
             </View>
             {profile.education_level && (
-              <View className="bg-brand-light rounded-full px-3 py-1.5">
-                <Text className="text-sm text-brand-dark font-semibold">
+              <View className="bg-brand-light dark:bg-brand/20 rounded-full px-3 py-1.5">
+                <Text className="text-sm text-brand-dark dark:text-brand font-semibold">
                   {EDU_LABELS[profile.education_level] ??
                     profile.education_level}
                 </Text>
@@ -163,10 +163,10 @@ export default function ProfileDetail() {
 
           {profile.bio && (
             <View className="mt-5">
-              <Text className="text-sm font-semibold text-gray-500 mb-1.5">
+              <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
                 O meni
               </Text>
-              <Text className="text-base text-gray-700 leading-6">
+              <Text className="text-base text-gray-700 dark:text-gray-200 leading-6">
                 {profile.bio}
               </Text>
             </View>
@@ -223,7 +223,7 @@ export default function ProfileDetail() {
                 color={isBlocked ? "#00A6F6" : "#aaa"}
               />
               <Text
-                className={`text-sm ${isBlocked ? "text-brand" : "text-gray-400"}`}
+                className={`text-sm ${isBlocked ? "text-brand" : "text-gray-400 dark:text-gray-500"}`}
               >
                 {isBlocked ? "Odblokiraj uporabnika" : "Blokiraj uporabnika"}
               </Text>

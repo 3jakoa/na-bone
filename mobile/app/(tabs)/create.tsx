@@ -362,24 +362,24 @@ export default function CreateBone() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-gray-50"
+      className="flex-1 bg-gray-50 dark:bg-neutral-950"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
           ref={scrollRef}
-          className="flex-1 bg-gray-50"
+          className="flex-1 bg-gray-50 dark:bg-neutral-950"
           contentContainerStyle={{ paddingBottom: noteFocused ? 120 : 40 }}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
         >
         <View className="pt-16 px-6 pb-2">
-          <Text className="text-3xl font-bold text-gray-900">Nov bon</Text>
-          <Text className="text-gray-500 mt-1">Povabi nekoga na kosilo</Text>
+          <Text className="text-3xl font-bold text-gray-900 dark:text-white">Nov bon</Text>
+          <Text className="text-gray-500 dark:text-gray-400 mt-1">Povabi nekoga na kosilo</Text>
         </View>
 
         {/* Restaurant */}
-        <View className="bg-white mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 mb-2">
+        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
             Restavracija
           </Text>
 
@@ -397,7 +397,7 @@ export default function CreateBone() {
                 <View className="flex-row flex-1 mr-3">
                   <Ionicons name="restaurant" size={18} color="#00A6F6" style={{ marginTop: 2 }} />
                   <View className="ml-2 flex-1">
-                    <Text className="text-base text-gray-900 font-semibold">
+                    <Text className="text-base text-gray-900 dark:text-white font-semibold">
                       {restaurant?.name}
                     </Text>
                     <View className="flex-row items-center mt-0.5 gap-2">
@@ -409,7 +409,7 @@ export default function CreateBone() {
                           </Text>
                         </View>
                       )}
-                      <Text className="text-xs text-gray-400">
+                      <Text className="text-xs text-gray-400 dark:text-gray-500">
                         {[restaurant?.address, restaurant?.city].filter(Boolean).join(", ")}
                       </Text>
                     </View>
@@ -419,11 +419,11 @@ export default function CreateBone() {
               </View>
               {restaurant?.supplement_price != null && (
                 <View className="flex-row items-center mt-0.5 ml-7 gap-2">
-                  <Text className="text-xs font-semibold text-green-600">
+                  <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
                     {Number(restaurant.supplement_price).toFixed(2)} EUR doplačilo
                   </Text>
                   {restaurant.meal_price != null && (
-                    <Text className="text-xs text-gray-400">
+                    <Text className="text-xs text-gray-400 dark:text-gray-500">
                       (cena obroka {Number(restaurant.meal_price).toFixed(2)})
                     </Text>
                   )}
@@ -432,13 +432,14 @@ export default function CreateBone() {
             </TouchableOpacity>
           ) : (
             <>
-            <View className="flex-row items-center bg-gray-50 rounded-2xl px-4 py-3 mb-2">
+            <View className="flex-row items-center bg-gray-50 dark:bg-neutral-800 rounded-2xl px-4 py-3 mb-2">
               <Ionicons name="search" size={18} color="#999" />
               <TextInput
                 value={search}
                 onChangeText={setSearch}
                 placeholder="Išči restavracijo..."
-                className="flex-1 ml-2 text-base text-gray-900"
+                placeholderTextColor="#888"
+                className="flex-1 ml-2 text-base text-gray-900 dark:text-white"
                 autoCorrect={false}
                 returnKeyType="done"
                 onSubmitEditing={Keyboard.dismiss}
@@ -468,7 +469,7 @@ export default function CreateBone() {
                         setShowPicker(false);
                         Keyboard.dismiss();
                       }}
-                      className="flex-row items-center py-3 px-3 rounded-2xl active:bg-gray-50"
+                      className="flex-row items-center py-3 px-3 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
                     >
                       <Ionicons
                         name="restaurant-outline"
@@ -478,7 +479,7 @@ export default function CreateBone() {
                       <View className="ml-2 flex-1">
                         <View className="flex-row items-center gap-1.5">
                           <Text
-                            className="flex-1 text-base text-gray-800"
+                            className="flex-1 text-base text-gray-800 dark:text-gray-100"
                             numberOfLines={1}
                           >
                             {r.name}
@@ -492,18 +493,18 @@ export default function CreateBone() {
                             </View>
                           )}
                         </View>
-                        <Text className="text-xs text-gray-400" numberOfLines={1}>
+                        <Text className="text-xs text-gray-400 dark:text-gray-500" numberOfLines={1}>
                           {[r.address, r.city]
                             .filter(Boolean)
                             .join(", ")}
                         </Text>
                         {r.supplement_price != null && (
                           <View className="flex-row items-center gap-2">
-                            <Text className="text-xs font-semibold text-green-600">
+                            <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
                               {Number(r.supplement_price).toFixed(2)} EUR doplačilo
                             </Text>
                             {r.meal_price != null && (
-                              <Text className="text-xs text-gray-400">
+                              <Text className="text-xs text-gray-400 dark:text-gray-500">
                                 (cena obroka {Number(r.meal_price).toFixed(2)})
                               </Text>
                             )}
@@ -563,8 +564,8 @@ export default function CreateBone() {
         </View>
 
         {/* Date */}
-        <View className="bg-white mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 mb-3">Kdaj</Text>
+        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">Kdaj</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -576,15 +577,15 @@ export default function CreateBone() {
                 <Pressable
                   key={d.offset}
                   onPress={() => setSelectedDate(d.offset)}
-                  className={`py-3 px-4 rounded-2xl items-center min-w-[72px] ${selectedDate === d.offset ? "bg-brand" : "bg-gray-100"}`}
+                  className={`py-3 px-4 rounded-2xl items-center min-w-[72px] ${selectedDate === d.offset ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
                 >
                   <Text
-                    className={`font-semibold ${selectedDate === d.offset ? "text-white" : "text-gray-700"}`}
+                    className={`font-semibold ${selectedDate === d.offset ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
                   >
                     {d.label}
                   </Text>
                   <Text
-                    className={`text-xs mt-0.5 ${selectedDate === d.offset ? "text-blue-100" : "text-gray-400"}`}
+                    className={`text-xs mt-0.5 ${selectedDate === d.offset ? "text-blue-100" : "text-gray-400 dark:text-gray-500"}`}
                   >
                     {d.sublabel}
                   </Text>
@@ -593,7 +594,7 @@ export default function CreateBone() {
             </View>
           </ScrollView>
 
-          <Text className="text-sm font-semibold text-gray-500 mb-3">Ura</Text>
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">Ura</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -604,10 +605,10 @@ export default function CreateBone() {
                 <Pressable
                   key={t}
                   onPress={() => setSelectedTime(t)}
-                  className={`px-4 py-2.5 rounded-xl ${selectedTime === t ? "bg-brand" : "bg-gray-100"}`}
+                  className={`px-4 py-2.5 rounded-xl ${selectedTime === t ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
                 >
                   <Text
-                    className={`text-sm font-semibold ${selectedTime === t ? "text-white" : "text-gray-700"}`}
+                    className={`text-sm font-semibold ${selectedTime === t ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
                   >
                     {t}
                   </Text>
@@ -618,14 +619,14 @@ export default function CreateBone() {
         </View>
 
         {/* Visibility */}
-        <View className="bg-white mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 mb-3">
+        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
             Vidnost
           </Text>
           <View className="flex-row gap-3">
             <Pressable
               onPress={() => setVisibility("public")}
-              className={`flex-1 py-4 rounded-2xl items-center ${visibility === "public" ? "bg-brand" : "bg-gray-100"}`}
+              className={`flex-1 py-4 rounded-2xl items-center ${visibility === "public" ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
             >
               <Ionicons
                 name="earth"
@@ -633,19 +634,19 @@ export default function CreateBone() {
                 color={visibility === "public" ? "#fff" : "#999"}
               />
               <Text
-                className={`font-semibold mt-1 ${visibility === "public" ? "text-white" : "text-gray-700"}`}
+                className={`font-semibold mt-1 ${visibility === "public" ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
               >
                 Javno
               </Text>
               <Text
-                className={`text-xs mt-0.5 ${visibility === "public" ? "text-blue-100" : "text-gray-400"}`}
+                className={`text-xs mt-0.5 ${visibility === "public" ? "text-blue-100" : "text-gray-400 dark:text-gray-500"}`}
               >
                 Vsi vidijo
               </Text>
             </Pressable>
             <Pressable
               onPress={() => setVisibility("private")}
-              className={`flex-1 py-4 rounded-2xl items-center ${visibility === "private" ? "bg-brand" : "bg-gray-100"}`}
+              className={`flex-1 py-4 rounded-2xl items-center ${visibility === "private" ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
             >
               <Ionicons
                 name="lock-closed"
@@ -653,12 +654,12 @@ export default function CreateBone() {
                 color={visibility === "private" ? "#fff" : "#999"}
               />
               <Text
-                className={`font-semibold mt-1 ${visibility === "private" ? "text-white" : "text-gray-700"}`}
+                className={`font-semibold mt-1 ${visibility === "private" ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
               >
                 Zasebno
               </Text>
               <Text
-                className={`text-xs mt-0.5 ${visibility === "private" ? "text-blue-100" : "text-gray-400"}`}
+                className={`text-xs mt-0.5 ${visibility === "private" ? "text-blue-100" : "text-gray-400 dark:text-gray-500"}`}
               >
                 Samo buddies
               </Text>
@@ -667,14 +668,15 @@ export default function CreateBone() {
         </View>
 
         {/* Note */}
-        <View className="bg-white mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 mb-2">
+        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
             Opis (opcijsko)
           </Text>
           <TextInput
             value={note}
             onChangeText={setNote}
             placeholder="Npr. Iščem družbo za kosilo..."
+            placeholderTextColor="#888"
             multiline
             numberOfLines={3}
             textAlignVertical="top"
@@ -687,7 +689,7 @@ export default function CreateBone() {
               }, 250);
             }}
             onBlur={() => setNoteFocused(false)}
-            className="text-base text-gray-900 min-h-20 bg-gray-50 rounded-2xl px-4 py-3"
+            className="text-base text-gray-900 dark:text-white min-h-20 bg-gray-50 dark:bg-neutral-800 rounded-2xl px-4 py-3"
           />
         </View>
 
@@ -705,7 +707,7 @@ export default function CreateBone() {
           <Pressable
             onPress={openInvite}
             disabled={loading}
-            className="bg-white border-2 border-brand rounded-2xl py-4 px-5 items-center shadow-sm flex-row gap-2"
+            className="bg-white dark:bg-neutral-900 border-2 border-brand rounded-2xl py-4 px-5 items-center shadow-sm flex-row gap-2"
           >
             <Ionicons name="paper-plane" size={18} color="#00A6F6" />
             <Text className="text-brand font-bold text-base">Povabi</Text>
@@ -719,25 +721,25 @@ export default function CreateBone() {
           presentationStyle="pageSheet"
           onRequestClose={() => setShowInvite(false)}
         >
-          <View className="flex-1 bg-gray-50">
+          <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
             <View className="flex-row items-center justify-between px-6 pt-16 pb-4">
               <Pressable onPress={() => setShowInvite(false)}>
-                <Ionicons name="close" size={28} color="#333" />
+                <Ionicons name="close" size={28} color="#888" />
               </Pressable>
-              <Text className="text-lg font-bold text-gray-900">
+              <Text className="text-lg font-bold text-gray-900 dark:text-white">
                 Povabi buddyje
               </Text>
               <View style={{ width: 28 }} />
             </View>
 
             {/* Preview */}
-            <View className="bg-white mx-4 rounded-2xl p-4 mb-4 shadow-sm flex-row items-center">
+            <View className="bg-white dark:bg-neutral-900 mx-4 rounded-2xl p-4 mb-4 shadow-sm flex-row items-center">
               <Ionicons name="restaurant" size={18} color="#00A6F6" />
               <View className="ml-2">
-                <Text className="font-semibold text-gray-900">
+                <Text className="font-semibold text-gray-900 dark:text-white">
                   {restaurant?.name}
                 </Text>
-                <Text className="text-xs text-gray-400">
+                <Text className="text-xs text-gray-400 dark:text-gray-500">
                   {DAY_OPTIONS.find((d) => d.offset === selectedDate)?.label}{" "}
                   {DAY_OPTIONS.find((d) => d.offset === selectedDate)?.sublabel}{" "}
                   ob {selectedTime}
@@ -749,8 +751,8 @@ export default function CreateBone() {
               <ActivityIndicator color="#00A6F6" className="mt-10" />
             ) : buddies.length === 0 ? (
               <View className="items-center mt-16">
-                <Ionicons name="people-outline" size={48} color="#ccc" />
-                <Text className="text-gray-400 text-lg mt-4">
+                <Ionicons name="people-outline" size={48} color="#888" />
+                <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
                   Še nimaš buddyjev
                 </Text>
               </View>
@@ -768,7 +770,7 @@ export default function CreateBone() {
                   return (
                     <Pressable
                       onPress={() => toggleBuddy(item.matchId)}
-                      className={`rounded-3xl p-4 flex-row items-center shadow-sm ${selected ? "bg-blue-50 border-2 border-brand" : "bg-white"}`}
+                      className={`rounded-3xl p-4 flex-row items-center shadow-sm ${selected ? "bg-blue-50 dark:bg-brand/20 border-2 border-brand" : "bg-white dark:bg-neutral-900"}`}
                     >
                       {item.profile.photos[0] ? (
                         <Image
@@ -778,23 +780,23 @@ export default function CreateBone() {
                       ) : (
                         <View
                           style={{ width: 48, height: 48, borderRadius: 24 }}
-                          className="bg-brand-light items-center justify-center"
+                          className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
                         >
-                          <Text className="font-bold text-brand-dark">
+                          <Text className="font-bold text-brand-dark dark:text-brand">
                             {item.profile.name[0]}
                           </Text>
                         </View>
                       )}
                       <View className="flex-1 ml-3">
-                        <Text className="font-bold text-gray-900">
+                        <Text className="font-bold text-gray-900 dark:text-white">
                           {item.profile.name}
                         </Text>
-                        <Text className="text-xs text-gray-400">
+                        <Text className="text-xs text-gray-400 dark:text-gray-500">
                           {item.profile.faculty}
                         </Text>
                       </View>
                       <View
-                        className={`w-7 h-7 rounded-full items-center justify-center ${selected ? "bg-brand" : "bg-gray-200"}`}
+                        className={`w-7 h-7 rounded-full items-center justify-center ${selected ? "bg-brand" : "bg-gray-200 dark:bg-neutral-700"}`}
                       >
                         {selected && (
                           <Ionicons name="checkmark" size={16} color="#fff" />
@@ -812,7 +814,7 @@ export default function CreateBone() {
                 <Pressable
                   onPress={sendInvites}
                   disabled={loading || selectedBuddies.size === 0}
-                  className={`rounded-2xl py-4 items-center shadow-lg ${selectedBuddies.size > 0 ? "bg-brand" : "bg-gray-300"}`}
+                  className={`rounded-2xl py-4 items-center shadow-lg ${selectedBuddies.size > 0 ? "bg-brand" : "bg-gray-300 dark:bg-neutral-700"}`}
                 >
                   <Text className="text-white font-bold text-base">
                     {loading
@@ -834,29 +836,30 @@ export default function CreateBone() {
           presentationStyle="pageSheet"
           onRequestClose={() => setShowAllModal(false)}
         >
-          <View className="flex-1 bg-gray-50">
-            <View className="flex-row items-center px-5 pt-16 pb-3 bg-white border-b border-gray-100">
+          <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
+            <View className="flex-row items-center px-5 pt-16 pb-3 bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-800">
               <Pressable onPress={() => setShowAllModal(false)}>
-                <Ionicons name="close" size={28} color="#333" />
+                <Ionicons name="close" size={28} color="#888" />
               </Pressable>
-              <Text className="text-lg font-bold text-gray-900 ml-3">
+              <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
                 Vse restavracije
               </Text>
             </View>
 
-            <View className="flex-row items-center bg-white mx-4 mt-3 rounded-2xl px-4 py-3">
+            <View className="flex-row items-center bg-white dark:bg-neutral-900 mx-4 mt-3 rounded-2xl px-4 py-3">
               <Ionicons name="search" size={18} color="#999" />
               <TextInput
                 value={modalSearch}
                 onChangeText={setModalSearch}
                 placeholder="Išči restavracijo..."
-                className="flex-1 ml-2 text-base text-gray-900"
+                placeholderTextColor="#888"
+                className="flex-1 ml-2 text-base text-gray-900 dark:text-white"
                 autoCorrect={false}
                 autoFocus
               />
               {modalSearch.length > 0 && (
                 <Pressable onPress={() => setModalSearch("")}>
-                  <Ionicons name="close-circle" size={18} color="#ccc" />
+                  <Ionicons name="close-circle" size={18} color="#888" />
                 </Pressable>
               )}
             </View>
@@ -886,13 +889,13 @@ export default function CreateBone() {
                     setShowAllModal(false);
                     setModalSearch("");
                   }}
-                  className="flex-row items-center py-3 px-3 mb-1 bg-white rounded-2xl"
+                  className="flex-row items-center py-3 px-3 mb-1 bg-white dark:bg-neutral-900 rounded-2xl"
                 >
                   <Ionicons name="restaurant-outline" size={16} color="#999" />
                   <View className="ml-2 flex-1">
                     <View className="flex-row items-center gap-1.5">
                       <Text
-                        className="flex-1 text-base text-gray-800"
+                        className="flex-1 text-base text-gray-800 dark:text-gray-100"
                         numberOfLines={1}
                       >
                         {r.name}
@@ -906,16 +909,16 @@ export default function CreateBone() {
                         </View>
                       )}
                     </View>
-                    <Text className="text-xs text-gray-400" numberOfLines={1}>
+                    <Text className="text-xs text-gray-400 dark:text-gray-500" numberOfLines={1}>
                       {[r.address, r.city].filter(Boolean).join(", ")}
                     </Text>
                     {r.supplement_price != null && (
                       <View className="flex-row items-center gap-2">
-                        <Text className="text-xs font-semibold text-green-600">
+                        <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
                           {Number(r.supplement_price).toFixed(2)} EUR doplačilo
                         </Text>
                         {r.meal_price != null && (
-                          <Text className="text-xs text-gray-400">
+                          <Text className="text-xs text-gray-400 dark:text-gray-500">
                             (cena obroka {Number(r.meal_price).toFixed(2)})
                           </Text>
                         )}
@@ -927,7 +930,7 @@ export default function CreateBone() {
               ListEmptyComponent={
                 modalSearch.length > 0 ? (
                   <View className="items-center py-8">
-                    <Text className="text-gray-400">Ni rezultatov</Text>
+                    <Text className="text-gray-400 dark:text-gray-500">Ni rezultatov</Text>
                   </View>
                 ) : null
               }

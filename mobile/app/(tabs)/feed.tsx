@@ -120,8 +120,8 @@ export default function Feed() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50 pt-16">
-      <Text className="text-3xl font-bold text-gray-900 px-6 mb-4">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
+      <Text className="text-3xl font-bold text-gray-900 dark:text-white px-6 mb-4">
         Javne objave
       </Text>
       <FlatList
@@ -133,11 +133,11 @@ export default function Feed() {
         }
         ListEmptyComponent={
           <View className="items-center mt-16">
-            <Ionicons name="restaurant-outline" size={48} color="#ccc" />
-            <Text className="text-gray-400 text-lg mt-4">
+            <Ionicons name="restaurant-outline" size={48} color="#888" />
+            <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
               Ni javnih objav
             </Text>
-            <Text className="text-gray-300 text-sm mt-1">
+            <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
               Bodi prvi — objavi bon!
             </Text>
           </View>
@@ -148,7 +148,7 @@ export default function Feed() {
           return (
             <Pressable
               onPress={() => setSelectedBone(item)}
-              className="bg-white rounded-3xl p-5 shadow-sm"
+              className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm"
             >
               {/* Author row */}
               {item.author && (
@@ -164,20 +164,20 @@ export default function Feed() {
                       style={{ width: 40, height: 40, borderRadius: 20 }}
                     />
                   ) : (
-                    <View className="w-10 h-10 rounded-full bg-brand-light items-center justify-center">
-                      <Text className="font-bold text-brand-dark">
+                    <View className="w-10 h-10 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
+                      <Text className="font-bold text-brand-dark dark:text-brand">
                         {item.author.name[0]}
                       </Text>
                     </View>
                   )}
                   <View className="ml-3 flex-1">
                     <Text
-                      className="font-semibold text-gray-900"
+                      className="font-semibold text-gray-900 dark:text-white"
                       numberOfLines={1}
                     >
                       {item.author.name}
                     </Text>
-                    <Text className="text-xs text-gray-400" numberOfLines={1}>
+                    <Text className="text-xs text-gray-400 dark:text-gray-500" numberOfLines={1}>
                       {item.author.faculty}
                     </Text>
                   </View>
@@ -194,7 +194,7 @@ export default function Feed() {
                     style={{ marginTop: 3 }}
                   />
                   <Text
-                    className="flex-1 font-bold text-base text-gray-900 ml-1.5"
+                    className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-1.5"
                     numberOfLines={2}
                   >
                     {item.restaurant}
@@ -213,7 +213,7 @@ export default function Feed() {
                 </View>
                 {ri && (ri.address || ri.city) && (
                   <Text
-                    className="text-xs text-gray-400 ml-6"
+                    className="text-xs text-gray-400 dark:text-gray-500 ml-6"
                     numberOfLines={1}
                   >
                     {[ri.address, ri.city].filter(Boolean).join(", ")}
@@ -221,11 +221,11 @@ export default function Feed() {
                 )}
                 {ri?.supplement_price != null && (
                   <View className="flex-row items-center ml-6 gap-2">
-                    <Text className="text-xs font-semibold text-green-600">
+                    <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
                       {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
                     </Text>
                     {ri.meal_price != null && (
-                      <Text className="text-xs text-gray-400">
+                      <Text className="text-xs text-gray-400 dark:text-gray-500">
                         (cena obroka {Number(ri.meal_price).toFixed(2)})
                       </Text>
                     )}
@@ -233,7 +233,7 @@ export default function Feed() {
                 )}
               </View>
 
-              <View className="bg-blue-50 rounded-xl px-3 py-2 flex-row items-center mb-2 self-start">
+              <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mb-2 self-start">
                 <Ionicons name="calendar" size={16} color="#00A6F6" />
                 <Text className="text-sm font-semibold text-brand ml-1.5">
                   {formatScheduledDate(item.scheduled_at)}
@@ -241,7 +241,7 @@ export default function Feed() {
               </View>
               {item.note ? (
                 <Text
-                  className="text-sm text-gray-600 mb-3"
+                  className="text-sm text-gray-600 dark:text-gray-300 mb-3"
                   numberOfLines={2}
                 >
                   {item.note}
@@ -274,7 +274,7 @@ export default function Feed() {
         >
           <Pressable
             onPress={() => {}}
-            className="bg-white rounded-3xl w-full max-w-md"
+            className="bg-white dark:bg-neutral-900 rounded-3xl w-full max-w-md"
             style={{ maxHeight: "85%" }}
           >
             {selectedBone && (() => {
@@ -284,14 +284,14 @@ export default function Feed() {
               return (
                 <>
                   <View className="flex-row items-center justify-between px-5 pt-5 pb-2">
-                    <Text className="text-lg font-bold text-gray-900">
+                    <Text className="text-lg font-bold text-gray-900 dark:text-white">
                       Javni bon
                     </Text>
                     <Pressable
                       onPress={() => setSelectedBone(null)}
                       hitSlop={10}
                     >
-                      <Ionicons name="close" size={26} color="#333" />
+                      <Ionicons name="close" size={26} color="#888" />
                     </Pressable>
                   </View>
 
@@ -306,17 +306,17 @@ export default function Feed() {
                             style={{ width: 48, height: 48, borderRadius: 24 }}
                           />
                         ) : (
-                          <View className="w-12 h-12 rounded-full bg-brand-light items-center justify-center">
-                            <Text className="font-bold text-brand-dark">
+                          <View className="w-12 h-12 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
+                            <Text className="font-bold text-brand-dark dark:text-brand">
                               {b.author.name[0]}
                             </Text>
                           </View>
                         )}
                         <View className="ml-3 flex-1">
-                          <Text className="font-semibold text-gray-900">
+                          <Text className="font-semibold text-gray-900 dark:text-white">
                             {b.author.name}
                           </Text>
-                          <Text className="text-xs text-gray-400">
+                          <Text className="text-xs text-gray-400 dark:text-gray-500">
                             {b.author.faculty}
                           </Text>
                         </View>
@@ -330,7 +330,7 @@ export default function Feed() {
                         color="#00A6F6"
                         style={{ marginTop: 3 }}
                       />
-                      <Text className="flex-1 font-bold text-lg text-gray-900 ml-2">
+                      <Text className="flex-1 font-bold text-lg text-gray-900 dark:text-white ml-2">
                         {b.restaurant}
                       </Text>
                       {ri?.rating != null && ri.rating > 0 && (
@@ -346,24 +346,24 @@ export default function Feed() {
                       )}
                     </View>
                     {ri && (ri.address || ri.city) && (
-                      <Text className="text-xs text-gray-500 ml-7 mb-1">
+                      <Text className="text-xs text-gray-500 dark:text-gray-400 ml-7 mb-1">
                         {[ri.address, ri.city].filter(Boolean).join(", ")}
                       </Text>
                     )}
                     {ri?.supplement_price != null && (
                       <View className="flex-row items-center ml-7 gap-2 mb-3">
-                        <Text className="text-xs font-semibold text-green-600">
+                        <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
                           {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
                         </Text>
                         {ri.meal_price != null && (
-                          <Text className="text-xs text-gray-400">
+                          <Text className="text-xs text-gray-400 dark:text-gray-500">
                             (cena obroka {Number(ri.meal_price).toFixed(2)})
                           </Text>
                         )}
                       </View>
                     )}
 
-                    <View className="bg-blue-50 rounded-xl px-3 py-2 flex-row items-center mt-2 mb-3 self-start">
+                    <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mt-2 mb-3 self-start">
                       <Ionicons name="calendar" size={16} color="#00A6F6" />
                       <Text className="text-sm font-semibold text-brand ml-1.5">
                         {formatScheduledDate(b.scheduled_at)}
@@ -371,8 +371,8 @@ export default function Feed() {
                     </View>
 
                     {b.note ? (
-                      <View className="bg-gray-50 rounded-2xl p-4 mb-4">
-                        <Text className="text-sm text-gray-700 leading-5">
+                      <View className="bg-gray-50 dark:bg-neutral-800 rounded-2xl p-4 mb-4">
+                        <Text className="text-sm text-gray-700 dark:text-gray-200 leading-5">
                           {b.note}
                         </Text>
                       </View>

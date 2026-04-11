@@ -66,9 +66,21 @@ export default function Discover() {
 
   const panResponder = useRef(
     PanResponder.create({
+      // Don't steal the gesture on touch-down — that would kill taps on the
+      // child Pressable (which opens the profile detail).
       onStartShouldSetPanResponder: () => false,
+      onStartShouldSetPanResponderCapture: () => false,
+      // Steal on horizontal movement via the CAPTURE phase (top-down). The
+      // bubble-phase onMoveShouldSetPanResponder would never fire here
+      // because the inner Pressable already owns the touch; the capture
+      // variant runs before children get the event, so we can reclaim.
+      onMoveShouldSetPanResponderCapture: (_, g) =>
+        Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy),
       onMoveShouldSetPanResponder: (_, g) =>
-        Math.abs(g.dx) > 10 && Math.abs(g.dx) > Math.abs(g.dy),
+        Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy),
+      // Ensure we hold on to the gesture once granted, even if a child
+      // tries to become responder mid-drag.
+      onPanResponderTerminationRequest: () => false,
       onPanResponderMove: (_, gesture) => {
         position.setValue({ x: gesture.dx, y: gesture.dy });
       },
@@ -83,6 +95,13 @@ export default function Discover() {
             useNativeDriver: false,
           }).start();
         }
+      },
+      onPanResponderTerminate: () => {
+        // Another view stole the gesture — snap back to rest.
+        Animated.spring(position, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: false,
+        }).start();
       },
     })
   ).current;
@@ -133,15 +152,15 @@ export default function Discover() {
   const nextCard = deck[idx + 1];
 
   return (
-    <View className="flex-1 bg-gray-50 pt-16">
-      <Text className="text-3xl font-bold text-gray-900 px-6 mb-4">Išči</Text>
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
+      <Text className="text-3xl font-bold text-gray-900 dark:text-white px-6 mb-4">Išči</Text>
 
       <View className="flex-1 items-center justify-center px-4">
         {!card ? (
           <View className="items-center">
-            <Ionicons name="search" size={48} color="#ccc" />
-            <Text className="text-gray-400 text-lg mt-4">Ni več profilov</Text>
-            <Text className="text-gray-300 text-sm mt-1">
+            <Ionicons name="search" size={48} color="#888" />
+            <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">Ni več profilov</Text>
+            <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
               Preveri znova pozneje
             </Text>
           </View>
@@ -150,7 +169,7 @@ export default function Discover() {
             {/* Next card (behind) */}
             {nextCard && (
               <View
-                className="absolute w-full h-full bg-white rounded-3xl shadow-sm overflow-hidden"
+                className="absolute w-full h-full bg-white dark:bg-neutral-900 rounded-3xl shadow-sm overflow-hidden"
                 style={{ transform: [{ scale: 0.95 }], top: 10 }}
               >
                 <CardContent profile={nextCard} />
@@ -169,7 +188,7 @@ export default function Discover() {
                 width: "100%",
                 height: "100%",
               }}
-              className="bg-white rounded-3xl shadow-lg overflow-hidden"
+              className="bg-white dark:bg-neutral-900 rounded-3xl shadow-lg overflow-hidden"
             >
               {/* Like / Nope stamps */}
               <Animated.View
@@ -201,7 +220,7 @@ export default function Discover() {
             <View className="flex-row justify-center gap-6 mt-5">
               <Pressable
                 onPress={() => swipeOut("left")}
-                className="w-16 h-16 rounded-full bg-white shadow items-center justify-center border border-gray-100"
+                className="w-16 h-16 rounded-full bg-white dark:bg-neutral-900 shadow items-center justify-center border border-gray-100 dark:border-neutral-800"
               >
                 <Ionicons name="close" size={32} color="#ef4444" />
               </Pressable>
@@ -209,13 +228,13 @@ export default function Discover() {
                 onPress={() =>
                   router.push(`/profile-detail?id=${card.id}`)
                 }
-                className="w-14 h-14 rounded-full bg-white shadow items-center justify-center border border-gray-100"
+                className="w-14 h-14 rounded-full bg-white dark:bg-neutral-900 shadow items-center justify-center border border-gray-100 dark:border-neutral-800"
               >
                 <Ionicons name="information" size={24} color="#00A6F6" />
               </Pressable>
               <Pressable
                 onPress={() => swipeOut("right")}
-                className="w-16 h-16 rounded-full bg-white shadow items-center justify-center border border-gray-100"
+                className="w-16 h-16 rounded-full bg-white dark:bg-neutral-900 shadow items-center justify-center border border-gray-100 dark:border-neutral-800"
               >
                 <Ionicons name="heart" size={30} color="#22c55e" />
               </Pressable>
@@ -237,22 +256,22 @@ function CardContent({ profile }: { profile: Profile }) {
           resizeMode="cover"
         />
       ) : (
-        <View style={{ width: "100%", height: "75%" }} className="bg-brand-light items-center justify-center">
-          <Text className="text-7xl font-bold text-brand-dark">
+        <View style={{ width: "100%", height: "75%" }} className="bg-brand-light dark:bg-neutral-800 items-center justify-center">
+          <Text className="text-7xl font-bold text-brand-dark dark:text-brand">
             {profile.name[0]}
           </Text>
         </View>
       )}
       <View className="p-5 flex-1 justify-center">
-        <Text className="text-xl font-bold text-gray-900">
+        <Text className="text-xl font-bold text-gray-900 dark:text-white">
           {profile.name}, {profile.age}
         </Text>
         <View className="flex-row items-center mt-1">
           <Ionicons name="school-outline" size={14} color="#999" />
-          <Text className="text-sm text-gray-500 ml-1">{profile.faculty}</Text>
+          <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1">{profile.faculty}</Text>
         </View>
         {profile.bio && (
-          <Text className="text-sm text-gray-600 mt-2" numberOfLines={2}>
+          <Text className="text-sm text-gray-600 dark:text-gray-300 mt-2" numberOfLines={2}>
             {profile.bio}
           </Text>
         )}

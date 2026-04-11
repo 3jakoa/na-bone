@@ -348,12 +348,12 @@ export default function Chat() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-gray-50"
+      className="flex-1 bg-gray-50 dark:bg-neutral-950"
     >
       {/* Header */}
-      <View className="flex-row items-center gap-3 px-5 pt-16 pb-3 bg-white border-b border-gray-100">
+      <View className="flex-row items-center gap-3 px-5 pt-16 pb-3 bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-800">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={24} color="#333" />
+          <Ionicons name="chevron-back" size={24} color="#888" />
         </Pressable>
         {other && (
           <Pressable
@@ -366,23 +366,23 @@ export default function Chat() {
                 style={{ width: 36, height: 36, borderRadius: 18 }}
               />
             ) : (
-              <View className="w-9 h-9 rounded-full bg-brand-light items-center justify-center">
-                <Text className="font-bold text-brand-dark text-sm">
+              <View className="w-9 h-9 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
+                <Text className="font-bold text-brand-dark dark:text-brand text-sm">
                   {other.name[0]}
                 </Text>
               </View>
             )}
             <View className="ml-2.5">
-              <Text className="font-bold text-base text-gray-900">
+              <Text className="font-bold text-base text-gray-900 dark:text-white">
                 {other.name}
               </Text>
-              <Text className="text-xs text-gray-400">{other.faculty}</Text>
+              <Text className="text-xs text-gray-400 dark:text-gray-500">{other.faculty}</Text>
             </View>
           </Pressable>
         )}
         <Pressable
           onPress={() => setShowMenu(true)}
-          className="w-9 h-9 rounded-full bg-gray-100 items-center justify-center"
+          className="w-9 h-9 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center"
         >
           <Ionicons name="ellipsis-vertical" size={18} color="#999" />
         </Pressable>
@@ -392,11 +392,11 @@ export default function Chat() {
       {activeBone && (() => {
         const ri = activeBone.restaurant_info ?? restMap.get(activeBone.restaurant) ?? null;
         return (
-          <View className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-sm flex-row items-start">
+          <View className="bg-white dark:bg-neutral-900 mx-4 mt-3 p-4 rounded-2xl shadow-sm flex-row items-start">
             <Ionicons name="restaurant" size={18} color="#00A6F6" style={{ marginTop: 2 }} />
             <View className="ml-2.5 flex-1">
               <View className="flex-row items-start gap-1.5">
-                <Text className="flex-1 font-semibold text-gray-900">
+                <Text className="flex-1 font-semibold text-gray-900 dark:text-white">
                   {activeBone.restaurant}
                 </Text>
                 {ri?.rating != null && ri.rating > 0 && (
@@ -412,23 +412,23 @@ export default function Chat() {
                 )}
               </View>
               {ri && (ri.address || ri.city) && (
-                <Text className="text-xs text-gray-400">
+                <Text className="text-xs text-gray-400 dark:text-gray-500">
                   {[ri.address, ri.city].filter(Boolean).join(", ")}
                 </Text>
               )}
               {ri?.supplement_price != null && (
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-xs font-semibold text-green-600">
+                  <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
                     {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
                   </Text>
                   {ri.meal_price != null && (
-                    <Text className="text-xs text-gray-400">
+                    <Text className="text-xs text-gray-400 dark:text-gray-500">
                       (cena obroka {Number(ri.meal_price).toFixed(2)})
                     </Text>
                   )}
                 </View>
               )}
-              <Text className="text-xs text-gray-400">
+              <Text className="text-xs text-gray-400 dark:text-gray-500">
                 {formatScheduledDate(activeBone.scheduled_at)}
               </Text>
             </View>
@@ -462,7 +462,7 @@ export default function Chat() {
               <View
                 className={`max-w-[85%] ${mine ? "self-end" : "self-start"}`}
               >
-                <View className="bg-white border border-gray-200 rounded-3xl p-4 shadow-sm">
+                <View className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-3xl p-4 shadow-sm">
                   <View className="mb-2">
                     <View className="flex-row items-start">
                       <Ionicons
@@ -471,7 +471,7 @@ export default function Chat() {
                         color="#00A6F6"
                         style={{ marginTop: 2 }}
                       />
-                      <Text className="flex-1 font-bold text-base text-gray-900 ml-2">
+                      <Text className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-2">
                         {invite.restaurant}
                       </Text>
                       {rating != null && rating > 0 && (
@@ -487,17 +487,17 @@ export default function Chat() {
                       )}
                     </View>
                     {(addr || city) && (
-                      <Text className="text-xs text-gray-400 ml-7">
+                      <Text className="text-xs text-gray-400 dark:text-gray-500 ml-7">
                         {[addr, city].filter(Boolean).join(", ")}
                       </Text>
                     )}
                     {supplement != null && (
                       <View className="flex-row items-center ml-7 gap-2">
-                        <Text className="text-xs font-semibold text-green-600">
+                        <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
                           {Number(supplement).toFixed(2)} EUR doplačilo
                         </Text>
                         {mealPrice != null && (
-                          <Text className="text-xs text-gray-400">
+                          <Text className="text-xs text-gray-400 dark:text-gray-500">
                             (cena obroka {Number(mealPrice).toFixed(2)})
                           </Text>
                         )}
@@ -510,24 +510,24 @@ export default function Chat() {
                       size={14}
                       color="#999"
                     />
-                    <Text className="text-sm text-gray-500 ml-1.5">
+                    <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1.5">
                       {formatScheduledDate(invite.scheduled_at)}
                     </Text>
                   </View>
                   {invite.note && (
-                    <Text className="text-sm text-gray-600 mt-1">
+                    <Text className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                       {invite.note}
                     </Text>
                   )}
 
                   {status === "accepted" ? (
-                    <View className="mt-3 bg-green-50 rounded-xl py-2 items-center">
-                      <Text className="text-green-600 font-semibold text-sm">
+                    <View className="mt-3 bg-green-50 dark:bg-green-500/20 rounded-xl py-2 items-center">
+                      <Text className="text-green-600 dark:text-green-400 font-semibold text-sm">
                         Sprejeto
                       </Text>
                     </View>
                   ) : status === "declined" ? (
-                    <View className="mt-3 bg-red-50 rounded-xl py-2 items-center">
+                    <View className="mt-3 bg-red-50 dark:bg-red-500/20 rounded-xl py-2 items-center">
                       <Text className="text-red-500 font-semibold text-sm">
                         Zavrnjeno
                       </Text>
@@ -548,15 +548,15 @@ export default function Chat() {
                         onPress={() =>
                           respondToInvite(invite.bone_id, "declined")
                         }
-                        className="flex-1 bg-gray-100 rounded-xl py-2.5 items-center"
+                        className="flex-1 bg-gray-100 dark:bg-neutral-800 rounded-xl py-2.5 items-center"
                       >
-                        <Text className="text-gray-600 font-semibold text-sm">
+                        <Text className="text-gray-600 dark:text-gray-200 font-semibold text-sm">
                           Zavrni
                         </Text>
                       </Pressable>
                     </View>
                   ) : (
-                    <View className="mt-3 bg-blue-50 rounded-xl py-3 px-4 items-center">
+                    <View className="mt-3 bg-blue-50 dark:bg-brand/20 rounded-xl py-3 px-4 items-center">
                       <Text className="text-brand font-semibold text-sm">
                         Čaka na odgovor
                       </Text>
@@ -569,9 +569,9 @@ export default function Chat() {
 
           return (
             <View
-              className={`max-w-[78%] px-4 py-3 rounded-3xl ${mine ? "self-end bg-brand" : "self-start bg-white shadow-sm"}`}
+              className={`max-w-[78%] px-4 py-3 rounded-3xl ${mine ? "self-end bg-brand" : "self-start bg-white dark:bg-neutral-900 shadow-sm"}`}
             >
-              <Text className={mine ? "text-white" : "text-gray-900"}>
+              <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
                 {item.content}
               </Text>
             </View>
@@ -580,12 +580,13 @@ export default function Chat() {
       />
 
       {/* Input */}
-      <View className="flex-row items-center gap-2 px-4 py-3 pb-8 bg-white border-t border-gray-100">
+      <View className="flex-row items-center gap-2 px-4 py-3 pb-8 bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800">
         <TextInput
           value={text}
           onChangeText={setText}
           placeholder="Sporočilo..."
-          className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-base"
+          placeholderTextColor="#888"
+          className="flex-1 bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3 text-base text-gray-900 dark:text-white"
         />
         <Pressable
           onPress={send}
@@ -608,9 +609,9 @@ export default function Chat() {
         >
           <Pressable
             onPress={() => {}}
-            className="bg-white rounded-t-3xl px-5 pt-3 pb-10"
+            className="bg-white dark:bg-neutral-900 rounded-t-3xl px-5 pt-3 pb-10"
           >
-            <View className="w-10 h-1 rounded-full bg-gray-300 self-center mb-5" />
+            <View className="w-10 h-1 rounded-full bg-gray-300 dark:bg-neutral-700 self-center mb-5" />
 
             {other && (
               <>
@@ -623,18 +624,18 @@ export default function Chat() {
                   ) : (
                     <View
                       style={{ width: 44, height: 44, borderRadius: 22 }}
-                      className="bg-brand-light items-center justify-center"
+                      className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
                     >
-                      <Text className="font-bold text-brand-dark">
+                      <Text className="font-bold text-brand-dark dark:text-brand">
                         {other.name[0]}
                       </Text>
                     </View>
                   )}
                   <View className="ml-3">
-                    <Text className="font-bold text-gray-900 text-base">
+                    <Text className="font-bold text-gray-900 dark:text-white text-base">
                       {other.name}
                     </Text>
-                    <Text className="text-xs text-gray-400">
+                    <Text className="text-xs text-gray-400 dark:text-gray-500">
                       {other.faculty}
                     </Text>
                   </View>
@@ -645,7 +646,7 @@ export default function Chat() {
                     setShowMenu(false);
                     router.push(`/profile-detail?id=${other.id}`);
                   }}
-                  className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50"
+                  className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
                 >
                   <View
                     className="w-10 h-10 rounded-full items-center justify-center"
@@ -653,7 +654,7 @@ export default function Chat() {
                   >
                     <Ionicons name="person-outline" size={20} color="#00A6F6" />
                   </View>
-                  <Text className="ml-3 text-base text-gray-800 font-medium">
+                  <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
                     Poglej profil
                   </Text>
                 </Pressable>
@@ -681,7 +682,7 @@ export default function Chat() {
                       ]
                     );
                   }}
-                  className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50"
+                  className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
                 >
                   <View
                     className="w-10 h-10 rounded-full items-center justify-center"
@@ -689,7 +690,7 @@ export default function Chat() {
                   >
                     <Ionicons name="ban-outline" size={20} color="#ef4444" />
                   </View>
-                  <Text className="ml-3 text-base text-gray-800 font-medium">
+                  <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
                     Blokiraj uporabnika
                   </Text>
                 </Pressable>

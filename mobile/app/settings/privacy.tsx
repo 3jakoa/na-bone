@@ -28,15 +28,15 @@ export default function Privacy() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#333" />
+          <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 ml-3">Zasebnost</Text>
+        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">Zasebnost</Text>
       </View>
 
-      <View className="bg-white mx-4 rounded-3xl overflow-hidden shadow-sm">
+      <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm">
         <ToggleRow
           icon="calendar-outline"
           label="Prikaži starost"
@@ -61,14 +61,14 @@ export default function Privacy() {
 
       <Pressable
         onPress={deleteAccount}
-        className="bg-white mx-4 mt-6 rounded-3xl py-4 items-center shadow-sm"
+        className="bg-white dark:bg-neutral-900 mx-4 mt-6 rounded-3xl py-4 items-center shadow-sm"
       >
         <Text className="text-red-500 font-semibold text-base">
           Izbriši račun
         </Text>
       </Pressable>
 
-      <Text className="text-xs text-gray-400 text-center mt-4 px-8">
+      <Text className="text-xs text-gray-400 dark:text-gray-500 text-center mt-4 px-8">
         Nastavitve zasebnosti se shranjujejo lokalno. Polna podpora bo na voljo kmalu.
       </Text>
     </View>
@@ -88,8 +88,8 @@ function ToggleRow({
 }) {
   return (
     <View className="flex-row items-center px-5 py-4">
-      <Ionicons name={icon as any} size={20} color="#555" />
-      <Text className="flex-1 ml-3 text-base text-gray-800">{label}</Text>
+      <Ionicons name={icon as any} size={20} color="#888" />
+      <Text className="flex-1 ml-3 text-base text-gray-800 dark:text-gray-100">{label}</Text>
       <Switch
         value={value}
         onValueChange={onToggle}
@@ -100,5 +100,5 @@ function ToggleRow({
 }
 
 function Sep() {
-  return <View className="h-px bg-gray-100 ml-14" />;
+  return <View className="h-px bg-gray-100 dark:bg-neutral-800 ml-14" />;
 }

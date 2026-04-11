@@ -68,12 +68,12 @@ export default function BlockedUsers() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#333" />
+          <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 ml-3">
+        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
           Blokirani uporabniki
         </Text>
       </View>
@@ -87,14 +87,14 @@ export default function BlockedUsers() {
           contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 32 }}
           ListEmptyComponent={
             <View className="items-center mt-16">
-              <Ionicons name="shield-checkmark-outline" size={48} color="#ccc" />
-              <Text className="text-gray-400 text-lg mt-4">
+              <Ionicons name="shield-checkmark-outline" size={48} color="#888" />
+              <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
                 Ni blokiranih uporabnikov
               </Text>
             </View>
           }
           renderItem={({ item }) => (
-            <View className="bg-white rounded-3xl p-4 flex-row items-center shadow-sm">
+            <View className="bg-white dark:bg-neutral-900 rounded-3xl p-4 flex-row items-center shadow-sm">
               <Pressable
                 onPress={() =>
                   router.push(`/profile-detail?id=${item.profile.id}`)
@@ -108,27 +108,27 @@ export default function BlockedUsers() {
                 ) : (
                   <View
                     style={{ width: 48, height: 48, borderRadius: 24 }}
-                    className="bg-brand-light items-center justify-center"
+                    className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
                   >
-                    <Text className="font-bold text-brand-dark">
+                    <Text className="font-bold text-brand-dark dark:text-brand">
                       {item.profile.name[0]}
                     </Text>
                   </View>
                 )}
               </Pressable>
               <View className="flex-1 ml-3">
-                <Text className="font-bold text-gray-900">
+                <Text className="font-bold text-gray-900 dark:text-white">
                   {item.profile.name}
                 </Text>
-                <Text className="text-xs text-gray-400">
+                <Text className="text-xs text-gray-400 dark:text-gray-500">
                   {item.profile.faculty}
                 </Text>
               </View>
               <Pressable
                 onPress={() => unblock(item)}
-                className="bg-gray-100 rounded-full px-4 py-2"
+                className="bg-gray-100 dark:bg-neutral-800 rounded-full px-4 py-2"
               >
-                <Text className="text-sm font-semibold text-gray-600">
+                <Text className="text-sm font-semibold text-gray-600 dark:text-gray-200">
                   Odblokiraj
                 </Text>
               </Pressable>

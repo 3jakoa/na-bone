@@ -53,19 +53,19 @@ export default function Notifications() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#333" />
+          <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 ml-3">Obvestila</Text>
+        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">Obvestila</Text>
       </View>
 
       {!prefs ? (
         <ActivityIndicator color="#00A6F6" className="mt-10" />
       ) : (
         <>
-          <View className="bg-white mx-4 rounded-3xl overflow-hidden shadow-sm">
+          <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm">
             <ToggleRow
               icon="restaurant-outline"
               label="Novi boni"
@@ -91,7 +91,7 @@ export default function Notifications() {
             />
           </View>
 
-          <Text className="text-xs text-gray-400 text-center mt-4 px-8">
+          <Text className="text-xs text-gray-400 dark:text-gray-500 text-center mt-4 px-8">
             Obvestila upravljaš tudi v nastavitvah sistema.
           </Text>
         </>
@@ -115,10 +115,10 @@ function ToggleRow({
 }) {
   return (
     <View className="flex-row items-center px-5 py-4">
-      <Ionicons name={icon as any} size={20} color="#555" />
+      <Ionicons name={icon as any} size={20} color="#888" />
       <View className="flex-1 ml-3">
-        <Text className="text-base text-gray-800">{label}</Text>
-        <Text className="text-xs text-gray-400">{description}</Text>
+        <Text className="text-base text-gray-800 dark:text-gray-100">{label}</Text>
+        <Text className="text-xs text-gray-400 dark:text-gray-500">{description}</Text>
       </View>
       <Switch
         value={value}
@@ -130,5 +130,5 @@ function ToggleRow({
 }
 
 function Sep() {
-  return <View className="h-px bg-gray-100 ml-14" />;
+  return <View className="h-px bg-gray-100 dark:bg-neutral-800 ml-14" />;
 }

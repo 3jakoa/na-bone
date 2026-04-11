@@ -63,20 +63,20 @@ export default function ProfileScreen() {
     router.replace("/auth/login");
   }
 
-  if (!me) return <View className="flex-1 bg-gray-50" />;
+  if (!me) return <View className="flex-1 bg-gray-50 dark:bg-neutral-950" />;
 
   return (
     <ScrollView
-      className="flex-1 bg-gray-50"
+      className="flex-1 bg-gray-50 dark:bg-neutral-950"
       contentContainerStyle={{ paddingBottom: 32 }}
     >
       <View className="pt-16 px-6 flex-row items-center justify-between mb-4">
-        <Text className="text-3xl font-bold text-gray-900">Profil</Text>
+        <Text className="text-3xl font-bold text-gray-900 dark:text-white">Profil</Text>
         <Pressable
           onPress={() => router.push("/edit-profile")}
-          className="w-10 h-10 rounded-full bg-white shadow-sm items-center justify-center"
+          className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900 shadow-sm items-center justify-center"
         >
-          <Ionicons name="pencil" size={18} color="#555" />
+          <Ionicons name="pencil" size={18} color="#999" />
         </Pressable>
       </View>
 
@@ -98,21 +98,21 @@ export default function ProfileScreen() {
               style={{ width: 128, height: 128, borderRadius: 64, borderWidth: 4, borderColor: "#fff" }}
             />
           ) : (
-            <View className="w-32 h-32 rounded-full bg-brand-light items-center justify-center border-4 border-white shadow-sm">
-              <Text className="text-5xl font-bold text-brand-dark">
+            <View className="w-32 h-32 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center border-4 border-white dark:border-neutral-900 shadow-sm">
+              <Text className="text-5xl font-bold text-brand-dark dark:text-brand">
                 {me.name[0]}
               </Text>
             </View>
           )}
         </Pressable>
-        <Text className="text-2xl font-bold mt-4 text-gray-900">
+        <Text className="text-2xl font-bold mt-4 text-gray-900 dark:text-white">
           {me.name}, {me.age}
         </Text>
         <View className="flex-row items-center mt-1">
           <Ionicons name="school-outline" size={14} color="#999" />
-          <Text className="text-gray-500 ml-1">{me.faculty}</Text>
+          <Text className="text-gray-500 dark:text-gray-400 ml-1">{me.faculty}</Text>
         </View>
-        <Text className="text-gray-400 text-sm">{me.university}</Text>
+        <Text className="text-gray-400 dark:text-gray-500 text-sm">{me.university}</Text>
         {me.education_level && (
           <View className="bg-brand-light rounded-full px-3 py-1 mt-2">
             <Text className="text-brand-dark text-xs font-semibold">
@@ -124,39 +124,39 @@ export default function ProfileScreen() {
 
       {/* Stats */}
       <View className="flex-row mx-4 gap-3 mb-4">
-        <View className="flex-1 bg-white rounded-3xl py-4 items-center shadow-sm">
+        <View className="flex-1 bg-white dark:bg-neutral-900 rounded-3xl py-4 items-center shadow-sm">
           <Ionicons name="restaurant" size={20} color="#00A6F6" />
-          <Text className="text-2xl font-bold text-gray-900 mt-1">
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
             {boneCount}
           </Text>
-          <Text className="text-xs text-gray-400">Boni</Text>
+          <Text className="text-xs text-gray-400 dark:text-gray-500">Boni</Text>
         </View>
         <Pressable
           onPress={() => router.push("/settings/buddies")}
-          className="flex-1 bg-white rounded-3xl py-4 items-center shadow-sm"
+          className="flex-1 bg-white dark:bg-neutral-900 rounded-3xl py-4 items-center shadow-sm"
         >
           <Ionicons name="people" size={20} color="#00A6F6" />
-          <Text className="text-2xl font-bold text-gray-900 mt-1">
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
             {matchCount}
           </Text>
-          <Text className="text-xs text-gray-400">Buddies</Text>
+          <Text className="text-xs text-gray-400 dark:text-gray-500">Buddies</Text>
         </Pressable>
       </View>
 
       {/* Bio */}
-      <View className="bg-white mx-4 rounded-3xl px-5 py-4 shadow-sm mb-4">
-        <Text className="text-sm font-semibold text-gray-500 mb-1.5">
+      <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm mb-4">
+        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
           O meni
         </Text>
-        <Text className="text-base text-gray-700 leading-6">
+        <Text className="text-base text-gray-700 dark:text-gray-200 leading-6">
           {me.bio || "Še nisi dodal/a bio-ja. Uredi profil!"}
         </Text>
       </View>
 
       {/* Photos */}
       {me.photos.length > 0 && (
-        <View className="bg-white mx-4 rounded-3xl px-5 py-4 shadow-sm mb-4">
-          <Text className="text-sm font-semibold text-gray-500 mb-3">
+        <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm mb-4">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
             Slike
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -186,7 +186,7 @@ export default function ProfileScreen() {
       )}
 
       {/* Details */}
-      <View className="bg-white mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
+      <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
         <DetailRow icon="person-outline" label="Spol" value={me.gender} />
         <Sep />
         <DetailRow
@@ -213,11 +213,17 @@ export default function ProfileScreen() {
       </View>
 
       {/* Settings */}
-      <View className="bg-white mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
+      <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
         <SettingsRow
           icon="notifications-outline"
           label="Obvestila"
           onPress={() => router.push("/settings/notifications")}
+        />
+        <Sep />
+        <SettingsRow
+          icon="moon-outline"
+          label="Videz"
+          onPress={() => router.push("/settings/appearance" as any)}
         />
         <Sep />
         <SettingsRow
@@ -248,7 +254,7 @@ export default function ProfileScreen() {
       {/* Logout */}
       <Pressable
         onPress={logout}
-        className="bg-white mx-4 rounded-3xl py-4 items-center shadow-sm"
+        className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl py-4 items-center shadow-sm"
       >
         <Text className="text-red-500 font-semibold text-base">Odjava</Text>
       </Pressable>
@@ -268,8 +274,8 @@ function DetailRow({
   return (
     <View className="flex-row items-center px-5 py-3.5">
       <Ionicons name={icon as any} size={18} color="#999" />
-      <Text className="text-sm text-gray-400 ml-3 w-20">{label}</Text>
-      <Text className="text-sm text-gray-900 flex-1 text-right">{value}</Text>
+      <Text className="text-sm text-gray-400 dark:text-gray-500 ml-3 w-20">{label}</Text>
+      <Text className="text-sm text-gray-900 dark:text-gray-100 flex-1 text-right">{value}</Text>
     </View>
   );
 }
@@ -285,13 +291,13 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} className="flex-row items-center px-5 py-3.5">
-      <Ionicons name={icon as any} size={20} color="#555" />
-      <Text className="flex-1 ml-3 text-base text-gray-800">{label}</Text>
-      <Ionicons name="chevron-forward" size={18} color="#ccc" />
+      <Ionicons name={icon as any} size={20} color="#888" />
+      <Text className="flex-1 ml-3 text-base text-gray-800 dark:text-gray-100">{label}</Text>
+      <Ionicons name="chevron-forward" size={18} color="#888" />
     </Pressable>
   );
 }
 
 function Sep() {
-  return <View className="h-px bg-gray-100 ml-14" />;
+  return <View className="h-px bg-gray-100 dark:bg-neutral-800 ml-14" />;
 }

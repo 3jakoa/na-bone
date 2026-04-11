@@ -16,10 +16,13 @@ import {
   registerForPushNotifications,
   handleNotificationTap,
 } from "../../lib/notifications";
+import { useTheme } from "../../lib/theme";
 
 export default function TabsLayout() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
+  const { scheme } = useTheme();
+  const isDark = scheme === "dark";
 
   useEffect(() => {
     (async () => {
@@ -56,11 +59,11 @@ export default function TabsLayout() {
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarActiveTintColor: "#00A6F6",
-          tabBarInactiveTintColor: "#999",
+          tabBarInactiveTintColor: isDark ? "#666" : "#999",
           tabBarStyle: {
-            backgroundColor: "#fff",
+            backgroundColor: isDark ? "#0a0a0a" : "#fff",
             borderTopWidth: 0.5,
-            borderTopColor: "#e5e5e5",
+            borderTopColor: isDark ? "#262626" : "#e5e5e5",
             paddingBottom: Platform.OS === "ios" ? 24 : 8,
             paddingTop: 8,
             height: Platform.OS === "ios" ? 88 : 64,
@@ -113,7 +116,7 @@ export default function TabsLayout() {
                   width: 62,
                   height: 62,
                   borderRadius: 31,
-                  backgroundColor: "#f2f2f7",
+                  backgroundColor: isDark ? "#171717" : "#f2f2f7",
                   alignItems: "center",
                   justifyContent: "center",
                   marginBottom: Platform.OS === "ios" ? 20 : 8,
@@ -185,7 +188,7 @@ export default function TabsLayout() {
         >
           <Pressable
             onPress={() => {}}
-            style={{ backgroundColor: "#fff", borderRadius: 24, width: "100%", paddingHorizontal: 24, paddingVertical: 28 }}
+            style={{ backgroundColor: isDark ? "#171717" : "#fff", borderRadius: 24, width: "100%", paddingHorizontal: 24, paddingVertical: 28 }}
           >
             <View style={{ alignItems: "center", marginBottom: 20 }}>
               <View
@@ -193,7 +196,7 @@ export default function TabsLayout() {
                   width: 56,
                   height: 56,
                   borderRadius: 28,
-                  backgroundColor: "#FEF2F2",
+                  backgroundColor: isDark ? "#3b0f0f" : "#FEF2F2",
                   alignItems: "center",
                   justifyContent: "center",
                   marginBottom: 12,
@@ -205,7 +208,7 @@ export default function TabsLayout() {
                 style={{
                   fontSize: 18,
                   fontWeight: "700",
-                  color: "#111827",
+                  color: isDark ? "#f5f5f5" : "#111827",
                   textAlign: "center",
                 }}
               >
@@ -214,7 +217,7 @@ export default function TabsLayout() {
               <Text
                 style={{
                   fontSize: 14,
-                  color: "#6b7280",
+                  color: isDark ? "#a3a3a3" : "#6b7280",
                   textAlign: "center",
                   marginTop: 8,
                 }}
@@ -250,14 +253,14 @@ export default function TabsLayout() {
               onPress={() => setLeaveRoute(null)}
               android_ripple={{ color: "#d1d5db" }}
               style={{
-                backgroundColor: "#f3f4f6",
+                backgroundColor: isDark ? "#262626" : "#f3f4f6",
                 borderRadius: 16,
                 paddingVertical: 14,
                 alignItems: "center" as const,
               }}
             >
               <Text
-                style={{ color: "#374151", fontWeight: "700", fontSize: 16 }}
+                style={{ color: isDark ? "#e5e5e5" : "#374151", fontWeight: "700", fontSize: 16 }}
               >
                 Ostani
               </Text>

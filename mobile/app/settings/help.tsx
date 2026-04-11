@@ -38,12 +38,12 @@ export default function Help() {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#333" />
+          <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 ml-3">Pomoč</Text>
+        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">Pomoč</Text>
       </View>
 
       <ScrollView
@@ -51,29 +51,29 @@ export default function Help() {
         showsVerticalScrollIndicator={false}
       >
         {/* FAQ */}
-        <Text className="text-sm font-semibold text-gray-500 px-6 mb-2">
+        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 px-6 mb-2">
           Pogosta vprašanja
         </Text>
-        <View className="bg-white mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
+        <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
           {FAQ.map((item, i) => (
             <View key={i}>
-              {i > 0 && <View className="h-px bg-gray-100 ml-5" />}
+              {i > 0 && <View className="h-px bg-gray-100 dark:bg-neutral-800 ml-5" />}
               <Pressable
                 onPress={() => setOpenIdx(openIdx === i ? null : i)}
                 className="flex-row items-center px-5 py-4"
               >
-                <Text className="flex-1 text-base text-gray-800">
+                <Text className="flex-1 text-base text-gray-800 dark:text-gray-100">
                   {item.q}
                 </Text>
                 <Ionicons
                   name={openIdx === i ? "chevron-up" : "chevron-down"}
                   size={18}
-                  color="#999"
+                  color="#888"
                 />
               </Pressable>
               {openIdx === i && (
                 <View className="px-5 pb-4">
-                  <Text className="text-sm text-gray-600 leading-5">
+                  <Text className="text-sm text-gray-600 dark:text-gray-300 leading-5">
                     {item.a}
                   </Text>
                 </View>
@@ -83,10 +83,10 @@ export default function Help() {
         </View>
 
         {/* Contact */}
-        <Text className="text-sm font-semibold text-gray-500 px-6 mb-2">
+        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 px-6 mb-2">
           Kontakt
         </Text>
-        <View className="bg-white mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
+        <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
           <HelpRow
             icon="mail-outline"
             title="E-mail"
@@ -105,10 +105,10 @@ export default function Help() {
         </View>
 
         {/* Feedback */}
-        <Text className="text-sm font-semibold text-gray-500 px-6 mb-2">
+        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 px-6 mb-2">
           Povratne informacije
         </Text>
-        <View className="bg-white mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
+        <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
           <HelpRow
             icon="bug-outline"
             title="Prijavi napako"
@@ -132,7 +132,7 @@ export default function Help() {
           />
         </View>
 
-        <Text className="text-xs text-gray-400 text-center mt-2">
+        <Text className="text-xs text-gray-400 dark:text-gray-500 text-center mt-2">
           Boni Buddy v0.0.1
         </Text>
       </ScrollView>
@@ -153,16 +153,16 @@ function HelpRow({
 }) {
   return (
     <Pressable onPress={onPress} className="flex-row items-center px-5 py-4">
-      <Ionicons name={icon as any} size={20} color="#555" />
+      <Ionicons name={icon as any} size={20} color="#888" />
       <View className="flex-1 ml-3">
-        <Text className="text-base text-gray-800">{title}</Text>
-        <Text className="text-xs text-gray-400">{subtitle}</Text>
+        <Text className="text-base text-gray-800 dark:text-gray-100">{title}</Text>
+        <Text className="text-xs text-gray-400 dark:text-gray-500">{subtitle}</Text>
       </View>
-      <Ionicons name="chevron-forward" size={18} color="#ccc" />
+      <Ionicons name="chevron-forward" size={18} color="#888" />
     </Pressable>
   );
 }
 
 function Sep() {
-  return <View className="h-px bg-gray-100 ml-14" />;
+  return <View className="h-px bg-gray-100 dark:bg-neutral-800 ml-14" />;
 }

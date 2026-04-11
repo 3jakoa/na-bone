@@ -120,11 +120,11 @@ export default function Matches() {
   );
 
   return (
-    <View className="flex-1 bg-gray-50 pt-16">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
       <View className="px-6 mb-4">
-        <Text className="text-3xl font-bold text-gray-900">Buddies</Text>
+        <Text className="text-3xl font-bold text-gray-900 dark:text-white">Buddies</Text>
         {loaded && items.length > 0 && (
-          <Text className="text-sm text-gray-400 mt-0.5">
+          <Text className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
             {items.length} {items.length === 1 ? "pogovor" : "pogovorov"}
           </Text>
         )}
@@ -136,9 +136,9 @@ export default function Matches() {
         ListEmptyComponent={
           loaded ? (
             <View className="items-center mt-16">
-              <Ionicons name="chatbubbles-outline" size={48} color="#ccc" />
-              <Text className="text-gray-400 text-lg mt-4">Še ni matchev</Text>
-              <Text className="text-gray-300 text-sm mt-1">
+              <Ionicons name="chatbubbles-outline" size={48} color="#888" />
+              <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">Še ni matchev</Text>
+              <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
                 Swipaj da najdeš buddyje
               </Text>
             </View>
@@ -147,7 +147,7 @@ export default function Matches() {
         renderItem={({ item }) => (
           <Pressable
             onPress={() => router.push(`/matches/${item.matchId}`)}
-            className="bg-white rounded-3xl px-4 py-3.5 flex-row items-center shadow-sm active:bg-gray-50"
+            className="bg-white dark:bg-neutral-900 rounded-3xl px-4 py-3.5 flex-row items-center shadow-sm active:bg-gray-50 dark:active:bg-neutral-800"
           >
             <Pressable
               onPress={() =>
@@ -160,8 +160,8 @@ export default function Matches() {
                   style={{ width: 56, height: 56, borderRadius: 28 }}
                 />
               ) : (
-                <View className="w-14 h-14 rounded-full bg-brand-light items-center justify-center">
-                  <Text className="font-bold text-lg text-brand-dark">
+                <View className="w-14 h-14 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
+                  <Text className="font-bold text-lg text-brand-dark dark:text-brand">
                     {item.other.name[0]}
                   </Text>
                 </View>
@@ -171,14 +171,14 @@ export default function Matches() {
             <View className="flex-1 ml-3 min-w-0">
               <View className="flex-row items-center">
                 <Text
-                  className="flex-1 font-bold text-base text-gray-900"
+                  className="flex-1 font-bold text-base text-gray-900 dark:text-white"
                   numberOfLines={1}
                 >
                   {item.other.name}
                 </Text>
                 {item.streak > 0 && (
                   <View
-                    className="flex-row items-center bg-orange-50 rounded-full px-2 py-0.5 ml-2 shrink-0"
+                    className="flex-row items-center bg-orange-50 dark:bg-orange-500/20 rounded-full px-2 py-0.5 ml-2 shrink-0"
                     style={{ gap: 2 }}
                   >
                     <Ionicons name="flame" size={11} color="#F97316" />
@@ -188,7 +188,7 @@ export default function Matches() {
                   </View>
                 )}
                 {item.last && (
-                  <Text className="text-xs text-gray-400 ml-2 shrink-0">
+                  <Text className="text-xs text-gray-400 dark:text-gray-500 ml-2 shrink-0">
                     {item.last.time}
                   </Text>
                 )}
@@ -207,7 +207,7 @@ export default function Matches() {
                   className={`flex-1 text-sm ${
                     item.last?.isInvite
                       ? "text-brand font-semibold"
-                      : "text-gray-500"
+                      : "text-gray-500 dark:text-gray-400"
                   }`}
                   numberOfLines={1}
                 >

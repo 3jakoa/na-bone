@@ -114,15 +114,15 @@ export default function Buddies() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#333" />
+          <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 ml-3">
+        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
           Moji buddyji
         </Text>
-        <Text className="text-gray-400 text-sm ml-2">({buddies.length})</Text>
+        <Text className="text-gray-400 dark:text-gray-500 text-sm ml-2">({buddies.length})</Text>
       </View>
 
       <FlatList
@@ -132,11 +132,11 @@ export default function Buddies() {
         ListEmptyComponent={
           loading ? null : (
             <View className="items-center mt-16">
-              <Ionicons name="people-outline" size={48} color="#ccc" />
-              <Text className="text-gray-400 text-lg mt-4">
+              <Ionicons name="people-outline" size={48} color="#888" />
+              <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
                 Še nimaš buddyjev
               </Text>
-              <Text className="text-gray-300 text-sm mt-1">
+              <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
                 Swipaj da jih najdeš!
               </Text>
             </View>
@@ -145,7 +145,7 @@ export default function Buddies() {
         renderItem={({ item }) => (
           <Pressable
             onPress={() => router.push(`/matches/${item.matchId}`)}
-            className="bg-white rounded-3xl p-4 flex-row items-center shadow-sm"
+            className="bg-white dark:bg-neutral-900 rounded-3xl p-4 flex-row items-center shadow-sm"
           >
             <Pressable
               onPress={() =>
@@ -160,9 +160,9 @@ export default function Buddies() {
               ) : (
                 <View
                   style={{ width: 56, height: 56, borderRadius: 28 }}
-                  className="bg-brand-light items-center justify-center"
+                  className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
                 >
-                  <Text className="font-bold text-brand-dark text-lg">
+                  <Text className="font-bold text-brand-dark dark:text-brand text-lg">
                     {item.profile.name[0]}
                   </Text>
                 </View>
@@ -170,10 +170,10 @@ export default function Buddies() {
             </Pressable>
 
             <View className="flex-1 ml-3">
-              <Text className="font-bold text-gray-900">
+              <Text className="font-bold text-gray-900 dark:text-white">
                 {item.profile.name}, {item.profile.age}
               </Text>
-              <Text className="text-xs text-gray-400">
+              <Text className="text-xs text-gray-400 dark:text-gray-500">
                 {item.profile.faculty}
               </Text>
             </View>
@@ -181,13 +181,13 @@ export default function Buddies() {
             <View className="flex-row gap-2">
               <Pressable
                 onPress={() => router.push(`/matches/${item.matchId}`)}
-                className="w-10 h-10 rounded-full bg-brand-light items-center justify-center"
+                className="w-10 h-10 rounded-full bg-brand-light dark:bg-brand/20 items-center justify-center"
               >
                 <Ionicons name="chatbubble" size={18} color="#00A6F6" />
               </Pressable>
               <Pressable
                 onPress={() => setActionBuddy(item)}
-                className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center"
+                className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center"
               >
                 <Ionicons
                   name="ellipsis-horizontal"
@@ -213,10 +213,10 @@ export default function Buddies() {
         >
           <Pressable
             onPress={() => {}}
-            className="bg-white rounded-t-3xl px-5 pt-3 pb-10"
+            className="bg-white dark:bg-neutral-900 rounded-t-3xl px-5 pt-3 pb-10"
           >
             {/* Handle bar */}
-            <View className="w-10 h-1 rounded-full bg-gray-300 self-center mb-5" />
+            <View className="w-10 h-1 rounded-full bg-gray-300 dark:bg-neutral-700 self-center mb-5" />
 
             {actionBuddy && (
               <>
@@ -230,18 +230,18 @@ export default function Buddies() {
                   ) : (
                     <View
                       style={{ width: 44, height: 44, borderRadius: 22 }}
-                      className="bg-brand-light items-center justify-center"
+                      className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
                     >
-                      <Text className="font-bold text-brand-dark">
+                      <Text className="font-bold text-brand-dark dark:text-brand">
                         {actionBuddy.profile.name[0]}
                       </Text>
                     </View>
                   )}
                   <View className="ml-3">
-                    <Text className="font-bold text-gray-900 text-base">
+                    <Text className="font-bold text-gray-900 dark:text-white text-base">
                       {actionBuddy.profile.name}
                     </Text>
-                    <Text className="text-xs text-gray-400">
+                    <Text className="text-xs text-gray-400 dark:text-gray-500">
                       {actionBuddy.profile.faculty}
                     </Text>
                   </View>
@@ -303,7 +303,7 @@ function ActionRow({
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50"
+      className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
     >
       <View
         className="w-10 h-10 rounded-full items-center justify-center"
@@ -311,7 +311,7 @@ function ActionRow({
       >
         <Ionicons name={icon as any} size={20} color={color} />
       </View>
-      <Text className="ml-3 text-base text-gray-800 font-medium">{label}</Text>
+      <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">{label}</Text>
     </Pressable>
   );
 }

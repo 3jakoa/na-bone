@@ -27,33 +27,35 @@ export default function Login() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50 justify-center px-6">
+    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 justify-center px-6">
       <View className="items-center mb-10">
         <Image
           source={require("../../assets/logo.png")}
           style={{ width: 96, height: 96, borderRadius: 48 }}
         />
-        <Text className="text-3xl font-bold text-gray-900 mt-4">Boni Buddy</Text>
-        <Text className="text-gray-500 mt-1">Prijava</Text>
+        <Text className="text-3xl font-bold text-gray-900 dark:text-white mt-4">Boni Buddy</Text>
+        <Text className="text-gray-500 dark:text-gray-400 mt-1">Prijava</Text>
       </View>
 
-      <View className="bg-white rounded-3xl px-5 py-6 shadow-sm">
-        <Text className="text-sm font-semibold text-gray-500 mb-1.5">E-mail</Text>
+      <View className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-6 shadow-sm">
+        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">E-mail</Text>
         <TextInput
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
           placeholder="ime@student.uni-lj.si"
-          className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3.5 text-base mb-4"
+          placeholderTextColor="#888"
+          className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-4"
         />
-        <Text className="text-sm font-semibold text-gray-500 mb-1.5">Geslo</Text>
+        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">Geslo</Text>
         <TextInput
           value={password}
           onChangeText={setPassword}
           secureTextEntry
           placeholder="Geslo"
-          className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3.5 text-base mb-6"
+          placeholderTextColor="#888"
+          className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-6"
         />
 
         <Pressable
@@ -68,19 +70,19 @@ export default function Login() {
       </View>
 
       <View className="flex-row items-center my-6 px-4">
-        <View className="flex-1 h-px bg-gray-200" />
-        <Text className="mx-4 text-xs text-gray-400">ali</Text>
-        <View className="flex-1 h-px bg-gray-200" />
+        <View className="flex-1 h-px bg-gray-200 dark:bg-neutral-800" />
+        <Text className="mx-4 text-xs text-gray-400 dark:text-gray-500">ali</Text>
+        <View className="flex-1 h-px bg-gray-200 dark:bg-neutral-800" />
       </View>
 
       <Pressable
         onPress={handleGoogle}
         disabled={loading}
-        className="bg-white border border-gray-200 rounded-2xl py-4 items-center shadow-sm"
+        className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl py-4 items-center shadow-sm"
       >
         <View className="flex-row items-center gap-2">
           <Image source={require("../../assets/google.png")} style={{ width: 20, height: 20 }} />
-          <Text className="font-semibold text-gray-700">Nadaljuj z Googlom</Text>
+          <Text className="font-semibold text-gray-700 dark:text-gray-100">Nadaljuj z Googlom</Text>
         </View>
       </Pressable>
 
