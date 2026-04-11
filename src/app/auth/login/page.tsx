@@ -19,8 +19,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const e = params.get("error");
-    if (e === "not_student") setError("Registracija je možna samo s študentskim e-mailom.");
-    else if (e === "auth_failed") setError("Prijava ni uspela. Poskusi znova.");
+    if (e === "auth_failed") setError("Prijava ni uspela. Poskusi znova.");
   }, [params]);
 
   async function handleLogin(e: React.FormEvent) {

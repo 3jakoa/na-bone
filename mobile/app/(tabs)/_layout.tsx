@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -8,13 +8,16 @@ import {
   Modal,
   Text,
   Pressable,
-  Alert,
 } from "react-native";
+import * as Notifications from "expo-notifications";
 import { supabase } from "../../lib/supabase";
 import { createGuard } from "../../lib/createGuard";
+import {
+  registerForPushNotifications,
+  handleNotificationTap,
+} from "../../lib/notifications";
 
 export default function TabsLayout() {
-  const subRef = useRef<any>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
 
@@ -32,48 +35,19 @@ export default function TabsLayout() {
       if (!me) return;
       if (me.photos?.[0]) setPhotoUrl(me.photos[0]);
 
-      const channel = supabase
-        .channel("match-bones")
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "meal_invites",
-          },
-          async (payload) => {
-            const bone = payload.new as any;
-            if (bone.user_id === me.id) return;
-
-            const { count } = await supabase
-              .from("buddy_matches")
-              .select("*", { count: "exact", head: true })
-              .or(
-                `and(user1_id.eq.${me.id},user2_id.eq.${bone.user_id}),and(user1_id.eq.${bone.user_id},user2_id.eq.${me.id})`
-              );
-            if (!count || count === 0) return;
-
-            const { data: author } = await supabase
-              .from("profiles")
-              .select("name")
-              .eq("id", bone.user_id)
-              .single();
-            const name = author?.name ?? "Nekdo";
-
-            Alert.alert(
-              "Nov bon!",
-              `${name} gre v ${bone.restaurant}! Pridruži se.`
-            );
-          }
-        )
-        .subscribe();
-
-      subRef.current = channel;
+      // Register for push notifications on first entry into the tabs layout
+      // (post-login, after onboarding). Non-blocking — failure just means
+      // the user doesn't get pushes.
+      registerForPushNotifications();
     })();
+  }, []);
 
-    return () => {
-      if (subRef.current) supabase.removeChannel(subRef.current);
-    };
+  // Route taps on push notifications to the right screen.
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener(
+      handleNotificationTap
+    );
+    return () => sub.remove();
   }, []);
 
   return (

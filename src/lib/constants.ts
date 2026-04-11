@@ -1,13 +1,5 @@
 import type { University, City } from "@/lib/supabase/types";
 
-export const STUDENT_EMAIL_DOMAINS = [
-  "student.uni-lj.si",
-  "student.um.si",
-  "student.upr.si",
-  "student.ung.si",
-  "student.uni-nm.si",
-];
-
 export const UNIVERSITIES: University[] = [
   "Univerza v Ljubljani",
   "Univerza v Mariboru",

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import {
   Image,
   Modal,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,7 +22,7 @@ import { supabase, type Profile } from "../../lib/supabase";
 import { RESTAURANTS as FALLBACK } from "../../lib/restaurants";
 import { createGuard } from "../../lib/createGuard";
 
-const HOURS = Array.from({ length: 13 }, (_, i) => {
+const HOURS = Array.from({ length: 16 }, (_, i) => {
   const h = 8 + i;
   return [`${h}:00`, `${h}:30`];
 }).flat();
@@ -63,6 +65,8 @@ type Restaurant = {
 type Buddy = { matchId: string; profile: Profile };
 
 export default function CreateBone() {
+  const scrollRef = useRef<ScrollView>(null);
+  const [noteFocused, setNoteFocused] = useState(false);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
@@ -84,6 +88,14 @@ export default function CreateBone() {
     new Set()
   );
   const [meId, setMeId] = useState<string | null>(null);
+
+  // Snap the ScrollView back to the top every time the user navigates to
+  // this screen.
+  useFocusEffect(
+    useCallback(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: false });
+    }, [])
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -133,7 +145,7 @@ export default function CreateBone() {
       (r.address && r.address.toLowerCase().includes(q))
   );
 
-  function getScheduledAt() {
+  function getScheduledDate() {
     const now = new Date();
     const date = new Date(now);
     date.setDate(date.getDate() + selectedDate);
@@ -141,8 +153,31 @@ export default function CreateBone() {
       const [h, m] = selectedTime.split(":").map(Number);
       date.setHours(h, m, 0, 0);
     }
-    return date.toISOString();
+    return date;
   }
+
+  function getScheduledAt() {
+    return getScheduledDate().toISOString();
+  }
+
+  // A time slot is in the past only when "Today" is selected and the slot's
+  // hour/minute has already passed.
+  function isTimeSlotPast(t: string) {
+    if (selectedDate !== 0) return false;
+    const [h, m] = t.split(":").map(Number);
+    const slot = new Date();
+    slot.setHours(h, m, 0, 0);
+    return slot.getTime() <= Date.now();
+  }
+
+  // If the user switches to Today and their previously picked time is now in
+  // the past, clear it so they can't submit a stale bone.
+  useEffect(() => {
+    if (selectedTime && isTimeSlotPast(selectedTime)) {
+      setSelectedTime("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate]);
 
   function toggleBuddy(matchId: string) {
     setSelectedBuddies((prev) => {
@@ -167,8 +202,8 @@ export default function CreateBone() {
 
   // Track dirty state for navigation guard
   useEffect(() => {
-    createGuard.dirty = !!(restaurant?.name || selectedTime);
-  }, [restaurant, selectedTime]);
+    createGuard.dirty = !!(restaurant?.name || selectedTime || note.trim());
+  }, [restaurant, selectedTime, note]);
 
   useEffect(() => {
     createGuard.reset = reset;
@@ -180,6 +215,13 @@ export default function CreateBone() {
   async function submit() {
     if (!restaurant) return Toast.show({ type: "error", text1: "Izberi restavracijo." });
     if (!selectedTime) return Toast.show({ type: "error", text1: "Izberi uro." });
+    if (getScheduledDate().getTime() <= Date.now()) {
+      return Toast.show({
+        type: "error",
+        text1: "Izbrani čas je že mimo.",
+        text2: "Izberi čas v prihodnosti.",
+      });
+    }
 
     setLoading(true);
     try {
@@ -216,6 +258,13 @@ export default function CreateBone() {
     if (!restaurant)
       return Toast.show({ type: "error", text1: "Najprej izberi restavracijo." });
     if (!selectedTime) return Toast.show({ type: "error", text1: "Najprej izberi uro." });
+    if (getScheduledDate().getTime() <= Date.now()) {
+      return Toast.show({
+        type: "error",
+        text1: "Izbrani čas je že mimo.",
+        text2: "Izberi čas v prihodnosti.",
+      });
+    }
 
     setLoadingBuddies(true);
     setShowInvite(true);
@@ -311,13 +360,18 @@ export default function CreateBone() {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView
-        className="flex-1 bg-gray-50"
-        contentContainerStyle={{ paddingBottom: 40 }}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-      >
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      className="flex-1 bg-gray-50"
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          ref={scrollRef}
+          className="flex-1 bg-gray-50"
+          contentContainerStyle={{ paddingBottom: noteFocused ? 120 : 40 }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
         <View className="pt-16 px-6 pb-2">
           <Text className="text-3xl font-bold text-gray-900">Nov bon</Text>
           <Text className="text-gray-500 mt-1">Povabi nekoga na kosilo</Text>
@@ -423,11 +477,14 @@ export default function CreateBone() {
                       />
                       <View className="ml-2 flex-1">
                         <View className="flex-row items-center gap-1.5">
-                          <Text className="text-base text-gray-800" numberOfLines={1}>
+                          <Text
+                            className="flex-1 text-base text-gray-800"
+                            numberOfLines={1}
+                          >
                             {r.name}
                           </Text>
                           {r.rating != null && r.rating > 0 && (
-                            <View className="flex-row items-center">
+                            <View className="flex-row items-center shrink-0">
                               <Ionicons name="star" size={12} color="#F59E0B" />
                               <Text className="text-xs font-semibold text-amber-500 ml-0.5">
                                 {r.rating}
@@ -543,7 +600,7 @@ export default function CreateBone() {
             keyboardShouldPersistTaps="handled"
           >
             <View className="flex-row gap-2">
-              {HOURS.map((t) => (
+              {HOURS.filter((t) => !isTimeSlotPast(t)).map((t) => (
                 <Pressable
                   key={t}
                   onPress={() => setSelectedTime(t)}
@@ -623,6 +680,13 @@ export default function CreateBone() {
             textAlignVertical="top"
             returnKeyType="done"
             blurOnSubmit
+            onFocus={() => {
+              setNoteFocused(true);
+              setTimeout(() => {
+                scrollRef.current?.scrollToEnd({ animated: true });
+              }, 250);
+            }}
+            onBlur={() => setNoteFocused(false)}
             className="text-base text-gray-900 min-h-20 bg-gray-50 rounded-2xl px-4 py-3"
           />
         </View>
@@ -827,11 +891,14 @@ export default function CreateBone() {
                   <Ionicons name="restaurant-outline" size={16} color="#999" />
                   <View className="ml-2 flex-1">
                     <View className="flex-row items-center gap-1.5">
-                      <Text className="text-base text-gray-800" numberOfLines={1}>
+                      <Text
+                        className="flex-1 text-base text-gray-800"
+                        numberOfLines={1}
+                      >
                         {r.name}
                       </Text>
                       {r.rating != null && r.rating > 0 && (
-                        <View className="flex-row items-center">
+                        <View className="flex-row items-center shrink-0">
                           <Ionicons name="star" size={12} color="#F59E0B" />
                           <Text className="text-xs font-semibold text-amber-500 ml-0.5">
                             {r.rating}
@@ -867,7 +934,8 @@ export default function CreateBone() {
             />
           </View>
         </Modal>
-      </ScrollView>
-    </TouchableWithoutFeedback>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }

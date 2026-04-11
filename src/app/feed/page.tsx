@@ -91,11 +91,13 @@ export default async function FeedPage() {
 
                 {/* Restaurant */}
                 <div>
-                  <div className="flex items-center gap-1.5">
-                    <Utensils className="w-4 h-4 text-brand shrink-0" />
-                    <span className="font-semibold text-gray-900">{bone.restaurant}</span>
+                  <div className="flex items-start gap-1.5">
+                    <Utensils className="w-4 h-4 text-brand shrink-0 mt-1" />
+                    <span className="flex-1 min-w-0 font-semibold text-gray-900 break-words">
+                      {bone.restaurant}
+                    </span>
                     {ri?.rating != null && (ri.rating as number) > 0 && (
-                      <span className="flex items-center gap-0.5 text-amber-500">
+                      <span className="flex items-center gap-0.5 shrink-0 mt-1 text-amber-500">
                         <Star className="w-3 h-3 fill-amber-400" />
                         <span className="text-xs font-semibold">{ri.rating}</span>
                       </span>

@@ -4,19 +4,6 @@ import { supabase } from "./supabase";
 
 WebBrowser.maybeCompleteAuthSession();
 
-const STUDENT_DOMAINS = [
-  "student.uni-lj.si",
-  "student.um.si",
-  "student.upr.si",
-  "student.ung.si",
-  "student.uni-nm.si",
-];
-
-export function isStudentEmail(email: string) {
-  const e = email.toLowerCase();
-  return STUDENT_DOMAINS.some((d) => e.endsWith(`@${d}`));
-}
-
 export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string }> {
   const redirectTo = Linking.createURL("/auth/callback");
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -36,9 +23,9 @@ export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string 
   if (exErr) return { ok: false, error: exErr.message };
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || !isStudentEmail(user.email ?? "")) {
+  if (!user) {
     await supabase.auth.signOut();
-    return { ok: false, error: "not_student" };
+    return { ok: false, error: "no_user" };
   }
   return { ok: true };
 }

@@ -395,12 +395,15 @@ export default function Chat() {
           <View className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-sm flex-row items-start">
             <Ionicons name="restaurant" size={18} color="#00A6F6" style={{ marginTop: 2 }} />
             <View className="ml-2.5 flex-1">
-              <View className="flex-row items-center gap-1.5">
-                <Text className="font-semibold text-gray-900">
+              <View className="flex-row items-start gap-1.5">
+                <Text className="flex-1 font-semibold text-gray-900">
                   {activeBone.restaurant}
                 </Text>
                 {ri?.rating != null && ri.rating > 0 && (
-                  <View className="flex-row items-center">
+                  <View
+                    className="flex-row items-center shrink-0"
+                    style={{ marginTop: 2 }}
+                  >
                     <Ionicons name="star" size={11} color="#F59E0B" />
                     <Text className="text-xs font-semibold text-amber-500 ml-0.5">
                       {ri.rating}
@@ -461,13 +464,21 @@ export default function Chat() {
               >
                 <View className="bg-white border border-gray-200 rounded-3xl p-4 shadow-sm">
                   <View className="mb-2">
-                    <View className="flex-row items-center">
-                      <Ionicons name="restaurant" size={18} color="#00A6F6" />
-                      <Text className="font-bold text-base text-gray-900 ml-2 flex-shrink">
+                    <View className="flex-row items-start">
+                      <Ionicons
+                        name="restaurant"
+                        size={18}
+                        color="#00A6F6"
+                        style={{ marginTop: 2 }}
+                      />
+                      <Text className="flex-1 font-bold text-base text-gray-900 ml-2">
                         {invite.restaurant}
                       </Text>
                       {rating != null && rating > 0 && (
-                        <View className="flex-row items-center ml-1.5">
+                        <View
+                          className="flex-row items-center ml-2 shrink-0"
+                          style={{ marginTop: 4 }}
+                        >
                           <Ionicons name="star" size={11} color="#F59E0B" />
                           <Text className="text-xs font-semibold text-amber-500 ml-0.5">
                             {rating}

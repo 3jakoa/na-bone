@@ -12,7 +12,6 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
 
   async function handleSignup() {
-    // TODO: re-enable student email check after domain verification
     if (password.length < 8) return Alert.alert("Napaka", "Geslo mora imeti vsaj 8 znakov.");
     if (password !== confirm) return Alert.alert("Napaka", "Gesli se ne ujemata.");
 
