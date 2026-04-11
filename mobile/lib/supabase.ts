@@ -31,6 +31,7 @@ export type Profile = {
   university: string;
   city: string;
   gender: "moški" | "ženska" | "drugo";
+  education_level: "dodiplomski" | "magistrski" | "doktorski" | null;
   photos: string[];
   is_onboarded: boolean;
 };
@@ -40,6 +41,13 @@ export type Bone = {
   user_id: string;
   match_id: string | null;
   restaurant: string;
+  restaurant_info: {
+    address?: string | null;
+    city?: string | null;
+    rating?: number | null;
+    supplement_price?: number | null;
+    meal_price?: number | null;
+  } | null;
   scheduled_at: string;
   note: string | null;
   status: "open" | "accepted" | "declined" | "done";
@@ -54,3 +62,10 @@ export type Message = {
   content: string;
   created_at: string;
 };
+
+export function capitalizeName(name: string): string {
+  return name
+    .split(" ")
+    .map((w) => (w.length > 0 ? w[0].toUpperCase() + w.slice(1) : ""))
+    .join(" ");
+}

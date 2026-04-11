@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert } from "react-native";
+import { View, Text, TextInput, Pressable, Alert, Image } from "react-native";
 import { Link, router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
 import { signInWithGoogle } from "../../lib/auth";
 
@@ -26,49 +27,64 @@ export default function Login() {
   }
 
   return (
-    <View className="flex-1 bg-white justify-center px-6">
-      <Text className="text-3xl font-bold text-center text-brand-dark mb-2">Boni Buddy</Text>
-      <Text className="text-center text-gray-500 mb-8">Prijava</Text>
+    <View className="flex-1 bg-gray-50 justify-center px-6">
+      <View className="items-center mb-10">
+        <Image
+          source={require("../../assets/logo.png")}
+          style={{ width: 96, height: 96, borderRadius: 48 }}
+        />
+        <Text className="text-3xl font-bold text-gray-900 mt-4">Boni Buddy</Text>
+        <Text className="text-gray-500 mt-1">Prijava</Text>
+      </View>
 
-      <Text className="text-sm font-semibold text-gray-700 mb-1">E-mail</Text>
-      <TextInput
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        className="border border-gray-300 rounded-xl px-4 py-3 mb-4"
-      />
-      <Text className="text-sm font-semibold text-gray-700 mb-1">Geslo</Text>
-      <TextInput
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        className="border border-gray-300 rounded-xl px-4 py-3 mb-6"
-      />
+      <View className="bg-white rounded-3xl px-5 py-6 shadow-sm">
+        <Text className="text-sm font-semibold text-gray-500 mb-1.5">E-mail</Text>
+        <TextInput
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          placeholder="ime@student.uni-lj.si"
+          className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3.5 text-base mb-4"
+        />
+        <Text className="text-sm font-semibold text-gray-500 mb-1.5">Geslo</Text>
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholder="Geslo"
+          className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3.5 text-base mb-6"
+        />
 
-      <Pressable
-        onPress={handleLogin}
-        disabled={loading}
-        className="bg-brand rounded-full py-3 items-center"
-      >
-        <Text className="text-white font-semibold">{loading ? "..." : "Prijava"}</Text>
-      </Pressable>
+        <Pressable
+          onPress={handleLogin}
+          disabled={loading}
+          className="bg-brand rounded-2xl py-4 items-center"
+        >
+          <Text className="text-white font-bold text-base">
+            {loading ? "..." : "Prijava"}
+          </Text>
+        </Pressable>
+      </View>
 
-      <View className="flex-row items-center my-4">
+      <View className="flex-row items-center my-6 px-4">
         <View className="flex-1 h-px bg-gray-200" />
-        <Text className="mx-3 text-xs text-gray-400">ali</Text>
+        <Text className="mx-4 text-xs text-gray-400">ali</Text>
         <View className="flex-1 h-px bg-gray-200" />
       </View>
 
       <Pressable
         onPress={handleGoogle}
         disabled={loading}
-        className="border border-gray-300 rounded-full py-3 items-center"
+        className="bg-white border border-gray-200 rounded-2xl py-4 items-center shadow-sm"
       >
-        <Text className="font-semibold text-gray-700">Nadaljuj z Googlom</Text>
+        <View className="flex-row items-center gap-2">
+          <Image source={require("../../assets/google.png")} style={{ width: 20, height: 20 }} />
+          <Text className="font-semibold text-gray-700">Nadaljuj z Googlom</Text>
+        </View>
       </Pressable>
 
-      <Link href="/auth/signup" className="text-center text-brand mt-6">
+      <Link href="/auth/signup" className="text-center text-brand font-semibold mt-6">
         Nimaš računa? Registracija
       </Link>
     </View>

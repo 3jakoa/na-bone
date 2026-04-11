@@ -6,7 +6,9 @@ import { supabase } from "../lib/supabase";
 export default function Index() {
   useEffect(() => {
     (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) return router.replace("/auth/login");
 
       const { data: profile } = await supabase
@@ -21,8 +23,8 @@ export default function Index() {
   }, []);
 
   return (
-    <View className="flex-1 items-center justify-center bg-brand">
-      <ActivityIndicator color="#fff" />
+    <View className="flex-1 items-center justify-center bg-gray-50">
+      <ActivityIndicator size="large" color="#00A6F6" />
     </View>
   );
 }

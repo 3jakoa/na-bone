@@ -10,7 +10,7 @@ export default function Posts() {
 
   useEffect(() => {
     supabase
-      .from("bones")
+      .from("meal_invites")
       .select("id, user_id, restaurant, scheduled_at, note, created_at")
       .eq("visibility", "public")
       .eq("status", "open")

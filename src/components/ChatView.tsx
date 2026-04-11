@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { Profile, Message, Bone } from "@/lib/supabase/types";
+import type { Profile, Message, Bone, RestaurantInfo } from "@/lib/supabase/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,31 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Send, Utensils, Check, X } from "lucide-react";
+import { ArrowLeft, Send, Utensils, Check, X, Star, MapPin, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatScheduledDate } from "@/lib/formatDate";
+
+type InviteCard = {
+  type: "bone_invite";
+  bone_id: string;
+  restaurant: string;
+  restaurant_address?: string | null;
+  restaurant_city?: string | null;
+  restaurant_rating?: number | null;
+  restaurant_supplement?: number | null;
+  restaurant_meal_price?: number | null;
+  scheduled_at: string;
+  note: string | null;
+};
+
+function parseInviteCard(content: string): InviteCard | null {
+  try {
+    const parsed = JSON.parse(content);
+    if (parsed?.type === "bone_invite") return parsed;
+  } catch {}
+  return null;
+}
 
 interface Props {
   matchId: string;
@@ -28,6 +50,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
   const supabase = createClient();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [activeBone, setActiveBone] = useState<Bone | null>(initialBone);
+  const [boneStatuses, setBoneStatuses] = useState<Record<string, string>>({});
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [boneOpen, setBoneOpen] = useState(false);
@@ -49,13 +72,36 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Realtime subscription
+  // Fetch bone statuses for invite cards
+  useEffect(() => {
+    const unknownIds = messages
+      .map((m) => parseInviteCard(m.content))
+      .filter((inv): inv is InviteCard => inv !== null)
+      .map((inv) => inv.bone_id)
+      .filter((id) => !(id in boneStatuses));
+    if (unknownIds.length === 0) return;
+    (async () => {
+      const { data } = await supabase
+        .from("meal_invites")
+        .select("id, status")
+        .in("id", unknownIds);
+      if (data) {
+        setBoneStatuses((prev) => {
+          const next = { ...prev };
+          for (const b of data) next[b.id] = b.status;
+          return next;
+        });
+      }
+    })();
+  }, [messages]);
+
+  // Realtime subscriptions
   useEffect(() => {
     const channel = supabase
       .channel(`chat-${matchId}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` },
+        { event: "INSERT", schema: "public", table: "chat_messages", filter: `match_id=eq.${matchId}` },
         (payload) => {
           setMessages((prev) => {
             if (prev.find((m) => m.id === payload.new.id)) return prev;
@@ -65,14 +111,17 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
       )
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "bones", filter: `match_id=eq.${matchId}` },
+        { event: "*", schema: "public", table: "meal_invites", filter: `match_id=eq.${matchId}` },
         (payload) => {
           if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
             const bone = payload.new as Bone;
-            if (bone.status === "open" || bone.status === "accepted") {
+            setBoneStatuses((prev) => ({ ...prev, [bone.id]: bone.status }));
+            if (bone.status === "accepted") {
               setActiveBone(bone);
+            } else if (bone.status === "open") {
+              setActiveBone((prev) => prev ?? bone);
             } else {
-              setActiveBone(null);
+              setActiveBone((prev) => prev?.id === bone.id ? null : prev);
             }
           }
         }
@@ -87,7 +136,7 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
     if (!text.trim() || sending) return;
     setSending(true);
 
-    const { data, error } = await supabase.from("messages").insert({
+    const { data, error } = await supabase.from("chat_messages").insert({
       match_id: matchId,
       sender_id: myProfile.id,
       content: text.trim(),
@@ -111,23 +160,32 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
       return;
     }
 
-    const { error } = await supabase.from("bones").insert({
+    const scheduledAt = new Date(boneDate).toISOString();
+
+    const { data: bone, error } = await supabase.from("meal_invites").insert({
       user_id: myProfile.id,
       match_id: matchId,
       restaurant: boneRestaurant.trim(),
-      scheduled_at: new Date(boneDate).toISOString(),
+      restaurant_info: null,
+      scheduled_at: scheduledAt,
       note: boneNote.trim() || null,
       status: "open",
       visibility: "private",
-    });
+    }).select("id").single();
 
     if (error) { toast.error(error.message); return; }
 
-    // Send a system-style message
-    await supabase.from("messages").insert({
+    // Send invite card message
+    await supabase.from("chat_messages").insert({
       match_id: matchId,
       sender_id: myProfile.id,
-      content: `🍽️ Predlagam: ${boneRestaurant} — ${new Date(boneDate).toLocaleString("sl-SI")}${boneNote ? ` · ${boneNote}` : ""}`,
+      content: JSON.stringify({
+        type: "bone_invite",
+        bone_id: bone.id,
+        restaurant: boneRestaurant.trim(),
+        scheduled_at: scheduledAt,
+        note: boneNote.trim() || null,
+      }),
     });
 
     setBoneOpen(false);
@@ -137,25 +195,30 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
     toast.success("Povabilo poslano!");
   }
 
-  async function respondToBone(accept: boolean) {
-    if (!activeBone) return;
-    const newStatus = accept ? "accepted" : "declined";
-
-    const { error } = await supabase
-      .from("bones")
-      .update({ status: newStatus })
-      .eq("id", activeBone.id);
-
-    if (error) { toast.error(error.message); return; }
-
-    await supabase.from("messages").insert({
-      match_id: matchId,
-      sender_id: myProfile.id,
-      content: accept
-        ? `✅ Sprejeto! Se vidimo v ${activeBone.restaurant}.`
-        : `❌ Žal ne morem tokrat.`,
+  async function respondToInvite(boneId: string, response: "accepted" | "declined") {
+    const { error } = await (supabase.rpc as any)("respond_to_bone_invite", {
+      p_bone_id: boneId,
+      p_response: response,
     });
+    if (error) { toast.error(error.message); return; }
+    setBoneStatuses((prev) => ({ ...prev, [boneId]: response }));
 
+    if (response === "accepted") {
+      const { data: bone } = await supabase
+        .from("meal_invites")
+        .select("*")
+        .eq("match_id", matchId)
+        .eq("status", "accepted")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      setActiveBone(bone ?? null);
+    }
+  }
+
+  async function respondToBoneBanner(accept: boolean) {
+    if (!activeBone) return;
+    await respondToInvite(activeBone.id, accept ? "accepted" : "declined");
     if (!accept) setActiveBone(null);
   }
 
@@ -198,20 +261,20 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
                 {activeBone.status === "accepted" ? "Dogovorjeno!" : "Povabilo na bone"}
               </div>
               <div className="text-sm text-brand-dark mt-0.5 truncate">
-                {activeBone.restaurant} · {new Date(activeBone.scheduled_at).toLocaleString("sl-SI")}
+                {activeBone.restaurant} · {formatScheduledDate(activeBone.scheduled_at)}
               </div>
               {activeBone.note && <div className="text-xs text-brand mt-0.5 truncate">{activeBone.note}</div>}
             </div>
             {activeBone.status === "open" && !isBoneProposedByMe && (
               <div className="flex gap-2 shrink-0">
                 <button
-                  onClick={() => respondToBone(true)}
+                  onClick={() => respondToBoneBanner(true)}
                   className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center hover:bg-green-200"
                 >
                   <Check className="w-4 h-4 text-green-600" />
                 </button>
                 <button
-                  onClick={() => respondToBone(false)}
+                  onClick={() => respondToBoneBanner(false)}
                   className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center hover:bg-red-200"
                 >
                   <X className="w-4 h-4 text-red-500" />
@@ -234,6 +297,81 @@ export default function ChatView({ matchId, myProfile, otherProfile, initialMess
         )}
         {messages.map((msg) => {
           const isMe = msg.sender_id === myProfile.id;
+          const invite = parseInviteCard(msg.content);
+
+          if (invite) {
+            const status = boneStatuses[invite.bone_id];
+            return (
+              <div key={msg.id} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
+                <div className="max-w-[85%] bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+                  {/* Restaurant */}
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Utensils className="w-4 h-4 text-brand shrink-0" />
+                    <span className="font-semibold text-gray-900">{invite.restaurant}</span>
+                    {invite.restaurant_rating != null && invite.restaurant_rating > 0 && (
+                      <span className="flex items-center gap-0.5 text-amber-500">
+                        <Star className="w-3 h-3 fill-amber-400" />
+                        <span className="text-xs font-semibold">{invite.restaurant_rating}</span>
+                      </span>
+                    )}
+                  </div>
+                  {(invite.restaurant_address || invite.restaurant_city) && (
+                    <div className="flex items-center gap-1 ml-5.5 mb-1">
+                      <MapPin className="w-3 h-3 text-gray-400" />
+                      <span className="text-xs text-gray-400">
+                        {[invite.restaurant_address, invite.restaurant_city].filter(Boolean).join(", ")}
+                      </span>
+                    </div>
+                  )}
+                  {invite.restaurant_supplement != null && (
+                    <div className="flex items-center gap-2 ml-5.5 mb-1">
+                      <span className="text-xs font-semibold text-green-600">
+                        {Number(invite.restaurant_supplement).toFixed(2)} EUR doplačilo
+                      </span>
+                    </div>
+                  )}
+                  {/* Date */}
+                  <div className="flex items-center gap-1 mb-1">
+                    <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                    <span className="text-xs text-gray-500">{formatScheduledDate(invite.scheduled_at)}</span>
+                  </div>
+                  {invite.note && (
+                    <p className="text-xs text-gray-600 mt-1">{invite.note}</p>
+                  )}
+                  {/* Status / Actions */}
+                  {status === "accepted" ? (
+                    <div className="mt-2 bg-green-50 rounded-lg py-1.5 text-center">
+                      <span className="text-green-600 font-semibold text-xs">Sprejeto</span>
+                    </div>
+                  ) : status === "declined" ? (
+                    <div className="mt-2 bg-red-50 rounded-lg py-1.5 text-center">
+                      <span className="text-red-500 font-semibold text-xs">Zavrnjeno</span>
+                    </div>
+                  ) : !isMe ? (
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => respondToInvite(invite.bone_id, "accepted")}
+                        className="flex-1 bg-brand text-white rounded-lg py-1.5 text-xs font-semibold hover:bg-brand-dark"
+                      >
+                        Sprejmi
+                      </button>
+                      <button
+                        onClick={() => respondToInvite(invite.bone_id, "declined")}
+                        className="flex-1 bg-gray-100 text-gray-600 rounded-lg py-1.5 text-xs font-semibold hover:bg-gray-200"
+                      >
+                        Zavrni
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-2 bg-blue-50 rounded-lg py-1.5 text-center">
+                      <span className="text-brand font-semibold text-xs">Čaka na odgovor</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div key={msg.id} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
               <div

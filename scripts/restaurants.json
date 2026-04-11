@@ -1,0 +1,6740 @@
+[
+  {
+    "spId": "1478",
+    "name": "ABI FALAFEL",
+    "city": "Ljubljana",
+    "address": "Trubarjeva cesta 40",
+    "postalCode": "1000",
+    "lat": 46.05244723,
+    "lon": 14.51096893,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "041 640 166"
+  },
+  {
+    "spId": "3316",
+    "name": "Aga kebab",
+    "city": "Ljubljana",
+    "address": "Litijska cesta 140",
+    "postalCode": "1000",
+    "lat": 46.0804828,
+    "lon": 14.4962593,
+    "mealPrice": 6.02,
+    "supplementPrice": 0.83,
+    "rating": 5,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2999",
+    "name": "Ajda burgers & more BTC",
+    "city": "Ljubljana",
+    "address": "Šmartinska cesta 152",
+    "postalCode": "1000",
+    "lat": 46.0681081,
+    "lon": 14.5420462,
+    "mealPrice": 8.89,
+    "supplementPrice": 3.7,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2549",
+    "name": "Ajda burgers & more postaja",
+    "city": "Ljubljana",
+    "address": "Trg OF 13",
+    "postalCode": "1000",
+    "lat": 46.0574226,
+    "lon": 14.509497,
+    "mealPrice": 7.59,
+    "supplementPrice": 2.4,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3347",
+    "name": "AL YASMIN arabska restavracija",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 56",
+    "postalCode": "1000",
+    "lat": 46.0561633,
+    "lon": 14.5062507,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3332",
+    "name": "ART kavarna Odeon",
+    "city": "Izola",
+    "address": "Ulica Prekomorskih brigad 4",
+    "postalCode": "6310",
+    "lat": 45.5354708,
+    "lon": 13.65936,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "059 764 332"
+  },
+  {
+    "spId": "3275",
+    "name": "Avokado",
+    "city": "Koper",
+    "address": "Gortanov trg 4",
+    "postalCode": "6000",
+    "lat": 45.5462204,
+    "lon": 13.728149,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch"
+    ],
+    "phone": "051 486 704"
+  },
+  {
+    "spId": "2147",
+    "name": "Azijska restavracija Han",
+    "city": "Ljubljana",
+    "address": "Kongresni trg 3",
+    "postalCode": "1000",
+    "lat": 46.0506054,
+    "lon": 14.5045463,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3042",
+    "name": "Bar Moment",
+    "city": "Ljubljana",
+    "address": "Litostrojska cesta 44E",
+    "postalCode": "1000",
+    "lat": 46.078743,
+    "lon": 14.495953,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3207",
+    "name": "Baščaršija Koper Carpacciov trg",
+    "city": "Koper",
+    "address": "Carpacciov trg 6",
+    "postalCode": "6000",
+    "lat": 45.5478156,
+    "lon": 13.7259576,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "041 516 409"
+  },
+  {
+    "spId": "3259",
+    "name": "Baščaršija Ljubljana Trubarjeva",
+    "city": "Ljubljana",
+    "address": "Trubarjeva cesta 52",
+    "postalCode": "1000",
+    "lat": 46.0522597,
+    "lon": 14.5124626,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3237",
+    "name": "Baščaršija Maribor Gosposvetska",
+    "city": "Maribor",
+    "address": "Gosposvetska cesta 43c",
+    "postalCode": "2000",
+    "lat": 46.5620837,
+    "lon": 15.6323094,
+    "mealPrice": 8.6,
+    "supplementPrice": 3.41,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 252 3431"
+  },
+  {
+    "spId": "2102",
+    "name": "Biotehniški izobraževalni center Ljubljana (Ižanska cesta 10)",
+    "city": "Ljubljana",
+    "address": "Ižanska cesta 10",
+    "postalCode": "1000",
+    "lat": 46.0397001,
+    "lon": 14.5130312,
+    "mealPrice": 7.5,
+    "supplementPrice": 2.31,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2103",
+    "name": "Biotehniški izobraževalni center Ljubljana (Cesta v Mestni log 47)",
+    "city": "Ljubljana",
+    "address": "Cesta v Mestni log 47",
+    "postalCode": "1000",
+    "lat": 46.0369256,
+    "lon": 14.4928696,
+    "mealPrice": 7.5,
+    "supplementPrice": 2.31,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2862",
+    "name": "Bistro Arty",
+    "city": "Maribor",
+    "address": "Slovenska ulica 20",
+    "postalCode": "2000",
+    "lat": 46.560381,
+    "lon": 15.64577,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3331",
+    "name": "Bistro Luft",
+    "city": "Ajdovščina",
+    "address": "Mirce 20",
+    "postalCode": "5270",
+    "lat": 45.8833914,
+    "lon": 13.8920092,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "040 166 932"
+  },
+  {
+    "spId": "3371",
+    "name": "Bistro podmornica caffee bar",
+    "city": "Koper",
+    "address": "Ulica Osvobodilne Fronte 15",
+    "postalCode": "6000",
+    "lat": 45.5471319,
+    "lon": 13.7304181,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3280",
+    "name": "Bistro Situla",
+    "city": "Novo Mesto",
+    "address": "Dilančeva ulica 1",
+    "postalCode": "8000",
+    "lat": 45.804333,
+    "lon": 15.1700618,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3221",
+    "name": "Bistro Slovely",
+    "city": "Ljubljana",
+    "address": "Kardeljeva ploščad 5",
+    "postalCode": "1000",
+    "lat": 46.0755832,
+    "lon": 14.513194,
+    "mealPrice": 8.74,
+    "supplementPrice": 3.55,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2821",
+    "name": "BISTRO VILLA DOMUS",
+    "city": "Koper",
+    "address": "Vojkovo nabrežje 12",
+    "postalCode": "6000",
+    "lat": 45.545517,
+    "lon": 13.733073,
+    "mealPrice": 8.19,
+    "supplementPrice": 3,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "070 500 866"
+  },
+  {
+    "spId": "1645",
+    "name": "Bohor",
+    "city": "Rogaška Slatina",
+    "address": "Kidričeva ulica 23",
+    "postalCode": "3250",
+    "lat": 46.2338608,
+    "lon": 15.6377234,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 58 14 100"
+  },
+  {
+    "spId": "3109",
+    "name": "Bolnišnična restavracija Splošne bolnišnice Jesenice",
+    "city": "Jesenice",
+    "address": "Cesta maršala Tita 112",
+    "postalCode": "4270",
+    "lat": 46.4428775,
+    "lon": 14.0369591,
+    "mealPrice": 7,
+    "supplementPrice": 1.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3173",
+    "name": "Burek Olimpija Rimska",
+    "city": "Ljubljana",
+    "address": "Rimska cesta 13",
+    "postalCode": "1000",
+    "lat": 46.047428,
+    "lon": 14.4998576,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 4,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3067",
+    "name": "BURGER TIME",
+    "city": "Ljubljana",
+    "address": "Trubarjeva 47",
+    "postalCode": "1000",
+    "lat": 46.0525226,
+    "lon": 14.5117865,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1161",
+    "name": "Cantante cafe Tabor",
+    "city": "Maribor",
+    "address": "Ulica Pariške komune 37",
+    "postalCode": "2000",
+    "lat": 46.5484518,
+    "lon": 15.6430608,
+    "mealPrice": 8.64,
+    "supplementPrice": 3.45,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1673",
+    "name": "Cantante cafe Tabor - DOSTAVA",
+    "city": "Maribor",
+    "address": "Ulica Pariške komune 37",
+    "postalCode": "2000",
+    "lat": 46.5484518,
+    "lon": 15.6430608,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "040 206 090"
+  },
+  {
+    "spId": "3176",
+    "name": "Cantina QUE PASA",
+    "city": "Ljubljana",
+    "address": "Trg osvobodilne fronte 13",
+    "postalCode": "1000",
+    "lat": 46.0574226,
+    "lon": 14.509497,
+    "mealPrice": 8.69,
+    "supplementPrice": 3.5,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3375",
+    "name": "Cappuccino Svetilnik Izola",
+    "city": "Izola",
+    "address": "Kopališka cesta 14",
+    "postalCode": "6310",
+    "lat": 45.5410644,
+    "lon": 13.6565676,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3171",
+    "name": "Chutys Europark Maribor",
+    "city": "Maribor",
+    "address": "Pobreška cesta 18",
+    "postalCode": "2000",
+    "lat": 46.5537814,
+    "lon": 15.6532921,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1568",
+    "name": "City grill",
+    "city": "Maribor",
+    "address": "Slovenska 18",
+    "postalCode": "2000",
+    "lat": 46.5603447,
+    "lon": 15.6458924,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "041 547 888"
+  },
+  {
+    "spId": "1569",
+    "name": "City grill - DOSTAVA",
+    "city": "Maribor",
+    "address": "Slovenska 18",
+    "postalCode": "2000",
+    "lat": 46.5603447,
+    "lon": 15.6458924,
+    "mealPrice": 8.34,
+    "supplementPrice": 3.15,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch"
+    ],
+    "phone": "041 547 888"
+  },
+  {
+    "spId": "3114",
+    "name": "Čevabdžinica Sarajevo84",
+    "city": "Koper",
+    "address": "Gramšijev trg 8",
+    "postalCode": "6000",
+    "lat": 45.5472243,
+    "lon": 13.7354463,
+    "mealPrice": 8.6,
+    "supplementPrice": 3.41,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "08 38 35 944"
+  },
+  {
+    "spId": "3234",
+    "name": "Čevabdžinica Sarajevo84 (Tomažičev trg)",
+    "city": "Koper",
+    "address": "Tomažičev trg 1",
+    "postalCode": "6000",
+    "lat": 45.5468662,
+    "lon": 13.7266374,
+    "mealPrice": 8.6,
+    "supplementPrice": 3.41,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "05 91 21 894"
+  },
+  {
+    "spId": "3286",
+    "name": "Čewapi Citypark Ljubljana",
+    "city": "Ljubljana",
+    "address": "Moskovskova ulica 4",
+    "postalCode": "1000",
+    "lat": 46.0569465,
+    "lon": 14.5057515,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3285",
+    "name": "Čewapi Ljubljana Center",
+    "city": "Ljubljana",
+    "address": "Cankarjeva 6",
+    "postalCode": "1000",
+    "lat": 46.052794,
+    "lon": 14.5025461,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3287",
+    "name": "Čewapi Supernova Ljubljana",
+    "city": "Ljubljana",
+    "address": "Jurčkova cesta 223",
+    "postalCode": "1000",
+    "lat": 46.0222779,
+    "lon": 14.5364504,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1485",
+    "name": "DA BU DA, Azijska restavracija",
+    "city": "Ljubljana",
+    "address": "Šubičeva 1a",
+    "postalCode": "1000",
+    "lat": 46.0514392,
+    "lon": 14.5000498,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2326",
+    "name": "Das ist Valter Kranj",
+    "city": "Kranj",
+    "address": "Cesta 1.maja 1a",
+    "postalCode": "4000",
+    "lat": 46.2333989,
+    "lon": 14.3620683,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "064 292 293"
+  },
+  {
+    "spId": "2951",
+    "name": "Das ist Valter Ljubljana center",
+    "city": "Ljubljana",
+    "address": "Borštnikov trg 3",
+    "postalCode": "1000",
+    "lat": 46.0478636,
+    "lon": 14.4991438,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2131",
+    "name": "Das ist Valter Ljubljana Šmartinska",
+    "city": "Ljubljana",
+    "address": "Šmartinska cesta 3",
+    "postalCode": "1000",
+    "lat": 46.0562816,
+    "lon": 14.5192825,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2252",
+    "name": "Das ist Valter Škofja Loka",
+    "city": "Škofja Loka",
+    "address": "Kidričeva cesta 8c",
+    "postalCode": "4220",
+    "lat": 46.1674362,
+    "lon": 14.3105818,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3145",
+    "name": "Dijaški dom",
+    "city": "Portorož",
+    "address": "Sončna pot 20",
+    "postalCode": "6320",
+    "lat": 45.5169575,
+    "lon": 13.5835564,
+    "mealPrice": 8.02,
+    "supplementPrice": 2.83,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1090",
+    "name": "Dijaški dom Lizike Jančar",
+    "city": "Maribor",
+    "address": "Titova cesta 24a",
+    "postalCode": "2000",
+    "lat": 46.5487086,
+    "lon": 15.6488376,
+    "mealPrice": 7,
+    "supplementPrice": 1.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "02 300 46 15"
+  },
+  {
+    "spId": "1502",
+    "name": "Dijaški dom Poljane",
+    "city": "Ljubljana",
+    "address": "Potočnikova ulica 3",
+    "postalCode": "1000",
+    "lat": 46.0492373,
+    "lon": 14.5233316,
+    "mealPrice": 6.66,
+    "supplementPrice": 1.47,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2111",
+    "name": "Dijaški dom Tabor",
+    "city": "Ljubljana",
+    "address": "Kotnikova 4",
+    "postalCode": "1000",
+    "lat": 46.0534162,
+    "lon": 14.5137731,
+    "mealPrice": 7.1,
+    "supplementPrice": 1.91,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1314",
+    "name": "Dijaški dom Vič",
+    "city": "Ljubljana",
+    "address": "Gerbičeva 53",
+    "postalCode": "1000",
+    "lat": 46.03939685,
+    "lon": 14.48836816,
+    "mealPrice": 7,
+    "supplementPrice": 1.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1501",
+    "name": "Dijaški in študentski dom Novo mesto",
+    "city": "Novo Mesto",
+    "address": "Šegova ulica 115",
+    "postalCode": "8000",
+    "lat": 45.7935957,
+    "lon": 15.1601492,
+    "mealPrice": 6.5,
+    "supplementPrice": 1.31,
+    "rating": 2,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3381",
+    "name": "Do kosti Pizzeria Chianti",
+    "city": "Novo Mesto",
+    "address": "Rozmanova ulica 25",
+    "postalCode": "8000",
+    "lat": 45.8054042,
+    "lon": 15.1652514,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2552",
+    "name": "Dobra hiša",
+    "city": "Ljubljana",
+    "address": "Stegne 11a",
+    "postalCode": "1000",
+    "lat": 46.0828895,
+    "lon": 14.4879422,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2298",
+    "name": "Dobra hiša Rudnik",
+    "city": "Ljubljana",
+    "address": "Jurčkova cesta 223",
+    "postalCode": "1000",
+    "lat": 46.0218387,
+    "lon": 14.5359136,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1578",
+    "name": "Dobrote vzhoda",
+    "city": "Ljubljana",
+    "address": "Celovška cesta 69 a",
+    "postalCode": "1000",
+    "lat": 46.063533,
+    "lon": 14.4946549,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3370",
+    "name": "Dodo Pizza Koper",
+    "city": "Koper",
+    "address": "Ljubljanska cesta 2a",
+    "postalCode": "6000",
+    "lat": 45.5442493,
+    "lon": 13.7308559,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3350",
+    "name": "Dodo Pizza Ljubljana-Bežigrad",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 105",
+    "postalCode": "1000",
+    "lat": 46.0739748,
+    "lon": 14.5107981,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3349",
+    "name": "Dodo Pizza Ljubljana-center",
+    "city": "Ljubljana",
+    "address": "Ilirska ulica 4",
+    "postalCode": "1000",
+    "lat": 46.0528712,
+    "lon": 14.5143744,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3351",
+    "name": "Dodo Pizza ljubljana-Fužine",
+    "city": "Ljubljana",
+    "address": "Nove Fužine 45",
+    "postalCode": "1000",
+    "lat": 46.0548719,
+    "lon": 14.5647044,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3191",
+    "name": "Domača pekarna Bežigrad",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 113",
+    "postalCode": "1000",
+    "lat": 46.0748031,
+    "lon": 14.510908,
+    "mealPrice": 6.12,
+    "supplementPrice": 0.93,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3369",
+    "name": "EASY BEER",
+    "city": "Koper",
+    "address": "Ferrarska ulica 30",
+    "postalCode": "6000",
+    "lat": 45.547239,
+    "lon": 13.7382923,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3243",
+    "name": "Eda restavracija",
+    "city": "Nova Gorica",
+    "address": "Delpinova ulica 18b",
+    "postalCode": "5000",
+    "lat": 45.95533,
+    "lon": 13.6460064,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "064 260 299"
+  },
+  {
+    "spId": "3399",
+    "name": "Ej babi",
+    "city": "Maribor",
+    "address": "Slovenska ulica 9",
+    "postalCode": "2000",
+    "lat": 46.5602684,
+    "lon": 15.6468947,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3292",
+    "name": "Fari's (Adamič Lundrovo nabrežje 3)",
+    "city": "Ljubljana",
+    "address": "Adamič Lundrovo nabrežje 3",
+    "postalCode": "1000",
+    "lat": 46.0513818,
+    "lon": 14.5082387,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2589",
+    "name": "Fari's (Miklošičeva 34)",
+    "city": "Ljubljana",
+    "address": "Miklošičeva 34",
+    "postalCode": "1000",
+    "lat": 46.0567756,
+    "lon": 14.5083706,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3192",
+    "name": "Fast food & pekarna  PLAVA LAGUNA",
+    "city": "Ljubljana",
+    "address": "Linhartova cesta 11",
+    "postalCode": "1000",
+    "lat": 46.0646461,
+    "lon": 14.5103219,
+    "mealPrice": 6.12,
+    "supplementPrice": 0.93,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3282",
+    "name": "Fast food Ajda",
+    "city": "Ljubljana",
+    "address": "Ajdovščina 2",
+    "postalCode": "1000",
+    "lat": 46.0535684,
+    "lon": 14.5045556,
+    "mealPrice": 6.04,
+    "supplementPrice": 0.85,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3382",
+    "name": "Fast food LEON",
+    "city": "Ljubljana",
+    "address": "Glinškova ploščad 2",
+    "postalCode": "1000",
+    "lat": 46.0901762,
+    "lon": 14.5089906,
+    "mealPrice": 6.4,
+    "supplementPrice": 1.21,
+    "rating": 5,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3158",
+    "name": "Fast food Magic",
+    "city": "Koper",
+    "address": "Pristaniška ulica 2",
+    "postalCode": "6000",
+    "lat": 45.546133,
+    "lon": 13.7260016,
+    "mealPrice": 6.52,
+    "supplementPrice": 1.33,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "031 477 222"
+  },
+  {
+    "spId": "3391",
+    "name": "FAST FOOD PRI ŠTUKU",
+    "city": "Maribor",
+    "address": "Gosposvetska cesta 84",
+    "postalCode": "2000",
+    "lat": 46.563473,
+    "lon": 15.6278471,
+    "mealPrice": 7.64,
+    "supplementPrice": 2.45,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3165",
+    "name": "Fast food Slast",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 51",
+    "postalCode": "1000",
+    "lat": 46.0556131,
+    "lon": 14.5048633,
+    "mealPrice": 6.54,
+    "supplementPrice": 1.35,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3335",
+    "name": "FOOD POINT NINETY NINE",
+    "city": "Koper",
+    "address": "Ferrarska ulica 5b",
+    "postalCode": "6000",
+    "lat": 45.5447372,
+    "lon": 13.733706,
+    "mealPrice": 6.64,
+    "supplementPrice": 1.45,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2849",
+    "name": "Forum",
+    "city": "Ljubljana",
+    "address": "Petkovškovo nabrežje 25",
+    "postalCode": "1000",
+    "lat": 46.052123,
+    "lon": 14.509031,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3291",
+    "name": "Galaksija Trebnje",
+    "city": "Trebnje",
+    "address": "Podjetniška ulica 13",
+    "postalCode": "8210",
+    "lat": 45.9138021,
+    "lon": 15.0270288,
+    "mealPrice": 8.8,
+    "supplementPrice": 3.61,
+    "rating": null,
+    "features": [
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2591",
+    "name": "Garač - Restavracija \"M\"",
+    "city": "Škofja Loka",
+    "address": "Šolska cesta 2",
+    "postalCode": "4220",
+    "lat": 46.1679455,
+    "lon": 14.3066673,
+    "mealPrice": 8.2,
+    "supplementPrice": 3.01,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3308",
+    "name": "Gaudi & Naan",
+    "city": "Ljubljana",
+    "address": "Trubarjeva 7",
+    "postalCode": "1000",
+    "lat": 46.0520133,
+    "lon": 14.5072227,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3223",
+    "name": "Gig Bar & Burger",
+    "city": "Ljubljana",
+    "address": "Jurčkova cesta 223",
+    "postalCode": "1000",
+    "lat": 46.0218387,
+    "lon": 14.5359136,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3352",
+    "name": "Gostilna Godec",
+    "city": "Borovnica",
+    "address": "Paplerjeva ulica 12",
+    "postalCode": "1353",
+    "lat": 45.9163676,
+    "lon": 14.3652266,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3299",
+    "name": "Gostilna in picerija Guliver",
+    "city": "Ljubljana",
+    "address": "Vilharjeva 43",
+    "postalCode": "1000",
+    "lat": 46.0600508,
+    "lon": 14.5194079,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3300",
+    "name": "Gostilna in picerija Guliver - dostava",
+    "city": "Ljubljana",
+    "address": "Vilharjeva 43",
+    "postalCode": "1000",
+    "lat": 46.0600508,
+    "lon": 14.5194079,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "031 362 601, 01 434 44 28"
+  },
+  {
+    "spId": "2411",
+    "name": "Gostilna in picerija JERNEJEV HRAM",
+    "city": "Novo Mesto",
+    "address": "Ljubljanska cesta 22",
+    "postalCode": "8000",
+    "lat": 45.8142861,
+    "lon": 15.1536271,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3294",
+    "name": "Gostilna in Pizzerija Kovač",
+    "city": "Litija",
+    "address": "Graška cesta 64",
+    "postalCode": "1270",
+    "lat": 46.0650526,
+    "lon": 14.8172893,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2543",
+    "name": "Gostilna Pod Škalcami",
+    "city": "Slovenske Konjice",
+    "address": "Oplotniška cesta 5",
+    "postalCode": "3210",
+    "lat": 46.3424536,
+    "lon": 15.4302266,
+    "mealPrice": 6.02,
+    "supplementPrice": 0.83,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "03 7593003"
+  },
+  {
+    "spId": "2346",
+    "name": "Gostilna pod Škalcami - DOSTAVA",
+    "city": "Slovenske Konjice",
+    "address": "Oplotniška cesta 5",
+    "postalCode": "3210",
+    "lat": 46.3424536,
+    "lon": 15.4302266,
+    "mealPrice": 6.02,
+    "supplementPrice": 0.83,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch"
+    ],
+    "phone": "031 300 184"
+  },
+  {
+    "spId": "3123",
+    "name": "Gostilna Stara Brajda",
+    "city": "Celje",
+    "address": "Travniška ulica 4",
+    "postalCode": "3000",
+    "lat": 46.245784,
+    "lon": 15.2672382,
+    "mealPrice": 8.54,
+    "supplementPrice": 3.35,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "05 91 18 879"
+  },
+  {
+    "spId": "3126",
+    "name": "Gostilna Štorklja",
+    "city": "Ljubljana",
+    "address": "Šlajmerjeva 1a",
+    "postalCode": "1000",
+    "lat": 46.0541021,
+    "lon": 14.5239482,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1123",
+    "name": "Gostilna Zlati lev",
+    "city": "Maribor",
+    "address": "Vodnikov trg 4",
+    "postalCode": "2000",
+    "lat": 46.5579632,
+    "lon": 15.6409783,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 250 80 80"
+  },
+  {
+    "spId": "1124",
+    "name": "Gostilna Zlati lev - DOSTAVA",
+    "city": "Maribor",
+    "address": "Vodnikov trg 4",
+    "postalCode": "2000",
+    "lat": 46.5579632,
+    "lon": 15.6409783,
+    "mealPrice": 8.74,
+    "supplementPrice": 3.55,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch"
+    ],
+    "phone": "040 781 966,   02 250 80 80"
+  },
+  {
+    "spId": "2185",
+    "name": "Gostilnica in pivnica Kratochwill",
+    "city": "Ljubljana",
+    "address": "Kolodvorska ulica 14",
+    "postalCode": "1000",
+    "lat": 46.0564799,
+    "lon": 14.5099706,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3060",
+    "name": "Gostilnica in pivnica Vič",
+    "city": "Ljubljana",
+    "address": "Trg mladinskih delovnih brigad 8",
+    "postalCode": "1000",
+    "lat": 46.0471605,
+    "lon": 14.4955915,
+    "mealPrice": 8.02,
+    "supplementPrice": 2.83,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1834",
+    "name": "Gostilnica in pizzerija Kratochwill (Jurčkova 225)",
+    "city": "Ljubljana",
+    "address": "Jurčkova 225",
+    "postalCode": "1000",
+    "lat": 46.0202672,
+    "lon": 14.5366758,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1835",
+    "name": "Gostilnica in pizzerija Kratochwill (Šmartinska 152)",
+    "city": "Ljubljana",
+    "address": "Šmartinska 152",
+    "postalCode": "1000",
+    "lat": 46.0693078,
+    "lon": 14.5484774,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3394",
+    "name": "GOSTILNICA KENIK",
+    "city": "Maribor",
+    "address": "Strossmayerjeva ulica 11",
+    "postalCode": "2000",
+    "lat": 46.5593854,
+    "lon": 15.6416199,
+    "mealPrice": 8.4,
+    "supplementPrice": 3.21,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2995",
+    "name": "Gostilnica Meta in Bazilika",
+    "city": "Ljubljana",
+    "address": "Snežniška ulica 1",
+    "postalCode": "1000",
+    "lat": 46.0475489,
+    "lon": 14.4995445,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1213",
+    "name": "Gostilnica Namanova",
+    "city": "Slovenj Gradec",
+    "address": "Podgorska cesta 2",
+    "postalCode": "2380",
+    "lat": 46.5072539,
+    "lon": 15.0764026,
+    "mealPrice": 7.5,
+    "supplementPrice": 2.31,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3305",
+    "name": "Gostišče LOKA",
+    "city": "Novo Mesto",
+    "address": "Župančičevo sprehajališče 2",
+    "postalCode": "8000",
+    "lat": 45.8046744,
+    "lon": 15.1616678,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1847",
+    "name": "Gostišče na trgu - Hiša kulinarike",
+    "city": "Novo Mesto",
+    "address": "Glavni trg 30",
+    "postalCode": "8000",
+    "lat": 45.8039607,
+    "lon": 15.1694229,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3354",
+    "name": "Grashka Deli",
+    "city": "Ljubljana",
+    "address": "Trubarjeva cesta 72",
+    "postalCode": "1000",
+    "lat": 46.0521055,
+    "lon": 14.5071995,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1188",
+    "name": "Gurmanski hram",
+    "city": "Maribor",
+    "address": "Zagrebška cesta 92",
+    "postalCode": "2000",
+    "lat": 46.5265465,
+    "lon": 15.6692877,
+    "mealPrice": 8.59,
+    "supplementPrice": 3.4,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "031 467 088, 02 460 52 24"
+  },
+  {
+    "spId": "1189",
+    "name": "Gurmanski hram - DOSTAVA",
+    "city": "Maribor",
+    "address": "Zagrebška cesta 92",
+    "postalCode": "2000",
+    "lat": 46.5265465,
+    "lon": 15.6692877,
+    "mealPrice": 8.79,
+    "supplementPrice": 3.6,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch"
+    ],
+    "phone": "031 467 088, 02 460 52 24"
+  },
+  {
+    "spId": "3284",
+    "name": "Halo Hong Kong - dostava",
+    "city": "Ljubljana",
+    "address": "Litijska cesta 28",
+    "postalCode": "1000",
+    "lat": 46.0477759,
+    "lon": 14.5418201,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 3,
+    "features": [
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "031 426 805, 031 499 104"
+  },
+  {
+    "spId": "2355",
+    "name": "Halo Katra - dostava",
+    "city": "Ljubljana",
+    "address": "Središka ulica 4",
+    "postalCode": "1000",
+    "lat": 46.0613483,
+    "lon": 14.527299,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "041 722 272"
+  },
+  {
+    "spId": "1514",
+    "name": "Halo Pinki - dostava",
+    "city": "Ljubljana",
+    "address": "Pod ježami 14",
+    "postalCode": "1000",
+    "lat": 46.0579436,
+    "lon": 14.5284637,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "01 544 11 11"
+  },
+  {
+    "spId": "2519",
+    "name": "Halo Shaolin - dostava (Hacquetova 5)",
+    "city": "Ljubljana",
+    "address": "Hacquetova 5",
+    "postalCode": "1000",
+    "lat": 46.0606245,
+    "lon": 14.5146389,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "040 549 068"
+  },
+  {
+    "spId": "3366",
+    "name": "Halo Shaolin - dostava (Hacquetova ulica 5)",
+    "city": "Ljubljana",
+    "address": "Hacquetova ulica 5",
+    "postalCode": "1000",
+    "lat": 46.0606314,
+    "lon": 14.5146277,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "040 549 068"
+  },
+  {
+    "spId": "2668",
+    "name": "Hiša pod gradom",
+    "city": "Ljubljana",
+    "address": "Streliška ulica 10",
+    "postalCode": "1000",
+    "lat": 46.0493959,
+    "lon": 14.5112233,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "031 484 369"
+  },
+  {
+    "spId": "2430",
+    "name": "Hit wok",
+    "city": "Ljubljana",
+    "address": "Čopova 4",
+    "postalCode": "1000",
+    "lat": 46.0518465,
+    "lon": 14.5052867,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3373",
+    "name": "Hotel restavracija Prunk",
+    "city": "Sežana",
+    "address": "Partizanska cesta 117",
+    "postalCode": "6210",
+    "lat": 45.7020205,
+    "lon": 13.8468272,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2846",
+    "name": "HotSpot bar&bistro",
+    "city": "Ljubljana",
+    "address": "Kardeljeva ploščad 17",
+    "postalCode": "1000",
+    "lat": 46.074054,
+    "lon": 14.516428,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3197",
+    "name": "HUDA .",
+    "city": "Brežice",
+    "address": "Cesta prvih borcev 7",
+    "postalCode": "8250",
+    "lat": 45.9030395,
+    "lon": 15.5923304,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3283",
+    "name": "Indijski okusi",
+    "city": "Ljubljana",
+    "address": "Litijska cesta 28",
+    "postalCode": "1000",
+    "lat": 46.0477759,
+    "lon": 14.5418201,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3387",
+    "name": "IT`S WOK O`CLOCK",
+    "city": "Ljubljana",
+    "address": "Kotnikova ulica 5",
+    "postalCode": "1000",
+    "lat": 46.0542883,
+    "lon": 14.5125403,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3256",
+    "name": "JOE PENA´S, mehiška restavracija",
+    "city": "Ljubljana",
+    "address": "Cankarjeva cesta 6",
+    "postalCode": "1000",
+    "lat": 46.052794,
+    "lon": 14.5025461,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3238",
+    "name": "K16",
+    "city": "Ljubljana",
+    "address": "Aškerčeva cesta 2",
+    "postalCode": "1000",
+    "lat": 46.0467202,
+    "lon": 14.5001974,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 5,
+    "features": [
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3302",
+    "name": "Kampus food",
+    "city": "Ljubljana",
+    "address": "Pivovarniška ulica 6",
+    "postalCode": "1000",
+    "lat": 46.058714,
+    "lon": 14.501792,
+    "mealPrice": 8.64,
+    "supplementPrice": 3.45,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2581",
+    "name": "KAPITAL",
+    "city": "Ljubljana",
+    "address": "Kardeljeva ploščad 17",
+    "postalCode": "1000",
+    "lat": 46.074015,
+    "lon": 14.516453,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3346",
+    "name": "KIOSK86",
+    "city": "Ljubljana",
+    "address": "Kardeljeva ploščad 5",
+    "postalCode": "1000",
+    "lat": 46.0741275,
+    "lon": 14.5142215,
+    "mealPrice": 7,
+    "supplementPrice": 1.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2644",
+    "name": "Kitajska restavracija AZIJA",
+    "city": "Kranj",
+    "address": "Gosposvetska ulica 1",
+    "postalCode": "4000",
+    "lat": 46.2461166,
+    "lon": 14.3530853,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3264",
+    "name": "Kitajska restavracija Beli labod 2",
+    "city": "Ljubljana",
+    "address": "Jurčkova cesta 7",
+    "postalCode": "1000",
+    "lat": 46.0325836,
+    "lon": 14.5151778,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2264",
+    "name": "Kitajska restavracija Cesarska hiša",
+    "city": "Koper",
+    "address": "Ankaranska cesta 5B",
+    "postalCode": "6000",
+    "lat": 45.5415072,
+    "lon": 13.7358793,
+    "mealPrice": 8.54,
+    "supplementPrice": 3.35,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2635",
+    "name": "Kitajska restavracija Dva zmaja",
+    "city": "Celje",
+    "address": "Kersnikova 31",
+    "postalCode": "3000",
+    "lat": 46.2391004,
+    "lon": 15.263821,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 541 01 60"
+  },
+  {
+    "spId": "2950",
+    "name": "Kitajska restavracija Han",
+    "city": "Ljubljana",
+    "address": "Moskovska ulica 4",
+    "postalCode": "1000",
+    "lat": 46.07048,
+    "lon": 14.5507145,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3118",
+    "name": "Kitajska restavracija Han - Aleja",
+    "city": "Ljubljana",
+    "address": "Rakuševa ulica 1",
+    "postalCode": "1000",
+    "lat": 46.0782899,
+    "lon": 14.4836777,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2841",
+    "name": "Kitajska restavracija Leteča zvezda",
+    "city": "Ljubljana",
+    "address": "Cesta v mestni log 55",
+    "postalCode": "1000",
+    "lat": 46.036207,
+    "lon": 14.489519,
+    "mealPrice": 8.72,
+    "supplementPrice": 3.53,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "040 512 588, 059 194 670"
+  },
+  {
+    "spId": "2842",
+    "name": "Kitajska restavracija Leteča zvezda - dostava",
+    "city": "Ljubljana",
+    "address": "Cesta v mestni log 55",
+    "postalCode": "1000",
+    "lat": 46.036207,
+    "lon": 14.489519,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "040 512 588, 059 194 670"
+  },
+  {
+    "spId": "2933",
+    "name": "Kitajska restavracija Ming Zhu",
+    "city": "Nova Gorica",
+    "address": "Bazoviška ulica 6",
+    "postalCode": "5000",
+    "lat": 45.9563076,
+    "lon": 13.6401351,
+    "mealPrice": 8.8,
+    "supplementPrice": 3.61,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "059 953 971"
+  },
+  {
+    "spId": "1415",
+    "name": "Kitajska restavracija NANKING",
+    "city": "Novo Mesto",
+    "address": "Mačkovec 6",
+    "postalCode": "8000",
+    "lat": 45.8264393,
+    "lon": 15.1923673,
+    "mealPrice": 8.6,
+    "supplementPrice": 3.41,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1346",
+    "name": "Kitajska restavracija Novi Šanghai",
+    "city": "Ljubljana",
+    "address": "Kapitelska 5",
+    "postalCode": "1000",
+    "lat": 46.0508628,
+    "lon": 14.5114751,
+    "mealPrice": 8.94,
+    "supplementPrice": 3.75,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2446",
+    "name": "Kitajska restavracija Šang Hai",
+    "city": "Jesenice",
+    "address": "Delavska ulica 11",
+    "postalCode": "4270",
+    "lat": 46.4334456,
+    "lon": 14.0635691,
+    "mealPrice": 8.8,
+    "supplementPrice": 3.61,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2761",
+    "name": "Kitajska restavracija Zlata srna",
+    "city": "Maribor",
+    "address": "Ulica Pohorskega bataljona 14",
+    "postalCode": "2000",
+    "lat": 46.5544914,
+    "lon": 15.6193002,
+    "mealPrice": 8.34,
+    "supplementPrice": 3.15,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 429 68 91"
+  },
+  {
+    "spId": "2762",
+    "name": "Kitajska restavracija Zlata srna - DOSTAVA",
+    "city": "Maribor",
+    "address": "Ulica Pohorskega bataljona 14",
+    "postalCode": "2000",
+    "lat": 46.5544914,
+    "lon": 15.6193002,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 429 68 91, 031 271 288"
+  },
+  {
+    "spId": "3268",
+    "name": "Kitajska restavracija Zlata srna 2",
+    "city": "Maribor",
+    "address": "Tančeva ulica 1",
+    "postalCode": "2000",
+    "lat": 46.5394767,
+    "lon": 15.6049297,
+    "mealPrice": 8.34,
+    "supplementPrice": 3.15,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 333 29 96"
+  },
+  {
+    "spId": "1165",
+    "name": "Kitajska restavracija Zvezda",
+    "city": "Maribor",
+    "address": "Loška ulica 10",
+    "postalCode": "2000",
+    "lat": 46.5566926,
+    "lon": 15.6509716,
+    "mealPrice": 8.69,
+    "supplementPrice": 3.5,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2265",
+    "name": "Kitajska restavracja Cesarska hiša-DOSTAVA",
+    "city": "Koper",
+    "address": "Ankaranska cesta 5B",
+    "postalCode": "6000",
+    "lat": 45.5415072,
+    "lon": 13.7358793,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1610",
+    "name": "Kitajski dvor (Dunajska cesta 29)",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 29",
+    "postalCode": "1000",
+    "lat": 46.061737,
+    "lon": 14.5076175,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1911",
+    "name": "Kitajski dvor (Teharska cesta 35)",
+    "city": "Celje",
+    "address": "Teharska cesta 35",
+    "postalCode": "3000",
+    "lat": 46.2315729,
+    "lon": 15.2762559,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 54 84 645"
+  },
+  {
+    "spId": "2117",
+    "name": "Kitajski dvor - dostava",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 29",
+    "postalCode": "1000",
+    "lat": 46.0621392,
+    "lon": 14.5074844,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "031 766 715, 01 436 42 45"
+  },
+  {
+    "spId": "1164",
+    "name": "Kitajski dvor - DOSTAVA",
+    "city": "Celje",
+    "address": "Teharska cesta 35",
+    "postalCode": "3000",
+    "lat": 46.2314098,
+    "lon": 15.2761445,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 548 46 45   041 812 939"
+  },
+  {
+    "spId": "1838",
+    "name": "Kitajsko mesto",
+    "city": "Domžale",
+    "address": "Slamnikarjeva 1",
+    "postalCode": "1230",
+    "lat": 46.1382014,
+    "lon": 14.596938,
+    "mealPrice": 7.9,
+    "supplementPrice": 2.71,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2772",
+    "name": "Kitajsko mesto - dostava",
+    "city": "Domžale",
+    "address": "Slamnikarjeva 1",
+    "postalCode": "1230",
+    "lat": 46.1382014,
+    "lon": 14.596938,
+    "mealPrice": 8.9,
+    "supplementPrice": 3.71,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "01 72 16 305"
+  },
+  {
+    "spId": "1422",
+    "name": "Klopčič",
+    "city": "Ljubljana",
+    "address": "Litostrojska cesta 57",
+    "postalCode": "1000",
+    "lat": 46.0816138,
+    "lon": 14.4923584,
+    "mealPrice": 7.5,
+    "supplementPrice": 2.31,
+    "rating": 5,
+    "features": [
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3140",
+    "name": "KLUBAR GASTROPUB",
+    "city": "Kranj",
+    "address": "Slovenski trg 7",
+    "postalCode": "4000",
+    "lat": 46.2428879,
+    "lon": 14.3559806,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "04 236 41 20"
+  },
+  {
+    "spId": "3121",
+    "name": "Kozlovna Poštna",
+    "city": "Maribor",
+    "address": "Poštna ulica 12",
+    "postalCode": "2000",
+    "lat": 46.5585966,
+    "lon": 15.6449785,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "059 017 670"
+  },
+  {
+    "spId": "2145",
+    "name": "Leonard",
+    "city": "Ljubljana",
+    "address": "Trg mladinskih delovnih brigad 12",
+    "postalCode": "1000",
+    "lat": 46.0479552,
+    "lon": 14.4962925,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2844",
+    "name": "Leteča zvezda",
+    "city": "Ljubljana",
+    "address": "Kvedrova cesta 5a",
+    "postalCode": "1000",
+    "lat": 46.070312,
+    "lon": 14.541963,
+    "mealPrice": 7.5,
+    "supplementPrice": 2.31,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2726",
+    "name": "LIPCA - INDEKS",
+    "city": "Ljubljana",
+    "address": "Borštnikov trg 3a",
+    "postalCode": "1000",
+    "lat": 46.047896,
+    "lon": 14.4987744,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3297",
+    "name": "Lokal P8",
+    "city": "Ljubljana - Šentvid",
+    "address": "Plemljeva 8",
+    "postalCode": "1210",
+    "lat": 46.1037922,
+    "lon": 14.4589447,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 1,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3393",
+    "name": "LONCHE Street Diner",
+    "city": "Maribor",
+    "address": "Loška ulica 13",
+    "postalCode": "2000",
+    "lat": 46.5567401,
+    "lon": 15.653565,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "030 680 220"
+  },
+  {
+    "spId": "2331",
+    "name": "Loving Hut",
+    "city": "Maribor",
+    "address": "Gosposvetska cesta 43a",
+    "postalCode": "2000",
+    "lat": 46.561508,
+    "lon": 15.63406,
+    "mealPrice": 8.02,
+    "supplementPrice": 2.83,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "070 631 502"
+  },
+  {
+    "spId": "3322",
+    "name": "LUNCH BOX",
+    "city": "Maribor",
+    "address": "Gosposvetska cesta 19",
+    "postalCode": "2000",
+    "lat": 46.5607589,
+    "lon": 15.6392304,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3368",
+    "name": "MAGMAX",
+    "city": "Nova Gorica",
+    "address": "Industrijska cesta 11",
+    "postalCode": "5000",
+    "lat": 45.9531105,
+    "lon": 13.6694122,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3327",
+    "name": "MANGO SNACKS",
+    "city": "Maribor",
+    "address": "Gosposvetska cesta 83",
+    "postalCode": "2000",
+    "lat": 46.5628737,
+    "lon": 15.6271258,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3205",
+    "name": "MC PANDA",
+    "city": "Maribor",
+    "address": "Ulica Vita Kraigherja 5",
+    "postalCode": "2000",
+    "lat": 46.5587501,
+    "lon": 15.6505413,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3122",
+    "name": "McDonald s restavracija  - Murska Sobota",
+    "city": "Murska Sobota",
+    "address": "Nemčavci 1d",
+    "postalCode": "9000",
+    "lat": 46.6694982,
+    "lon": 16.1775262,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 250 12 37"
+  },
+  {
+    "spId": "1182",
+    "name": "McDonald´s restavracija - Swaty",
+    "city": "Maribor",
+    "address": "Tržaška 6",
+    "postalCode": "2000",
+    "lat": 46.54175582,
+    "lon": 15.64776005,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "320 22 30"
+  },
+  {
+    "spId": "1185",
+    "name": "McDonald´s restavracija Europark",
+    "city": "Maribor",
+    "address": "Pobreška 18",
+    "postalCode": "2000",
+    "lat": 46.55381546,
+    "lon": 15.6514902,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 320 39 00"
+  },
+  {
+    "spId": "1184",
+    "name": "McDonald´s restavracija Ptujska",
+    "city": "Maribor",
+    "address": "Ptujska 106",
+    "postalCode": "2000",
+    "lat": 46.5349073,
+    "lon": 15.6622092,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 426 03 66"
+  },
+  {
+    "spId": "3270",
+    "name": "McDonald´s restavracija Studenci",
+    "city": "Maribor",
+    "address": "Ulica Jožeta Košarja 2",
+    "postalCode": "2000",
+    "lat": 46.5315527,
+    "lon": 15.6773941,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1179",
+    "name": "McDonald´s restavracija Velenje",
+    "city": "Velenje",
+    "address": "Kidričeva 2b",
+    "postalCode": "3320",
+    "lat": 46.35996095,
+    "lon": 15.11980472,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 897 23 40"
+  },
+  {
+    "spId": "3326",
+    "name": "McDonald's Petrol Maribor",
+    "city": "Maribor",
+    "address": "Na Polju 24",
+    "postalCode": "2000",
+    "lat": 46.5334546,
+    "lon": 15.6993819,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1380",
+    "name": "McDonald's restavracij - Odiseja",
+    "city": "Ljubljana",
+    "address": "Moskovska ulica 11",
+    "postalCode": "1000",
+    "lat": 46.06947022,
+    "lon": 14.54737593,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3107",
+    "name": "McDonald's restavracija - ALEJA",
+    "city": "Ljubljana",
+    "address": "Rakuševa ulica 1",
+    "postalCode": "1000",
+    "lat": 46.0782899,
+    "lon": 14.4836777,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3246",
+    "name": "McDonald's restavracija - Barje jug",
+    "city": "Ljubljana",
+    "address": "Cesta dveh cesarjev 73",
+    "postalCode": "1000",
+    "lat": 46.0288734,
+    "lon": 14.4784293,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3247",
+    "name": "McDonald's restavracija - Barje sever",
+    "city": "Ljubljana",
+    "address": "Cesta dveh cesarjev 71",
+    "postalCode": "1000",
+    "lat": 46.0291537,
+    "lon": 14.4818821,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3189",
+    "name": "McDonald's restavracija - Cankarjeva",
+    "city": "Ljubljana",
+    "address": "Cankarjeva cesta 4",
+    "postalCode": "1000",
+    "lat": 46.0527153,
+    "lon": 14.5028959,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2868",
+    "name": "McDonald's restavracija - Celje Drive",
+    "city": "Celje",
+    "address": "Mariborska cesta 164",
+    "postalCode": "3000",
+    "lat": 46.247996,
+    "lon": 15.280446,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 620 23 95"
+  },
+  {
+    "spId": "1341",
+    "name": "McDonald's restavracija - Celovška",
+    "city": "Ljubljana",
+    "address": "Celovška cesta 170",
+    "postalCode": "1000",
+    "lat": 46.0749608,
+    "lon": 14.4846712,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1377",
+    "name": "McDonald's restavracija - Center",
+    "city": "Ljubljana",
+    "address": "Čopova 14",
+    "postalCode": "1000",
+    "lat": 46.05200055,
+    "lon": 14.50488239,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1342",
+    "name": "McDonald's restavracija - Domžale",
+    "city": "Domžale",
+    "address": "Breznikova 15",
+    "postalCode": "1230",
+    "lat": 46.1468404,
+    "lon": 14.5975108,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2866",
+    "name": "McDonald's restavracija - Kranj",
+    "city": "Kranj",
+    "address": "Cesta Boštjana Hladnika 7",
+    "postalCode": "4000",
+    "lat": 46.232304,
+    "lon": 14.369412,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "04 62 09 722"
+  },
+  {
+    "spId": "3279",
+    "name": "McDonald's restavracija - Lesce",
+    "city": "Lesce",
+    "address": "Hraška cesta 21a",
+    "postalCode": "4248",
+    "lat": 46.3612077,
+    "lon": 14.160096,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1381",
+    "name": "McDonald's restavracija - Novo mesto",
+    "city": "Novo Mesto",
+    "address": "Ljubljanska 24",
+    "postalCode": "8000",
+    "lat": 45.81480455,
+    "lon": 15.15417151,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1536",
+    "name": "McDonald's restavracija - Rudnik",
+    "city": "Ljubljana",
+    "address": "Premrlova ulica 12",
+    "postalCode": "1000",
+    "lat": 46.0175171,
+    "lon": 14.53007184,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3188",
+    "name": "McDonald's restavracija - Supernova Rudnik",
+    "city": "Ljubljana",
+    "address": "Jurčkova cesta 223",
+    "postalCode": "1000",
+    "lat": 46.0218387,
+    "lon": 14.5359136,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3164",
+    "name": "McDonald's restavracija - Šmartinka Drive",
+    "city": "Ljubljana",
+    "address": "Šmartinska 147",
+    "postalCode": "1000",
+    "lat": 46.0694793,
+    "lon": 14.5408094,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1378",
+    "name": "McDonald's restavracija - Žito",
+    "city": "Ljubljana",
+    "address": "Moskovska ulica 1",
+    "postalCode": "1000",
+    "lat": 46.06947767,
+    "lon": 14.54738666,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2253",
+    "name": "McDonald's restavracija Koper",
+    "city": "Koper",
+    "address": "Ankaranska 4",
+    "postalCode": "6000",
+    "lat": 45.54149179,
+    "lon": 13.73655012,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "059 689 718"
+  },
+  {
+    "spId": "2815",
+    "name": "McDonald's restavracija Nova Gorica",
+    "city": "Nova Gorica",
+    "address": "Vojkova cesta 111",
+    "postalCode": "5000",
+    "lat": 45.954703,
+    "lon": 13.653513,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "059 689 724"
+  },
+  {
+    "spId": "3330",
+    "name": "McDonald's Supernova Koper",
+    "city": "Koper",
+    "address": "Dolinska cesta 1a",
+    "postalCode": "6000",
+    "lat": 45.5307743,
+    "lon": 13.7318276,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "059 689 739"
+  },
+  {
+    "spId": "2648",
+    "name": "ME GUSTA",
+    "city": "Maribor",
+    "address": "Jezdarska ulica 8b (vhod v lokal iz Žitne ulice 4)",
+    "postalCode": "2000",
+    "lat": 46.5513718,
+    "lon": 15.6409209,
+    "mealPrice": 7,
+    "supplementPrice": 1.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "vhod v lokal iz Žitne ulice 4"
+  },
+  {
+    "spId": "3138",
+    "name": "Meating pub & restavracija",
+    "city": "Maribor",
+    "address": "Mlinska ulica 2",
+    "postalCode": "2000",
+    "lat": 46.5603608,
+    "lon": 15.6553755,
+    "mealPrice": 8.6,
+    "supplementPrice": 3.41,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "070 678 678"
+  },
+  {
+    "spId": "1407",
+    "name": "Mehiška restavracija Imperio mexicano",
+    "city": "Ljubljana",
+    "address": "Moskovska ulica 4",
+    "postalCode": "1000",
+    "lat": 46.0702369,
+    "lon": 14.5490389,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2023",
+    "name": "Menza BF",
+    "city": "Ljubljana",
+    "address": "Večna pot 111",
+    "postalCode": "1000",
+    "lat": 46.0512363,
+    "lon": 14.4699693,
+    "mealPrice": 8.2,
+    "supplementPrice": 3.01,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2521",
+    "name": "Menza FE",
+    "city": "Ljubljana",
+    "address": "Tržaška cesta 25",
+    "postalCode": "1000",
+    "lat": 46.0448994,
+    "lon": 14.4892307,
+    "mealPrice": 8.2,
+    "supplementPrice": 3.01,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2360",
+    "name": "MM PANDA",
+    "city": "Maribor",
+    "address": "Koroška cesta 9",
+    "postalCode": "2000",
+    "lat": 46.5576636,
+    "lon": 15.643214,
+    "mealPrice": 7.24,
+    "supplementPrice": 2.05,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 220 87 60"
+  },
+  {
+    "spId": "3357",
+    "name": "Moj cmok",
+    "city": "Ljubljana",
+    "address": "Pogačarjev trg 1",
+    "postalCode": "1000",
+    "lat": 46.0511981,
+    "lon": 14.5085112,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3362",
+    "name": "Moji štruklji BTC",
+    "city": "Ljubljana",
+    "address": "Italijanska ulica 7",
+    "postalCode": "1000",
+    "lat": 46.063985,
+    "lon": 14.5443996,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3290",
+    "name": "Namaste Grab & Go",
+    "city": "Ljubljana",
+    "address": "Tomšičeva 2",
+    "postalCode": "1000",
+    "lat": 46.0522881,
+    "lon": 14.5027386,
+    "mealPrice": 7,
+    "supplementPrice": 1.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2828",
+    "name": "Namaste Indian Express",
+    "city": "Ljubljana",
+    "address": "Trubarjeva ulica 31",
+    "postalCode": "1000",
+    "lat": 46.052474,
+    "lon": 14.509783,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2249",
+    "name": "News Cafe",
+    "city": "Portorož",
+    "address": "Obala 4F",
+    "postalCode": "6320",
+    "lat": 45.5148393,
+    "lon": 13.5719437,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3359",
+    "name": "Niam niam garden",
+    "city": "Ljubljana",
+    "address": "Trubarjeva cesta 50",
+    "postalCode": "1000",
+    "lat": 46.0522981,
+    "lon": 14.5122594,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3167",
+    "name": "NJAMY - dostava",
+    "city": "Kranj",
+    "address": "Šorlijeva 12",
+    "postalCode": "4000",
+    "lat": 46.2519474,
+    "lon": 14.3572697,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "04 236 90 00"
+  },
+  {
+    "spId": "3229",
+    "name": "Norma 23",
+    "city": "Ljubljana",
+    "address": "Adamič-Lundrovo nabrežje 1",
+    "postalCode": "1000",
+    "lat": 46.0510563,
+    "lon": 14.5065665,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2732",
+    "name": "Okrepčevalnica - Diner kino gledališče Bežigrad",
+    "city": "Ljubljana",
+    "address": "Linhartova 11",
+    "postalCode": "1000",
+    "lat": 46.0646461,
+    "lon": 14.5103219,
+    "mealPrice": 8.62,
+    "supplementPrice": 3.43,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1683",
+    "name": "Okrepčevalnica - pizzerija Maks",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 111",
+    "postalCode": "1000",
+    "lat": 46.0745055,
+    "lon": 14.5113788,
+    "mealPrice": 7.9,
+    "supplementPrice": 2.71,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3397",
+    "name": "Okrepčevalnica \"Medicinska fakulteta\"",
+    "city": "Maribor",
+    "address": "Taborska ulica 8",
+    "postalCode": "2000",
+    "lat": 46.5548619,
+    "lon": 15.6469443,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "03 759 3003"
+  },
+  {
+    "spId": "2944",
+    "name": "Okrepčevalnica Ajda",
+    "city": "Ljubljana",
+    "address": "Ajdovščina 4",
+    "postalCode": "1000",
+    "lat": 46.0533642,
+    "lon": 14.5052036,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2347",
+    "name": "Okrepčevalnica FERI",
+    "city": "Maribor",
+    "address": "Smetanova ulica 17",
+    "postalCode": "2000",
+    "lat": 46.5594876,
+    "lon": 15.6392718,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "03 759 3003"
+  },
+  {
+    "spId": "3342",
+    "name": "Okrepčevalnica HAM-HAM",
+    "city": "Rogatec",
+    "address": "Celjska cesta 3",
+    "postalCode": "3252",
+    "lat": 46.224141,
+    "lon": 15.7005677,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 58 27 242"
+  },
+  {
+    "spId": "2652",
+    "name": "Okrepčevalnica IZUM",
+    "city": "Maribor",
+    "address": "Prešernova 17",
+    "postalCode": "2000",
+    "lat": 46.5636048,
+    "lon": 15.6514339,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "02 252 03 91"
+  },
+  {
+    "spId": "3200",
+    "name": "Okrepčevalnica Marijanca",
+    "city": "Ljubljana",
+    "address": "Večna pot 113",
+    "postalCode": "1000",
+    "lat": 46.0514769,
+    "lon": 14.4802775,
+    "mealPrice": 6.76,
+    "supplementPrice": 1.57,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3333",
+    "name": "OKREPČEVALNICA PINELA",
+    "city": "Portorož",
+    "address": "Obala 99",
+    "postalCode": "6320",
+    "lat": 45.5068887,
+    "lon": 13.6004072,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "041 827 007"
+  },
+  {
+    "spId": "3372",
+    "name": "Okrepčevalnica Rock Cafe",
+    "city": "Koper",
+    "address": "Ukmarjev trg 5",
+    "postalCode": "6000",
+    "lat": 45.5489402,
+    "lon": 13.7252892,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1817",
+    "name": "OLA ENKA",
+    "city": "Ljubljana",
+    "address": "Baragova ulica 16",
+    "postalCode": "1000",
+    "lat": 46.0759757,
+    "lon": 14.5170092,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3296",
+    "name": "O-LALA",
+    "city": "Ljubljana",
+    "address": "Tržaška cesta 18",
+    "postalCode": "1000",
+    "lat": 46.0456937,
+    "lon": 14.4895928,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3318",
+    "name": "ON THAI Rudnik",
+    "city": "Ljubljana",
+    "address": "Jurčkova cesta 225",
+    "postalCode": "1000",
+    "lat": 46.0202672,
+    "lon": 14.5366758,
+    "mealPrice": 8.52,
+    "supplementPrice": 3.33,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3319",
+    "name": "ON THAI Šiška",
+    "city": "Ljubljana",
+    "address": "Cesta ljubljanske brigade 33",
+    "postalCode": "1000",
+    "lat": 46.0883544,
+    "lon": 14.4771772,
+    "mealPrice": 8.52,
+    "supplementPrice": 3.33,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3169",
+    "name": "ORIENT EXPRESS, samopostrežna restavracija",
+    "city": "Ljubljana",
+    "address": "Kolodvorska 11",
+    "postalCode": "1000",
+    "lat": 46.0566129,
+    "lon": 14.5094147,
+    "mealPrice": 8.1,
+    "supplementPrice": 2.91,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3035",
+    "name": "Oštarija City center Celje",
+    "city": "Celje",
+    "address": "Mariborska cesta 100",
+    "postalCode": "3000",
+    "lat": 46.2419031,
+    "lon": 15.2774074,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "08 280 21 71"
+  },
+  {
+    "spId": "1471",
+    "name": "Oštarija Rudolfswerth",
+    "city": "Novo Mesto",
+    "address": "Kandijska cesta 35",
+    "postalCode": "8000",
+    "lat": 45.8002137,
+    "lon": 15.174038,
+    "mealPrice": 8.4,
+    "supplementPrice": 3.21,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3298",
+    "name": "P8 - dostava",
+    "city": "Ljubljana - Šentvid",
+    "address": "Plemeljeva 8",
+    "postalCode": "1210",
+    "lat": 46.1037922,
+    "lon": 14.4589447,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "041 815 333"
+  },
+  {
+    "spId": "2753",
+    "name": "Palača SMELT",
+    "city": "Ljubljana",
+    "address": "Dunajska 160",
+    "postalCode": "1000",
+    "lat": 46.082788,
+    "lon": 14.5139668,
+    "mealPrice": 7.96,
+    "supplementPrice": 2.77,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2863",
+    "name": "Papagayo",
+    "city": "Maribor",
+    "address": "Gosposka ulica 6",
+    "postalCode": "2000",
+    "lat": 46.557861,
+    "lon": 15.646434,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2623",
+    "name": "PE Dijaški dom Celje",
+    "city": "Celje",
+    "address": "Ljubljanska cesta 21",
+    "postalCode": "3000",
+    "lat": 46.2327648,
+    "lon": 15.2565348,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "03 42 66 600"
+  },
+  {
+    "spId": "3392",
+    "name": "Pe Hiša kruha junior",
+    "city": "Maribor",
+    "address": "Tyrševa 2",
+    "postalCode": "2000",
+    "lat": 46.5605193,
+    "lon": 15.6467651,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "041 768 183"
+  },
+  {
+    "spId": "3390",
+    "name": "PE LUCKY STREET FOOD",
+    "city": "Maribor",
+    "address": "Vetrinjska ulica 9a",
+    "postalCode": "2000",
+    "lat": 46.5577873,
+    "lon": 15.6479782,
+    "mealPrice": 6.2,
+    "supplementPrice": 1.01,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1424",
+    "name": "PE Marjetica",
+    "city": "Ljubljana",
+    "address": "Tobačna ulica 5",
+    "postalCode": "1000",
+    "lat": 46.0493297,
+    "lon": 14.4938602,
+    "mealPrice": 7.58,
+    "supplementPrice": 2.39,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3353",
+    "name": "Picerija Barjan",
+    "city": "Ljubljana",
+    "address": "Cesta v mestni log 55",
+    "postalCode": "1000",
+    "lat": 46.0361537,
+    "lon": 14.4895929,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2243",
+    "name": "PICERIJA CITYBURGER",
+    "city": "Koper",
+    "address": "Ankaranska 7",
+    "postalCode": "6000",
+    "lat": 45.5458243,
+    "lon": 13.7403981,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "05/639 88 28"
+  },
+  {
+    "spId": "2551",
+    "name": "Picerija ERA",
+    "city": "Novo Mesto",
+    "address": "Pod Trško goro 83",
+    "postalCode": "8000",
+    "lat": 45.8225275,
+    "lon": 15.1842413,
+    "mealPrice": 8.8,
+    "supplementPrice": 3.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3142",
+    "name": "Picerija in pivnica KUFR",
+    "city": "Slovenj Gradec",
+    "address": "Glavni trg 43",
+    "postalCode": "2380",
+    "lat": 46.5084742,
+    "lon": 15.0782194,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 88 39 850"
+  },
+  {
+    "spId": "3281",
+    "name": "Picerija Pavon",
+    "city": "Ljubljana",
+    "address": "Njegoševa ulica 6k",
+    "postalCode": "1000",
+    "lat": 46.0534434,
+    "lon": 14.5195208,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1794",
+    "name": "Picestavracija Boccaccio",
+    "city": "Ljubljana",
+    "address": "Celovška cesta 249",
+    "postalCode": "1000",
+    "lat": 46.0808062,
+    "lon": 14.4786087,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "pizza",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3361",
+    "name": "Pisana skleda",
+    "city": "Ljubljana",
+    "address": "Zemljemerska ulica 7",
+    "postalCode": "1000",
+    "lat": 46.0473472,
+    "lon": 14.5172059,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2595",
+    "name": "Pizza SALAMON - dostava",
+    "city": "Ljubljana",
+    "address": "Vilharjeva 43",
+    "postalCode": "1000",
+    "lat": 46.0300713,
+    "lon": 14.5324491,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "01 42 87 910, 01 42 87  915, 041 578 940, 051 265 636"
+  },
+  {
+    "spId": "2308",
+    "name": "Pizzeria Briksen",
+    "city": "Bled",
+    "address": "Ljubljanska cesta 5",
+    "postalCode": "4260",
+    "lat": 46.368334,
+    "lon": 14.1111195,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3295",
+    "name": "Pizzeria Favola",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 129",
+    "postalCode": "1000",
+    "lat": 46.0775941,
+    "lon": 14.5118999,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "wheelchair",
+      "coeliac_friendly",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1441",
+    "name": "Pizzeria FoculuS",
+    "city": "Ljubljana",
+    "address": "Gregorčičeva ulica 3",
+    "postalCode": "1000",
+    "lat": 46.04792605,
+    "lon": 14.5021382,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "student_benefits",
+      "coeliac_friendly",
+      "pizza",
+      "open_weekends"
+    ],
+    "phone": "01 251 56 43, 01 421 92 95"
+  },
+  {
+    "spId": "2284",
+    "name": "Pizzeria Fontana",
+    "city": "Krško",
+    "address": "Dalmatinova ulica 2",
+    "postalCode": "8270",
+    "lat": 45.9638619,
+    "lon": 15.4861918,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3388",
+    "name": "Pizzeria Gusto",
+    "city": "Ljubljana",
+    "address": "Trg osvobodilne fronte 14",
+    "postalCode": "1000",
+    "lat": 46.0574455,
+    "lon": 14.5089472,
+    "mealPrice": 8.99,
+    "supplementPrice": 3.8,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3174",
+    "name": "Pizzeria in oštarija Chianti",
+    "city": "Ljubljana",
+    "address": "Rakuševa cesta 1",
+    "postalCode": "1000",
+    "lat": 46.0782899,
+    "lon": 14.4836777,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1103",
+    "name": "Pizzeria in špageteria Al Capone",
+    "city": "Maribor",
+    "address": "Pobreška cesta 18",
+    "postalCode": "2000",
+    "lat": 46.553751,
+    "lon": 15.651964,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 332 81 35"
+  },
+  {
+    "spId": "1305",
+    "name": "Pizzeria in špagetteria Cubus",
+    "city": "Novo Mesto",
+    "address": "Podbevškova ulica 11",
+    "postalCode": "8000",
+    "lat": 45.8043094,
+    "lon": 15.196019,
+    "mealPrice": 7.6,
+    "supplementPrice": 2.41,
+    "rating": 5,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1423",
+    "name": "Pizzeria Laterna",
+    "city": "Ljubljana",
+    "address": "Tržaška 79a",
+    "postalCode": "1000",
+    "lat": 46.04252341,
+    "lon": 14.47929798,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3309",
+    "name": "Pizzeria Oliva",
+    "city": "Ljubljana",
+    "address": "Litijska cesta 38",
+    "postalCode": "1000",
+    "lat": 46.0470744,
+    "lon": 14.5449275,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2165",
+    "name": "Pizzeria Osmica",
+    "city": "Ljubljana",
+    "address": "Nazorjeva ulica 8",
+    "postalCode": "1000",
+    "lat": 46.0527303,
+    "lon": 14.5045867,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "student_benefits",
+      "pizza",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2375",
+    "name": "Pizzeria Parma",
+    "city": "Ljubljana",
+    "address": "Trg republike 2",
+    "postalCode": "1000",
+    "lat": 46.0500505,
+    "lon": 14.5004647,
+    "mealPrice": 8.8,
+    "supplementPrice": 3.61,
+    "rating": 4,
+    "features": [
+      "student_benefits",
+      "coeliac_friendly",
+      "pizza",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1335",
+    "name": "Pizzeria Šestinka",
+    "city": "Ljubljana",
+    "address": "Miklošičeva cesta 22",
+    "postalCode": "1000",
+    "lat": 46.0544486,
+    "lon": 14.5072493,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "pizza",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1031",
+    "name": "Pizzerija Atrij d.o.o.",
+    "city": "Koper",
+    "address": "Čevljarska 8",
+    "postalCode": "6000",
+    "lat": 45.5475251,
+    "lon": 13.7294406,
+    "mealPrice": 8.42,
+    "supplementPrice": 3.23,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "05 627 22 55"
+  },
+  {
+    "spId": "1716",
+    "name": "Pizzerija Dimnik",
+    "city": "Trbovlje",
+    "address": "Obrtniška cesta 1",
+    "postalCode": "1420",
+    "lat": 46.1549843,
+    "lon": 15.0511805,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1717",
+    "name": "Pizzerija Dimnik - dostava",
+    "city": "Trbovlje",
+    "address": "Obrtniška cesta 1",
+    "postalCode": "1420",
+    "lat": 46.1549843,
+    "lon": 15.0511805,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 562 84 99, 05 998 71 22"
+  },
+  {
+    "spId": "1413",
+    "name": "Pizzerija in okrepčevalnica KONDOR",
+    "city": "Ljubljana",
+    "address": "Cesta v Mestni log 55",
+    "postalCode": "1000",
+    "lat": 46.0366776,
+    "lon": 14.4895863,
+    "mealPrice": 8.5,
+    "supplementPrice": 3.31,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3116",
+    "name": "Pizzerija in špageterija Alcapone",
+    "city": "Ljubljana",
+    "address": "Moskovska ulica 4",
+    "postalCode": "1000",
+    "lat": 46.0681081,
+    "lon": 14.5420462,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1176",
+    "name": "Pizzerija Velun",
+    "city": "Velenje",
+    "address": "Šalek 24 a",
+    "postalCode": "3320",
+    "lat": 46.3621913,
+    "lon": 15.1258621,
+    "mealPrice": 8.2,
+    "supplementPrice": 3.01,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "080 21 55"
+  },
+  {
+    "spId": "3360",
+    "name": "Prfect Meals - dostava",
+    "city": "Domžale",
+    "address": "Študljanska 20",
+    "postalCode": "1230",
+    "lat": 46.1260469,
+    "lon": 14.6000456,
+    "mealPrice": 7.9,
+    "supplementPrice": 2.71,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "040 868 817"
+  },
+  {
+    "spId": "1265",
+    "name": "Prometna šola Maribor",
+    "city": "Maribor",
+    "address": "Preradovičeva ulica 33",
+    "postalCode": "2000",
+    "lat": 46.553867,
+    "lon": 15.6245844,
+    "mealPrice": 7,
+    "supplementPrice": 1.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch"
+    ],
+    "phone": "02 4294118"
+  },
+  {
+    "spId": "3364",
+    "name": "Pr'picopeku",
+    "city": "Ljubljana",
+    "address": "Rimska cesta 17",
+    "postalCode": "1000",
+    "lat": 46.047555,
+    "lon": 14.4990629,
+    "mealPrice": 7.02,
+    "supplementPrice": 1.83,
+    "rating": 4,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2651",
+    "name": "Q TABOR",
+    "city": "Maribor",
+    "address": "Gorkega ulica 45",
+    "postalCode": "2000",
+    "lat": 46.5499577,
+    "lon": 15.6385033,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 805 13 90"
+  },
+  {
+    "spId": "3344",
+    "name": "Restavracija & pub GOLD PUB",
+    "city": "Radlje Ob Dravi",
+    "address": "koroška cesta 61",
+    "postalCode": "2360",
+    "lat": 46.615453,
+    "lon": 15.2129088,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2187",
+    "name": "Restavracija 123 DSU",
+    "city": "Ljubljana",
+    "address": "Litostrojska 54",
+    "postalCode": "1000",
+    "lat": 46.0823205,
+    "lon": 14.4964189,
+    "mealPrice": 6.8,
+    "supplementPrice": 1.61,
+    "rating": 4,
+    "features": [
+      "salad_bar",
+      "student_benefits",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2528",
+    "name": "Restavracija 123 Mega center 2",
+    "city": "Ljubljana",
+    "address": "Verovškova ulica 55a",
+    "postalCode": "1000",
+    "lat": 46.0638551,
+    "lon": 14.4957973,
+    "mealPrice": 6.8,
+    "supplementPrice": 1.61,
+    "rating": 4,
+    "features": [
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3339",
+    "name": "Restavracija 123 Pristan Koper",
+    "city": "Koper",
+    "address": "Vojkovo nabrežje 32",
+    "postalCode": "6000",
+    "lat": 45.548204,
+    "lon": 13.7377678,
+    "mealPrice": 6.8,
+    "supplementPrice": 1.61,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "student_benefits",
+      "lunch"
+    ],
+    "phone": "05 620 34 31"
+  },
+  {
+    "spId": "2164",
+    "name": "Restavracija Allegria",
+    "city": "Ljubljana",
+    "address": "Nazorjeva ulica 8",
+    "postalCode": "1000",
+    "lat": 46.0527303,
+    "lon": 14.5045867,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2501",
+    "name": "Restavracija Ancora",
+    "city": "Maribor",
+    "address": "Jurčičeva ulica 7",
+    "postalCode": "2000",
+    "lat": 46.5591908,
+    "lon": 15.6473742,
+    "mealPrice": 8.72,
+    "supplementPrice": 3.53,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 250 20 33"
+  },
+  {
+    "spId": "2703",
+    "name": "Restavracija Azija",
+    "city": "Maribor",
+    "address": "Ptujska cesta 131 ",
+    "postalCode": "2000",
+    "lat": 46.5311257,
+    "lon": 15.6701161,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 461 43 61"
+  },
+  {
+    "spId": "2527",
+    "name": "Restavracija Brejk",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 22",
+    "postalCode": "1000",
+    "lat": 46.0620352,
+    "lon": 14.5093682,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2234",
+    "name": "Restavracija Eat Smart 1",
+    "city": "Maribor",
+    "address": "Koroška cesta 46",
+    "postalCode": "2000",
+    "lat": 46.5594876,
+    "lon": 15.6392718,
+    "mealPrice": 8.19,
+    "supplementPrice": 3,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "041 520 809"
+  },
+  {
+    "spId": "3232",
+    "name": "Restavracija Eat Smart 2",
+    "city": "Maribor",
+    "address": "Koroška cesta 80",
+    "postalCode": "2000",
+    "lat": 46.5595476,
+    "lon": 15.6338033,
+    "mealPrice": 8.19,
+    "supplementPrice": 3,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "051 238 635"
+  },
+  {
+    "spId": "1827",
+    "name": "Restavracija Fany & Mary",
+    "city": "Ljubljana",
+    "address": "Petkovškovo nabrežje 19",
+    "postalCode": "1000",
+    "lat": 46.0520454,
+    "lon": 14.5083412,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "pizza",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2097",
+    "name": "Restavracija Fresco",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 51",
+    "postalCode": "1000",
+    "lat": 46.0556131,
+    "lon": 14.5048633,
+    "mealPrice": 8.99,
+    "supplementPrice": 3.8,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3134",
+    "name": "Restavracija FS, Fakulteta za strojništvo",
+    "city": "Ljubljana",
+    "address": "Aškerčeva ulica 6",
+    "postalCode": "1000",
+    "lat": 46.0468575,
+    "lon": 14.4984281,
+    "mealPrice": 8.62,
+    "supplementPrice": 3.43,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3036",
+    "name": "Restavracija in maloprodaja Hermine Wech - Koroška perutnina (Gačnikova pot 2)",
+    "city": "Ravne Na Koroškem",
+    "address": "Gačnikova pot 2",
+    "postalCode": "2390",
+    "lat": 46.544365,
+    "lon": 14.9627537,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 821 88 70"
+  },
+  {
+    "spId": "3038",
+    "name": "Restavracija in maloprodaja Hermine Wech - Koroška perutnina (Ozare)",
+    "city": "Slovenj Gradec",
+    "address": "Ozare",
+    "postalCode": "2380",
+    "lat": 46.5075851,
+    "lon": 15.0768162,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 2,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 620 18 41"
+  },
+  {
+    "spId": "2343",
+    "name": "Restavracija in pivnica Zvezda",
+    "city": "Murska Sobota",
+    "address": "Trg zmage 8",
+    "postalCode": "9000",
+    "lat": 46.660916,
+    "lon": 16.164826,
+    "mealPrice": 8.5,
+    "supplementPrice": 3.31,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 539 15 70"
+  },
+  {
+    "spId": "3389",
+    "name": "Restavracija in prenočišča ČARDA",
+    "city": "Martjanci",
+    "address": "Nemčavci 39c",
+    "postalCode": "9221",
+    "lat": 46.6726667,
+    "lon": 16.1788959,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "00386 2548 1118"
+  },
+  {
+    "spId": "1195",
+    "name": "Restavracija Interspar Celje",
+    "city": "Celje",
+    "address": "Mariborska 100",
+    "postalCode": "3000",
+    "lat": 46.2417572,
+    "lon": 15.2761156,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 426 76 68"
+  },
+  {
+    "spId": "1369",
+    "name": "Restavracija Interspar Citypark",
+    "city": "Ljubljana",
+    "address": "Šmartinska 152g",
+    "postalCode": "1000",
+    "lat": 46.0702369,
+    "lon": 14.5490389,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1023",
+    "name": "Restavracija Interspar Koper",
+    "city": "Koper",
+    "address": "Ankaranska cesta 3A",
+    "postalCode": "6000",
+    "lat": 45.5432181,
+    "lon": 13.7410232,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "05 611 74 28"
+  },
+  {
+    "spId": "1198",
+    "name": "Restavracija Interspar Kranj",
+    "city": "Kranj",
+    "address": "Cesta 1.maja 77",
+    "postalCode": "4000",
+    "lat": 46.2317974,
+    "lon": 14.364596,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "04 281 67 08"
+  },
+  {
+    "spId": "1194",
+    "name": "Restavracija Interspar Maribor Europark",
+    "city": "Maribor",
+    "address": "Pobreška 18",
+    "postalCode": "2000",
+    "lat": 46.554734,
+    "lon": 15.6534804,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 320 84 18"
+  },
+  {
+    "spId": "1197",
+    "name": "Restavracija Interspar Maribor2 Supernova Qlandia",
+    "city": "Maribor",
+    "address": "Cesta Proletarskih brigad 100",
+    "postalCode": "2000",
+    "lat": 46.546433,
+    "lon": 15.618417,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 480 50 58"
+  },
+  {
+    "spId": "1025",
+    "name": "Restavracija Interspar Nova Gorica",
+    "city": "Nova Gorica",
+    "address": "Cesta 25. junija 1a",
+    "postalCode": "5000",
+    "lat": 45.9555094,
+    "lon": 13.6572042,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "05 335 49 17"
+  },
+  {
+    "spId": "1370",
+    "name": "Restavracija Interspar Vič",
+    "city": "Ljubljana",
+    "address": "Jamova 105",
+    "postalCode": "1000",
+    "lat": 46.03967798,
+    "lon": 14.47670298,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "student_benefits",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2040",
+    "name": "Restavracija Kitajska palača",
+    "city": "Maribor",
+    "address": "Focheva ulica 41",
+    "postalCode": "2000",
+    "lat": 46.5453657,
+    "lon": 15.643939,
+    "mealPrice": 8.3,
+    "supplementPrice": 3.11,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 620 96 18"
+  },
+  {
+    "spId": "2775",
+    "name": "Restavracija Kitajska palača - DOSTAVA",
+    "city": "Maribor",
+    "address": "Focheva ulica 41",
+    "postalCode": "2000",
+    "lat": 46.5453657,
+    "lon": 15.643939,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 620 96 18"
+  },
+  {
+    "spId": "1768",
+    "name": "Restavracija klub Cankarjevega doma",
+    "city": "Ljubljana",
+    "address": "Prešernova cesta 10",
+    "postalCode": "1000",
+    "lat": 46.0500434,
+    "lon": 14.4988365,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1263",
+    "name": "Restavracija Kolodvorska",
+    "city": "Velenje",
+    "address": "Cesta talcev 37",
+    "postalCode": "3320",
+    "lat": 46.3633644,
+    "lon": 15.1037539,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 898 71 70"
+  },
+  {
+    "spId": "3096",
+    "name": "Restavracija Kompliment",
+    "city": "Škofja Loka",
+    "address": "Kidričeva cesta 75",
+    "postalCode": "4220",
+    "lat": 46.170667,
+    "lon": 14.342255,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1713",
+    "name": "Restavracija Letališka",
+    "city": "Ljubljana",
+    "address": "Letališka cesta 15",
+    "postalCode": "1000",
+    "lat": 46.0619631,
+    "lon": 14.5525533,
+    "mealPrice": 6.8,
+    "supplementPrice": 1.61,
+    "rating": 5,
+    "features": [
+      "salad_bar",
+      "student_benefits",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2085",
+    "name": "Restavracija Mango",
+    "city": "Maribor",
+    "address": "Turnerjeva ulica 17",
+    "postalCode": "2000",
+    "lat": 46.56316907,
+    "lon": 15.62965699,
+    "mealPrice": 8.44,
+    "supplementPrice": 3.25,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "031 374 375"
+  },
+  {
+    "spId": "2649",
+    "name": "Restavracija McDonalds - Citycenter Celje",
+    "city": "Celje",
+    "address": "Mariborska cesta 100",
+    "postalCode": "3000",
+    "lat": 46.2419031,
+    "lon": 15.2774074,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 620 98 01"
+  },
+  {
+    "spId": "2759",
+    "name": "Restavracija McDonalds - Ptuj",
+    "city": "Ptuj",
+    "address": "Ormoška cesta 3",
+    "postalCode": "2250",
+    "lat": 46.41889598,
+    "lon": 15.8771082,
+    "mealPrice": 7.8,
+    "supplementPrice": 2.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "250 12 38"
+  },
+  {
+    "spId": "3144",
+    "name": "Restavracija Mensana",
+    "city": "Murska Sobota",
+    "address": "Slomškova ulica 49",
+    "postalCode": "9000",
+    "lat": 46.6579914,
+    "lon": 16.1638527,
+    "mealPrice": 8.2,
+    "supplementPrice": 3.01,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": "02 521 42 32"
+  },
+  {
+    "spId": "3236",
+    "name": "Restavracija Menza IJS",
+    "city": "Ljubljana",
+    "address": "Jamova cesta 39",
+    "postalCode": "1000",
+    "lat": 46.0428394,
+    "lon": 14.4876334,
+    "mealPrice": 8.2,
+    "supplementPrice": 3.01,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2721",
+    "name": "Restavracija Modri kvadrat",
+    "city": "Ljubljana",
+    "address": "Davčna ulica 1",
+    "postalCode": "1000",
+    "lat": 46.0650084,
+    "lon": 14.5268284,
+    "mealPrice": 8.5,
+    "supplementPrice": 3.31,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3358",
+    "name": "Restavracija Moysushi",
+    "city": "Ljubljana",
+    "address": "Mestni trg 17",
+    "postalCode": "1000",
+    "lat": 46.0489118,
+    "lon": 14.5060514,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1382",
+    "name": "Restavracija Mozart",
+    "city": "Ljubljana",
+    "address": "Stegne 7",
+    "postalCode": "1000",
+    "lat": 46.0816492,
+    "lon": 14.486736,
+    "mealPrice": 8.5,
+    "supplementPrice": 3.31,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3172",
+    "name": "Restavracija Mozart P.E. Ekonomska fakulteta",
+    "city": "Ljubljana",
+    "address": "Kardeljeva ploščad 17",
+    "postalCode": "1000",
+    "lat": 46.0740168,
+    "lon": 14.516449,
+    "mealPrice": 8.5,
+    "supplementPrice": 3.31,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3049",
+    "name": "Restavracija Mr.Falafel",
+    "city": "Maribor",
+    "address": "Gosposka ulica 30",
+    "postalCode": "2000",
+    "lat": 46.5598616,
+    "lon": 15.6467848,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3179",
+    "name": "Restavracija OAZA Pef",
+    "city": "Ljubljana",
+    "address": "Kardeljeva ploščad 16",
+    "postalCode": "1000",
+    "lat": 46.0754157,
+    "lon": 14.5179893,
+    "mealPrice": 7.99,
+    "supplementPrice": 2.8,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "student_benefits",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3241",
+    "name": "Restavracija Pergola",
+    "city": "Izola",
+    "address": "Tomažičeva ulica 10",
+    "postalCode": "6310",
+    "lat": 45.5328016,
+    "lon": 13.6510231,
+    "mealPrice": 8.4,
+    "supplementPrice": 3.21,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "05 66 07 421"
+  },
+  {
+    "spId": "3240",
+    "name": "Restavracija PF, Pravna fakulteta",
+    "city": "Ljubljana",
+    "address": "Poljanski nasip 2",
+    "postalCode": "1000",
+    "lat": 46.0515247,
+    "lon": 14.5110994,
+    "mealPrice": 8.62,
+    "supplementPrice": 3.43,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3396",
+    "name": "Restavracija Piano",
+    "city": "Maribor",
+    "address": "Koroška cesta 160",
+    "postalCode": "2000",
+    "lat": 46.563898,
+    "lon": 15.6239313,
+    "mealPrice": 8.24,
+    "supplementPrice": 3.05,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3376",
+    "name": "Restavracija pizza Bella Napoli",
+    "city": "Ljubljana",
+    "address": "Moskovska ulica 11",
+    "postalCode": "1000",
+    "lat": 46.065363,
+    "lon": 14.55022,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1360",
+    "name": "Restavracija Plečnikov hram",
+    "city": "Ljubljana",
+    "address": "Trg francoske revolucije 2",
+    "postalCode": "1000",
+    "lat": 46.0470781,
+    "lon": 14.5034063,
+    "mealPrice": 8.8,
+    "supplementPrice": 3.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2180",
+    "name": "Restavracija Prestige catering, GZS",
+    "city": "Ljubljana",
+    "address": "Dimičeva ulica 13",
+    "postalCode": "1000",
+    "lat": 46.0715896,
+    "lon": 14.5148274,
+    "mealPrice": 7.74,
+    "supplementPrice": 2.55,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1321",
+    "name": "Restavracija Rdeče jabolko",
+    "city": "Ljubljana",
+    "address": "Tržaška 116",
+    "postalCode": "1000",
+    "lat": 46.0398978,
+    "lon": 14.4730179,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2884",
+    "name": "Restavracija sarajevskih jedi Valter Jesenice",
+    "city": "Jesenice",
+    "address": "Cesta Maršala Tita 106",
+    "postalCode": "4270",
+    "lat": 46.441619,
+    "lon": 14.0390784,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2520",
+    "name": "Restavracija Shaolin",
+    "city": "Ljubljana",
+    "address": "Hacquetova 5",
+    "postalCode": "1000",
+    "lat": 46.0606245,
+    "lon": 14.5146389,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1367",
+    "name": "Restavracija Skriti kot",
+    "city": "Ljubljana",
+    "address": "Ajdovščina 4",
+    "postalCode": "1000",
+    "lat": 46.0537029,
+    "lon": 14.5049926,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1298",
+    "name": "Restavracija Splošne bolnišnice Novo mesto",
+    "city": "Novo Mesto",
+    "address": "Šmihelska cesta 1",
+    "postalCode": "8000",
+    "lat": 45.8002373,
+    "lon": 15.1630024,
+    "mealPrice": 7,
+    "supplementPrice": 1.81,
+    "rating": 5,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "07 3916182"
+  },
+  {
+    "spId": "3231",
+    "name": "Restavracija študentski dom 16",
+    "city": "Maribor",
+    "address": "Gosposvetska cesta 89",
+    "postalCode": "2000",
+    "lat": 46.5646783,
+    "lon": 15.6235584,
+    "mealPrice": 8.4,
+    "supplementPrice": 3.21,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch"
+    ],
+    "phone": "02 228 42 00"
+  },
+  {
+    "spId": "3156",
+    "name": "Restavracija Vrtnica",
+    "city": "Nova Gorica",
+    "address": "Kidričeva ulica 11",
+    "postalCode": "5000",
+    "lat": 45.9575994,
+    "lon": 13.6489258,
+    "mealPrice": 8.02,
+    "supplementPrice": 2.83,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": "05 398 55 55"
+  },
+  {
+    "spId": "3324",
+    "name": "Restavracija Zadružnik Kozje",
+    "city": "Kozje",
+    "address": "Kozje 141a",
+    "postalCode": "3260",
+    "lat": 46.0733211,
+    "lon": 15.5596719,
+    "mealPrice": 7.22,
+    "supplementPrice": 2.03,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 800 27 72"
+  },
+  {
+    "spId": "3323",
+    "name": "Restavracija Zadružnik Šmarje",
+    "city": "Šmarje Pri Jelšah",
+    "address": "Obrtniška ulica 3",
+    "postalCode": "3240",
+    "lat": 46.2298904,
+    "lon": 15.5239915,
+    "mealPrice": 7.22,
+    "supplementPrice": 2.03,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "03 818 18 44"
+  },
+  {
+    "spId": "3336",
+    "name": "Restavracija Zeleni Park",
+    "city": "Koper",
+    "address": "Cesta Zore Perello - Godina 2",
+    "postalCode": "6000",
+    "lat": 45.5447737,
+    "lon": 13.7269309,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "070 338 058"
+  },
+  {
+    "spId": "2698",
+    "name": "Restavracija Zlata sreča",
+    "city": "Maribor",
+    "address": "Metelkova ulica 29",
+    "postalCode": "2000",
+    "lat": 46.543881,
+    "lon": 15.638065,
+    "mealPrice": 8.16,
+    "supplementPrice": 2.97,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 33 21 565"
+  },
+  {
+    "spId": "3289",
+    "name": "Rex",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 123",
+    "postalCode": "1000",
+    "lat": 46.0759414,
+    "lon": 14.5094681,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3220",
+    "name": "RIKŠA CURRY&WOK",
+    "city": "Ljubljana",
+    "address": "Resljeva cesta 1",
+    "postalCode": "1000",
+    "lat": 46.0523157,
+    "lon": 14.5100928,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2739",
+    "name": "Roza slon",
+    "city": "Ljubljana",
+    "address": "Trg OF 14",
+    "postalCode": "1000",
+    "lat": 46.0574435,
+    "lon": 14.5087523,
+    "mealPrice": 7.82,
+    "supplementPrice": 2.63,
+    "rating": 5,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2859",
+    "name": "Roza slon Bežigrad",
+    "city": "Ljubljana",
+    "address": "Dunajska 115",
+    "postalCode": "1000",
+    "lat": 46.07502,
+    "lon": 14.51101,
+    "mealPrice": 7.82,
+    "supplementPrice": 2.63,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3225",
+    "name": "Roza slon BTC",
+    "city": "Ljubljana",
+    "address": "Kajuhova 32/R",
+    "postalCode": "1000",
+    "lat": 46.0577638,
+    "lon": 14.5403399,
+    "mealPrice": 7.82,
+    "supplementPrice": 2.63,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3224",
+    "name": "Roza slon Vič",
+    "city": "Ljubljana",
+    "address": "Tržaška cesta 116",
+    "postalCode": "1000",
+    "lat": 46.0399968,
+    "lon": 14.4724761,
+    "mealPrice": 7.82,
+    "supplementPrice": 2.63,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3072",
+    "name": "Ruby food",
+    "city": "Ljubljana",
+    "address": "Igriška ulica 5",
+    "postalCode": "1000",
+    "lat": 46.0480819,
+    "lon": 14.4993023,
+    "mealPrice": 8.14,
+    "supplementPrice": 2.95,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2781",
+    "name": "Samopostrežna restavracija Stolpič",
+    "city": "Celje",
+    "address": "Mariborska cesta 7",
+    "postalCode": "3000",
+    "lat": 46.23373698,
+    "lon": 15.26778821,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "031 796 556"
+  },
+  {
+    "spId": "3340",
+    "name": "SB Nova Gorica",
+    "city": "Šempeter Pri Gorici",
+    "address": "Ulica padlih borcev 13a",
+    "postalCode": "5290",
+    "lat": 45.9292957,
+    "lon": 13.6420086,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3365",
+    "name": "Shaolin",
+    "city": "Ljubljana",
+    "address": "Hacquetova ulica 5",
+    "postalCode": "1000",
+    "lat": 46.0606314,
+    "lon": 14.5146277,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3395",
+    "name": "Skalina",
+    "city": "Maribor",
+    "address": "Vrbanska cesta 30",
+    "postalCode": "2000",
+    "lat": 46.569165,
+    "lon": 15.6340217,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": null,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": "059 092 299"
+  },
+  {
+    "spId": "3069",
+    "name": "Splošna bolnišnica Brežice",
+    "city": "Brežice",
+    "address": "Černelčeva cesta 15",
+    "postalCode": "8250",
+    "lat": 45.9084904,
+    "lon": 15.5935718,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2641",
+    "name": "Splošna bolnišnica Izola",
+    "city": "Izola",
+    "address": "Polje 40",
+    "postalCode": "6310",
+    "lat": 45.5444241,
+    "lon": 13.6870967,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2263",
+    "name": "Srednja šola Izola - Scuola media Isola",
+    "city": "Izola",
+    "address": "Prekomorskih brigad 7",
+    "postalCode": "6310",
+    "lat": 45.5352121,
+    "lon": 13.6583605,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2569",
+    "name": "Stari Grill",
+    "city": "Maribor",
+    "address": "Glavni trg 5",
+    "postalCode": "2000",
+    "lat": 46.5573679,
+    "lon": 15.6450408,
+    "mealPrice": 8.2,
+    "supplementPrice": 3.01,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 250 23 00"
+  },
+  {
+    "spId": "3265",
+    "name": "Subway - Bavarc",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 56",
+    "postalCode": "1000",
+    "lat": 46.0561633,
+    "lon": 14.5062507,
+    "mealPrice": 7.24,
+    "supplementPrice": 2.05,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2714",
+    "name": "Subway - Center",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 1",
+    "postalCode": "1000",
+    "lat": 46.0469188,
+    "lon": 14.5009328,
+    "mealPrice": 7.24,
+    "supplementPrice": 2.05,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2389",
+    "name": "Subway Bežigrad",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 107",
+    "postalCode": "1000",
+    "lat": 46.0589662,
+    "lon": 14.5064647,
+    "mealPrice": 7.1,
+    "supplementPrice": 1.91,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2988",
+    "name": "Subway BTC",
+    "city": "Ljubljana",
+    "address": "Ameriška ulica 13",
+    "postalCode": "1000",
+    "lat": 46.0681081,
+    "lon": 14.5420462,
+    "mealPrice": 7.1,
+    "supplementPrice": 1.91,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3374",
+    "name": "SUBWAY KOPER",
+    "city": "Koper",
+    "address": "Ankaranska cesta 2",
+    "postalCode": "6000",
+    "lat": 45.5399829,
+    "lon": 13.7356181,
+    "mealPrice": 7.1,
+    "supplementPrice": 1.91,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3363",
+    "name": "Šavirma",
+    "city": "Ljubljana",
+    "address": "Štefanova ulica 5",
+    "postalCode": "1000",
+    "lat": 46.0532954,
+    "lon": 14.5028936,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2092",
+    "name": "Šeherezada",
+    "city": "Ljubljana",
+    "address": "Trubarjeva cesta 31",
+    "postalCode": "1000",
+    "lat": 46.0525259,
+    "lon": 14.5098328,
+    "mealPrice": 7.74,
+    "supplementPrice": 2.55,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3159",
+    "name": "Šeherezada 2",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 55",
+    "postalCode": "1000",
+    "lat": 46.0563837,
+    "lon": 14.5050602,
+    "mealPrice": 7.74,
+    "supplementPrice": 2.55,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1841",
+    "name": "ŠENDTVIČ",
+    "city": "Ljubljana - Šentvid",
+    "address": "Prušnikova ulica 87",
+    "postalCode": "1210",
+    "lat": 46.0965362,
+    "lon": 14.4663388,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3329",
+    "name": "Šiš okrepčevalnica",
+    "city": "Maribor",
+    "address": "Usnjarska ulica 5",
+    "postalCode": "2000",
+    "lat": 46.5565608,
+    "lon": 15.6470526,
+    "mealPrice": 8.52,
+    "supplementPrice": 3.33,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "coeliac_friendly",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 62 12 299"
+  },
+  {
+    "spId": "2523",
+    "name": "Športni bar SLOVAN",
+    "city": "Ljubljana",
+    "address": "Gortanova 21",
+    "postalCode": "1000",
+    "lat": 46.0503594,
+    "lon": 14.5332075,
+    "mealPrice": 6.9,
+    "supplementPrice": 1.71,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2213",
+    "name": "Študentski dom Ljubljana - Restavracija",
+    "city": "Ljubljana",
+    "address": "Svetčeva ulica 9",
+    "postalCode": "1000",
+    "lat": 46.051935,
+    "lon": 14.487097,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "01 242 10 17"
+  },
+  {
+    "spId": "3202",
+    "name": "Taverna Palermo",
+    "city": "Maribor",
+    "address": "Ulica Heroja Nandeta 31",
+    "postalCode": "2000",
+    "lat": 46.5326581,
+    "lon": 15.673326,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 426 03 15"
+  },
+  {
+    "spId": "3203",
+    "name": "Taverna Palermo - DOSTAVA",
+    "city": "Maribor",
+    "address": "Ulica Heroja Nandeta 31",
+    "postalCode": "2000",
+    "lat": 46.5326581,
+    "lon": 15.673326,
+    "mealPrice": 8.76,
+    "supplementPrice": 3.57,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "delivery",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "02 426 0315"
+  },
+  {
+    "spId": "3288",
+    "name": "The Place",
+    "city": "Ljubljana",
+    "address": "Plečnikov trg 1",
+    "postalCode": "1000",
+    "lat": 46.0502698,
+    "lon": 14.5023394,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3380",
+    "name": "Top Pizza",
+    "city": "Ljubljana",
+    "address": "Igriška ulica 5",
+    "postalCode": "1000",
+    "lat": 46.0479857,
+    "lon": 14.4994886,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3253",
+    "name": "Tvoj Chef Restavracija",
+    "city": "Zagorje Ob Savi",
+    "address": "Cesta 9. avgusta 8c",
+    "postalCode": "1410",
+    "lat": 46.1344219,
+    "lon": 14.9952803,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3398",
+    "name": "U Sushi",
+    "city": "Maribor",
+    "address": "Tržaška cesta 65",
+    "postalCode": "2000",
+    "lat": 46.5243897,
+    "lon": 15.6501642,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1262",
+    "name": "UFO",
+    "city": "Ljubljana",
+    "address": "Svetčeva ulica 14",
+    "postalCode": "1000",
+    "lat": 46.051198,
+    "lon": 14.4867877,
+    "mealPrice": 8.19,
+    "supplementPrice": 3,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3328",
+    "name": "URNEBES URBAN GRILL",
+    "city": "Maribor",
+    "address": "Koroška cesta 20",
+    "postalCode": "2000",
+    "lat": 46.5580414,
+    "lon": 15.6425647,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 5,
+    "features": [
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3226",
+    "name": "Uršin bistro",
+    "city": "Ljubljana",
+    "address": "Poljanska 22",
+    "postalCode": "1000",
+    "lat": 46.049579,
+    "lon": 14.5168208,
+    "mealPrice": 8.8,
+    "supplementPrice": 3.61,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3356",
+    "name": "Vegetarijanska in veganska restavracija Jamuna",
+    "city": "Ljubljana",
+    "address": "Ajdovščina 4",
+    "postalCode": "1000",
+    "lat": 46.0535524,
+    "lon": 14.5052844,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1339",
+    "name": "Vegetarijanska restavracija Radha Govinda",
+    "city": "Ljubljana",
+    "address": "Žibretova 23",
+    "postalCode": "1000",
+    "lat": 46.062892,
+    "lon": 14.4989731,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3141",
+    "name": "Verdi Ptuj",
+    "city": "Ptuj",
+    "address": "Ormoška cesta 15",
+    "postalCode": "2250",
+    "lat": 46.4186013,
+    "lon": 15.8791007,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3348",
+    "name": "Vila de Casa Cafe",
+    "city": "Ljubljana",
+    "address": "Gosarjeva ulica 5",
+    "postalCode": "1000",
+    "lat": 46.0746073,
+    "lon": 14.515152,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3117",
+    "name": "Vino & ribe Aleja",
+    "city": "Ljubljana",
+    "address": "Rakuševa ulica 1",
+    "postalCode": "1000",
+    "lat": 46.0782899,
+    "lon": 14.4836777,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3201",
+    "name": "Vino & ribe Rudnik",
+    "city": "Ljubljana",
+    "address": "Jurčkova cesta 223",
+    "postalCode": "1000",
+    "lat": 46.0218387,
+    "lon": 14.5359136,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2742",
+    "name": "VIVO D125",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 125",
+    "postalCode": "1000",
+    "lat": 46.0764534,
+    "lon": 14.5115361,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3304",
+    "name": "Vrt bambus",
+    "city": "Ljubljana",
+    "address": "Podutiška cesta 56",
+    "postalCode": "1000",
+    "lat": 46.0710655,
+    "lon": 14.4706026,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3386",
+    "name": "WHITE SWAN dumpling",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 3",
+    "postalCode": "1000",
+    "lat": 46.0472334,
+    "lon": 14.5010625,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3384",
+    "name": "WHITE SWAN fast  food",
+    "city": "Ljubljana",
+    "address": "Dunajska cesta 107",
+    "postalCode": "1000",
+    "lat": 46.0743177,
+    "lon": 14.5108713,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3383",
+    "name": "WHITE SWAN fast food",
+    "city": "Ljubljana",
+    "address": "Kolodvorska ulica 20",
+    "postalCode": "1000",
+    "lat": 46.056892,
+    "lon": 14.5104298,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3385",
+    "name": "WHITE SWAN poke bowl",
+    "city": "Ljubljana",
+    "address": "Miklošičeva cesta 22",
+    "postalCode": "1000",
+    "lat": 46.0546355,
+    "lon": 14.5075148,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3078",
+    "name": "WOK MIX center",
+    "city": "Maribor",
+    "address": "Vetrinjska ulic 15",
+    "postalCode": "2000",
+    "lat": 46.5593704,
+    "lon": 15.647724,
+    "mealPrice": 7.14,
+    "supplementPrice": 1.95,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3273",
+    "name": "Wok&Roll",
+    "city": "Celje",
+    "address": "Mariborska cesta 1",
+    "postalCode": "3000",
+    "lat": 46.232335,
+    "lon": 15.2665865,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "031 609 792"
+  },
+  {
+    "spId": "3345",
+    "name": "WOOP! arena",
+    "city": "Ljubljana",
+    "address": "Moskovska ulica 10",
+    "postalCode": "1000",
+    "lat": 46.06548,
+    "lon": 14.5479606,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3355",
+    "name": "Yimi azijska restavracija",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 55",
+    "postalCode": "1000",
+    "lat": 46.056112,
+    "lon": 14.5050148,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3258",
+    "name": "Yuko",
+    "city": "Ljubljana",
+    "address": "Prešernova cesta 15",
+    "postalCode": "1000",
+    "lat": 46.0497279,
+    "lon": 14.4974415,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3254",
+    "name": "Zamaro",
+    "city": "Ljubljana",
+    "address": "Topniška ulica 29a",
+    "postalCode": "1000",
+    "lat": 46.0676359,
+    "lon": 14.5113473,
+    "mealPrice": 7.74,
+    "supplementPrice": 2.55,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "salad_bar",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2952",
+    "name": "Zbornica bar in žar",
+    "city": "Ljubljana",
+    "address": "Rimska cesta 13",
+    "postalCode": "1000",
+    "lat": 46.047428,
+    "lon": 14.4998576,
+    "mealPrice": 9,
+    "supplementPrice": 3.81,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3303",
+    "name": "Zmajevo mesto",
+    "city": "Novo Mesto",
+    "address": "Šentjernejska cesta 6",
+    "postalCode": "8000",
+    "lat": 45.7996462,
+    "lon": 15.1821621,
+    "mealPrice": 8,
+    "supplementPrice": 2.81,
+    "rating": 3,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2993",
+    "name": "Znanstvena kavarna Mafija",
+    "city": "Ljubljana",
+    "address": "Jadranska ulica 21",
+    "postalCode": "1000",
+    "lat": 46.0419603,
+    "lon": 14.4899295,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "wheelchair",
+      "lunch"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3325",
+    "name": "Žito Celje Prešernova",
+    "city": "Celje",
+    "address": "Prešernova ulica 25",
+    "postalCode": "3000",
+    "lat": 46.229278,
+    "lon": 15.2623491,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "03 757 34 65"
+  },
+  {
+    "spId": "2009",
+    "name": "Žito Koper",
+    "city": "Koper",
+    "address": "Pristaniška ulica 2",
+    "postalCode": "6000",
+    "lat": 45.546168,
+    "lon": 13.725994,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": "05 627 16 55"
+  },
+  {
+    "spId": "2956",
+    "name": "Žito Leon Štukelj Maribor",
+    "city": "Maribor",
+    "address": "Trg Leona Štuklja 1",
+    "postalCode": "2000",
+    "lat": 46.5592387,
+    "lon": 15.6484212,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "02 250 69 48"
+  },
+  {
+    "spId": "2771",
+    "name": "ŽITO Ljubljana Bavarski dvor",
+    "city": "Ljubljana",
+    "address": "Slovenska cesta 58",
+    "postalCode": "1000",
+    "lat": 46.0569106,
+    "lon": 14.505859,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "3320",
+    "name": "ŽITO Ljubljana Kolodvorska",
+    "city": "Ljubljana",
+    "address": "Kolodvorska 3",
+    "postalCode": "1000",
+    "lat": 46.0548976,
+    "lon": 14.5087739,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "1791",
+    "name": "ŽITO Ljubljana Vodnik",
+    "city": "Ljubljana",
+    "address": "Vodnikov trg 5",
+    "postalCode": "1000",
+    "lat": 46.0506123,
+    "lon": 14.5092262,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2535",
+    "name": "ŽITO Ljubljana železniška (kolodvor)",
+    "city": "Ljubljana",
+    "address": "Trg OF 7",
+    "postalCode": "1000",
+    "lat": 46.0579939,
+    "lon": 14.5114823,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch",
+      "open_weekends"
+    ],
+    "phone": null
+  },
+  {
+    "spId": "2322",
+    "name": "Žito Maribor Trg revolucije",
+    "city": "Maribor",
+    "address": "Trg revolucije 2",
+    "postalCode": "2000",
+    "lat": 46.554224,
+    "lon": 15.6461698,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 4,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": "02 773 95 87"
+  },
+  {
+    "spId": "3343",
+    "name": "ŽITO Postojna",
+    "city": "Postojna",
+    "address": "Novi trg 7B",
+    "postalCode": "6230",
+    "lat": 45.7734925,
+    "lon": 14.2123283,
+    "mealPrice": 5.19,
+    "supplementPrice": 0,
+    "rating": 5,
+    "features": [
+      "vegetarian",
+      "lunch"
+    ],
+    "phone": null
+  }
+]

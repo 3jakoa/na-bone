@@ -33,7 +33,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
     const supabase = createClient();
     const swipedAt = new Date().toISOString();
     const { error } = await supabase
-      .from("swipes")
+      .from("profile_swipes")
       .upsert(
         {
           swiper_id: myProfileId,
@@ -54,7 +54,7 @@ export default function SwipeDeck({ profiles, myProfile }: Props) {
 
     if (direction === "right") {
       const { data: match } = await supabase
-        .from("matches")
+        .from("buddy_matches")
         .select("id")
         .or(
           `and(user1_id.eq.${myProfileId},user2_id.eq.${profile.id}),and(user1_id.eq.${profile.id},user2_id.eq.${myProfileId})`

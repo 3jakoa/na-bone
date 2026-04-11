@@ -21,9 +21,8 @@ export default async function MatchChatPage({ params }: Props) {
 
   if (!myProfile) redirect("/onboarding");
 
-  // Verify this match belongs to current user
   const { data: match } = await supabase
-    .from("matches")
+    .from("buddy_matches")
     .select("*")
     .eq("id", matchId)
     .or(`user1_id.eq.${myProfile.id},user2_id.eq.${myProfile.id}`)
@@ -42,19 +41,29 @@ export default async function MatchChatPage({ params }: Props) {
   if (!otherProfile) redirect("/matches");
 
   const { data: messages } = await supabase
-    .from("messages")
+    .from("chat_messages")
     .select("*")
     .eq("match_id", matchId)
     .order("created_at", { ascending: true });
 
-  const { data: activeBone } = await supabase
-    .from("bones")
+  // Prioritize accepted bone, then open
+  const { data: acceptedBone } = await supabase
+    .from("meal_invites")
     .select("*")
     .eq("match_id", matchId)
-    .in("status", ["open", "accepted"])
+    .eq("status", "accepted")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  const activeBone = acceptedBone ?? (await supabase
+    .from("meal_invites")
+    .select("*")
+    .eq("match_id", matchId)
+    .eq("status", "open")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle()).data;
 
   return (
     <ChatView

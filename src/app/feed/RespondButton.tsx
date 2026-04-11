@@ -13,7 +13,7 @@ export default function RespondButton({ boneId }: { boneId: string }) {
 
   async function respond() {
     setLoading(true);
-    const { data, error } = await supabase.rpc("respond_to_public_bone", {
+    const { data, error } = await (supabase.rpc as any)("respond_to_public_bone", {
       p_bone_id: boneId,
     });
     setLoading(false);

@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Utensils } from "lucide-react";
+import { Utensils, Star, MapPin, Clock } from "lucide-react";
 import RespondButton from "./RespondButton";
 import CreatePublicBoneButton from "./CreatePublicBoneButton";
+import { formatScheduledDate } from "@/lib/formatDate";
+import type { RestaurantInfo } from "@/lib/supabase/types";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +23,12 @@ export default async function FeedPage() {
   if (!myProfile) redirect("/onboarding");
 
   const { data: bones } = await supabase
-    .from("bones")
-    .select("id, user_id, restaurant, scheduled_at, note, created_at")
+    .from("meal_invites")
+    .select("*")
     .eq("visibility", "public")
     .eq("status", "open")
-    .order("created_at", { ascending: false })
+    .gte("scheduled_at", new Date().toISOString())
+    .order("scheduled_at", { ascending: true })
     .limit(100);
 
   const authorIds = Array.from(new Set((bones ?? []).map((b) => b.user_id)));
@@ -34,9 +37,14 @@ export default async function FeedPage() {
         .from("profiles")
         .select("id, name, photos, faculty, university, city")
         .in("id", authorIds)
-    : { data: [] as { id: string; name: string; photos: string[]; faculty: string; university: string; city: string }[] };
+    : { data: [] as any[] };
+  const authorMap = new Map((authors ?? []).map((a: any) => [a.id, a]));
 
-  const authorMap = new Map((authors ?? []).map((a) => [a.id, a]));
+  // Fetch restaurant details for fallback (when restaurant_info is null)
+  const { data: allRests } = await supabase
+    .from("restaurants")
+    .select("name, address, city, supplement_price, meal_price, rating");
+  const restMap = new Map((allRests ?? []).map((r: any) => [r.name, r]));
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-10 pb-24">
@@ -62,8 +70,10 @@ export default async function FeedPage() {
             const author = authorMap.get(bone.user_id);
             if (!author) return null;
             const isMine = bone.user_id === myProfile.id;
+            const ri: RestaurantInfo | null = (bone as any).restaurant_info ?? restMap.get(bone.restaurant) ?? null;
             return (
               <div key={bone.id} className="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-3">
+                {/* Author */}
                 <div className="flex items-center gap-3">
                   <Avatar className="w-12 h-12 shrink-0 ring-2 ring-white shadow">
                     <AvatarImage src={author.photos[0]} />
@@ -78,18 +88,53 @@ export default async function FeedPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-start gap-2 text-sm">
-                  <Utensils className="w-4 h-4 text-brand mt-0.5 shrink-0" />
-                  <div className="min-w-0">
-                    <div className="font-semibold text-gray-900 truncate">{bone.restaurant}</div>
-                    <div className="text-xs text-gray-500">
-                      {new Date(bone.scheduled_at).toLocaleString("sl-SI")}
-                    </div>
-                    {bone.note && (
-                      <div className="text-xs text-gray-600 mt-1">{bone.note}</div>
+
+                {/* Restaurant */}
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <Utensils className="w-4 h-4 text-brand shrink-0" />
+                    <span className="font-semibold text-gray-900">{bone.restaurant}</span>
+                    {ri?.rating != null && (ri.rating as number) > 0 && (
+                      <span className="flex items-center gap-0.5 text-amber-500">
+                        <Star className="w-3 h-3 fill-amber-400" />
+                        <span className="text-xs font-semibold">{ri.rating}</span>
+                      </span>
                     )}
                   </div>
+                  {ri && (ri.address || ri.city) && (
+                    <div className="flex items-center gap-1 ml-5.5 mt-0.5">
+                      <MapPin className="w-3 h-3 text-gray-400 shrink-0" />
+                      <span className="text-xs text-gray-400">
+                        {[ri.address, ri.city].filter(Boolean).join(", ")}
+                      </span>
+                    </div>
+                  )}
+                  {ri?.supplement_price != null && (
+                    <div className="flex items-center gap-2 ml-5.5 mt-0.5">
+                      <span className="text-xs font-semibold text-green-600">
+                        {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
+                      </span>
+                      {ri.meal_price != null && (
+                        <span className="text-xs text-gray-400">
+                          (cena obroka {Number(ri.meal_price).toFixed(2)})
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
+
+                {/* Date/Time */}
+                <div className="flex items-center gap-1.5 bg-brand-light/60 rounded-lg px-3 py-1.5 self-start">
+                  <Clock className="w-3.5 h-3.5 text-brand shrink-0" />
+                  <span className="text-sm font-semibold text-brand-dark">
+                    {formatScheduledDate(bone.scheduled_at)}
+                  </span>
+                </div>
+
+                {bone.note && (
+                  <p className="text-sm text-gray-600">{bone.note}</p>
+                )}
+
                 {!isMine && <RespondButton boneId={bone.id} />}
                 {isMine && (
                   <span className="text-xs text-gray-400 italic">Tvoj javni bone</span>
