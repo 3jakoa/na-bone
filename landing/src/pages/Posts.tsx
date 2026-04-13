@@ -15,7 +15,7 @@ import {
   type RestaurantInfo,
 } from "../supabase";
 
-const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.bonibuddy.si";
+const APP_URL = import.meta.env.VITE_APP_URL ?? "https://bonibuddy.app";
 
 type FeedItem = PublicBone & { author?: PublicAuthor };
 

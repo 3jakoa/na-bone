@@ -17,7 +17,7 @@ import {
   X,
 } from "lucide-react";
 
-const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.bonibuddy.si";
+const APP_URL = import.meta.env.VITE_APP_URL ?? "https://bonibuddy.app";
 
 export default function Home() {
   return (
