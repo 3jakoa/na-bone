@@ -28,15 +28,19 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const isAuthPage = request.nextUrl.pathname.startsWith("/auth");
+  const isOAuthCallback = request.nextUrl.pathname === "/auth/callback";
   const isPublicPage = request.nextUrl.pathname === "/";
+
 
   if (!user && !isAuthPage && !isPublicPage) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  if (user && (isAuthPage || isPublicPage)) {
-    return NextResponse.redirect(new URL("/discover", request.url));
+  // Never redirect away from /auth/callback — it must run to exchange the OAuth code.
+  if (user && (isAuthPage || isPublicPage) && !isOAuthCallback) {
+  return NextResponse.redirect(new URL("/discover", request.url));
   }
+
 
   return supabaseResponse;
 }
