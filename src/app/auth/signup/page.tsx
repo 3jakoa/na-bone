@@ -4,15 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { STUDENT_EMAIL_DOMAINS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-
-function isStudentEmail(email: string): boolean {
-  return STUDENT_EMAIL_DOMAINS.some((domain) => email.toLowerCase().endsWith(`@${domain}`));
-}
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -26,11 +22,6 @@ export default function SignupPage() {
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-
-    if (!isStudentEmail(email)) {
-      setError(`Registracija je možna samo s študentskim e-mailom (${STUDENT_EMAIL_DOMAINS.join(", ")})`);
-      return;
-    }
 
     if (password !== confirm) {
       setError("Gesli se ne ujemata.");
@@ -84,8 +75,8 @@ export default function SignupPage() {
       <Card className="w-full max-w-md mx-auto">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">🍽️</div>
-          <CardTitle className="text-2xl font-bold">Na Bone</CardTitle>
-          <CardDescription>Ustvari račun s študentskim e-mailom</CardDescription>
+          <CardTitle className="text-2xl font-bold">Boni Buddy</CardTitle>
+          <CardDescription>Ustvari račun</CardDescription>
         </CardHeader>
         <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">
@@ -95,18 +86,15 @@ export default function SignupPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Študentski e-mail</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="ime.priimek@student.uni-lj.si"
+                placeholder="ime.priimek@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                Podprte domene: {STUDENT_EMAIL_DOMAINS.join(", ")}
-              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Geslo</Label>
@@ -134,6 +122,10 @@ export default function SignupPage() {
             <Button type="submit" className="w-full bg-brand hover:bg-brand-dark rounded-full" disabled={loading}>
               {loading ? "Ustvarjam račun..." : "Registracija"}
             </Button>
+            <div className="flex items-center gap-2 w-full text-xs text-muted-foreground">
+              <div className="flex-1 h-px bg-border" /> ali <div className="flex-1 h-px bg-border" />
+            </div>
+            <GoogleSignInButton />
             <p className="text-sm text-muted-foreground text-center">
               Že imaš račun?{" "}
               <Link href="/auth/login" className="text-brand hover:underline font-medium">

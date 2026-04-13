@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Utensils, UserCheck } from "lucide-react";
+import { Search, Utensils, UserCheck, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/discover", icon: Search, label: "Išči" },
+  { href: "/feed", icon: Globe, label: "Feed" },
   { href: "/matches", icon: Utensils, label: "Buddies" },
   { href: "/profile", icon: UserCheck, label: "Account" },
 ];

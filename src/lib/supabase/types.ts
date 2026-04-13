@@ -15,7 +15,14 @@ export type City =
 
 export type Gender = "moški" | "ženska" | "drugo";
 
-// Row types (what comes back from the database)
+export type RestaurantInfo = {
+  address?: string | null;
+  city?: string | null;
+  rating?: number | null;
+  supplement_price?: number | null;
+  meal_price?: number | null;
+};
+
 export type ProfileRow = {
   id: string;
   user_id: string;
@@ -59,9 +66,28 @@ export type BoneRow = {
   user_id: string;
   match_id: string | null;
   restaurant: string;
+  restaurant_info: RestaurantInfo | null;
   scheduled_at: string;
   note: string | null;
   status: "open" | "accepted" | "declined" | "done";
+  visibility: "public" | "private";
+  created_at: string;
+};
+
+export type RestaurantRow = {
+  id: string;
+  sp_id: number | null;
+  name: string;
+  city: string | null;
+  address: string | null;
+  postal_code: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  supplement_price: number | null;
+  meal_price: number | null;
+  rating: number | null;
+  features: string[] | null;
+  phone: string | null;
   created_at: string;
 };
 
@@ -73,7 +99,6 @@ export type MessageRow = {
   created_at: string;
 };
 
-// Supabase requires Relationships on every table definition
 export type Database = {
   public: {
     Tables: {
@@ -83,28 +108,40 @@ export type Database = {
         Update: Partial<Omit<ProfileRow, "id" | "created_at" | "updated_at">>;
         Relationships: [];
       };
-      swipes: {
+      profile_swipes: {
         Row: SwipeRow;
         Insert: SwipeInsert;
         Update: SwipeUpdate;
         Relationships: [];
       };
-      matches: {
+      buddy_matches: {
         Row: MatchRow;
         Insert: Omit<MatchRow, "id" | "created_at">;
         Update: Partial<Omit<MatchRow, "id" | "created_at">>;
         Relationships: [];
       };
-      bones: {
+      meal_invites: {
         Row: BoneRow;
         Insert: Omit<BoneRow, "id" | "created_at">;
         Update: Partial<Omit<BoneRow, "id" | "created_at">>;
         Relationships: [];
       };
-      messages: {
+      restaurants: {
+        Row: RestaurantRow;
+        Insert: Omit<RestaurantRow, "id" | "created_at">;
+        Update: Partial<Omit<RestaurantRow, "id" | "created_at">>;
+        Relationships: [];
+      };
+      chat_messages: {
         Row: MessageRow;
         Insert: Omit<MessageRow, "id" | "created_at">;
         Update: Partial<Omit<MessageRow, "id" | "created_at">>;
+        Relationships: [];
+      };
+      blocked_users: {
+        Row: { id: string; blocker_id: string; blocked_id: string; created_at: string };
+        Insert: { blocker_id: string; blocked_id: string };
+        Update: never;
         Relationships: [];
       };
     };
@@ -114,9 +151,9 @@ export type Database = {
   };
 };
 
-// Convenience aliases
 export type Profile = ProfileRow;
 export type Swipe = SwipeRow;
 export type Match = MatchRow;
 export type Bone = BoneRow;
+export type Restaurant = RestaurantRow;
 export type Message = MessageRow;
