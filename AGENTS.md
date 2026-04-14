@@ -1,5 +1,9 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# Repo Rules
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+This repo no longer has a root Next.js app. Active code lives in:
+
+- `mobile/` for the Expo React Native app.
+- `landing/` for the Vite React landing page.
+- `supabase/` for database migrations.
+
+Do not create new production app code at the repo root.

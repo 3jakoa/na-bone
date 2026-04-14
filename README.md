@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Boni Buddy
 
-## Getting Started
+This repo now contains the active Boni Buddy products:
 
-First, run the development server:
+- `mobile/` - Expo React Native app for iOS/Android.
+- `landing/` - Vite React landing page and public boni feed.
+- `supabase/` - database migrations.
+
+The old root Next.js web app has been removed. Do not add app code at the repo root.
+
+## Mobile development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd mobile
+npm install
+npx expo start -c
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Use Expo Go or the iOS simulator for day-to-day testing. Use EAS/TestFlight only for release builds and native behaviours such as deep links, Google OAuth edge cases, and notifications.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Landing development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cd landing
+npm install
+npm run dev
+```
 
-## Learn More
+The landing app deploys separately from `landing/`.
 
-To learn more about Next.js, take a look at the following resources:
+## Production build notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Mobile builds use Expo EAS from `mobile/`.
+- Landing builds use Vercel/Vite from `landing/`.
+- The old root Vercel/Next project should stay disabled or ignored.
