@@ -9,14 +9,14 @@ export default function Privacy() {
   const [showBio, setShowBio] = useState(true);
   const [showUni, setShowUni] = useState(true);
 
-  async function deleteAccount() {
+  async function signOut() {
     Alert.alert(
-      "Izbriši račun",
-      "Ali ste prepričani? To dejanje je nepopravljivo.",
+      "Odjava",
+      "Ali se želiš odjaviti iz računa?",
       [
         { text: "Prekliči", style: "cancel" },
         {
-          text: "Izbriši",
+          text: "Odjava",
           style: "destructive",
           onPress: async () => {
             await supabase.auth.signOut();
@@ -60,11 +60,11 @@ export default function Privacy() {
       </View>
 
       <Pressable
-        onPress={deleteAccount}
+        onPress={signOut}
         className="bg-white dark:bg-neutral-900 mx-4 mt-6 rounded-3xl py-4 items-center shadow-sm"
       >
         <Text className="text-red-500 font-semibold text-base">
-          Izbriši račun
+          Odjava
         </Text>
       </Pressable>
 

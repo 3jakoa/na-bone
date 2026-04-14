@@ -20,6 +20,7 @@
 
 # production
 /build
+/landing/dist/
 
 # misc
 .DS_Store

@@ -1,7 +1,26 @@
 import { useState } from "react";
-import { View, Text, Pressable, ScrollView, Linking } from "react-native";
+import { View, Text, Pressable, ScrollView, Linking, Alert } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+
+const SUPPORT_EMAIL = "bonibuddyapp@gmail.com";
+
+async function openEmail(subject?: string) {
+  const url = subject
+    ? `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}`
+    : `mailto:${SUPPORT_EMAIL}`;
+
+  const supported = await Linking.canOpenURL(url);
+  if (!supported) {
+    Alert.alert(
+      "Mail ni na voljo",
+      `V simulatorju pogosto ni nastavljene Mail aplikacije. Piši na ${SUPPORT_EMAIL}.`
+    );
+    return;
+  }
+
+  await Linking.openURL(url);
+}
 
 const FAQ = [
   {
@@ -26,7 +45,7 @@ const FAQ = [
   },
   {
     q: "Kako prijavim neprimerno vsebino?",
-    a: "Piši nam na pomoc@bonibuddy.app z opisom situacije. Vsako prijavo obravnavamo resno.",
+    a: `Piši nam na ${SUPPORT_EMAIL} z opisom situacije. Vsako prijavo obravnavamo resno.`,
   },
   {
     q: "Ali je aplikacija brezplačna?",
@@ -90,8 +109,10 @@ export default function Help() {
           <HelpRow
             icon="mail-outline"
             title="E-mail"
-            subtitle="pomoc@bonibuddy.app"
-            onPress={() => Linking.openURL("mailto:pomoc@bonibuddy.app")}
+            subtitle={SUPPORT_EMAIL}
+            onPress={() => {
+              void openEmail();
+            }}
           />
           <Sep />
           <HelpRow
@@ -113,22 +134,18 @@ export default function Help() {
             icon="bug-outline"
             title="Prijavi napako"
             subtitle="Pomagaj nam izboljšati aplikacijo"
-            onPress={() =>
-              Linking.openURL(
-                "mailto:pomoc@bonibuddy.app?subject=Bug%20Report"
-              )
-            }
+            onPress={() => {
+              void openEmail("Bug Report");
+            }}
           />
           <Sep />
           <HelpRow
             icon="bulb-outline"
             title="Predlagaj funkcijo"
             subtitle="Povej nam kaj si želiš"
-            onPress={() =>
-              Linking.openURL(
-                "mailto:pomoc@bonibuddy.app?subject=Feature%20Request"
-              )
-            }
+            onPress={() => {
+              void openEmail("Feature Request");
+            }}
           />
         </View>
 
