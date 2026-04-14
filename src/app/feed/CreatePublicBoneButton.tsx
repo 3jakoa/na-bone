@@ -90,10 +90,12 @@ export default function CreatePublicBoneButton({ myProfileId }: { myProfileId: s
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" className="bg-brand hover:bg-brand-dark gap-1 shrink-0">
+      <DialogTrigger
+        render={
+          <Button size="sm" className="bg-brand hover:bg-brand-dark gap-1 shrink-0" />
+        }
+      >
           <Plus className="w-4 h-4" /> Nov
-        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
