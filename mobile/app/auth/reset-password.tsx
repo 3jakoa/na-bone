@@ -1,13 +1,41 @@
 import { useEffect, useRef, useState } from "react";
 import { View, Text, TextInput, Pressable, Alert, ActivityIndicator, Image } from "react-native";
 import * as Linking from "expo-linking";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { completeAuthCallbackFromUrl } from "../../lib/auth";
 
+type RouteParams = Record<string, string | string[] | undefined>;
+
+const AUTH_PARAM_KEYS = [
+  "code",
+  "access_token",
+  "refresh_token",
+  "error",
+  "error_code",
+  "error_description",
+];
+
+function getFirstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function buildCallbackUrlFromParams(params: RouteParams) {
+  const searchParams = new URLSearchParams();
+
+  for (const key of AUTH_PARAM_KEYS) {
+    const value = getFirstParam(params[key]);
+    if (value) searchParams.set(key, value);
+  }
+
+  const query = searchParams.toString();
+  return query ? `bonibuddy://auth/reset-password?${query}` : null;
+}
+
 export default function ResetPassword() {
   const incomingUrl = Linking.useURL();
-  const attempted = useRef(false);
+  const routeParams = useLocalSearchParams() as RouteParams;
+  const handledCallback = useRef(false);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState("");
@@ -15,28 +43,59 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (attempted.current) return;
-    attempted.current = true;
+    if (handledCallback.current || ready) return;
 
     (async () => {
-      const url = incomingUrl ?? (await Linking.getInitialURL());
+      const url =
+        incomingUrl ??
+        buildCallbackUrlFromParams(routeParams) ??
+        (await Linking.getInitialURL());
+
       if (url) {
         const result = await completeAuthCallbackFromUrl(url);
         if (!result.ok) {
+          handledCallback.current = true;
           setError(result.error ?? "Povezava za ponastavitev ni veljavna.");
           return;
         }
-      } else {
-        const { data } = await supabase.auth.getSession();
-        if (!data.session) {
-          setError("Odpri povezavo iz e-maila za ponastavitev gesla.");
-          return;
-        }
+
+        handledCallback.current = true;
+        setReady(true);
+        return;
       }
 
-      setReady(true);
+      // iOS can route to this screen before the deep-link URL is available to JS.
+      // Give Linking/useLocalSearchParams a moment before showing an error.
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const delayedUrl =
+        incomingUrl ??
+        buildCallbackUrlFromParams(routeParams) ??
+        (await Linking.getInitialURL());
+
+      if (delayedUrl) {
+        const result = await completeAuthCallbackFromUrl(delayedUrl);
+        if (!result.ok) {
+          handledCallback.current = true;
+          setError(result.error ?? "Povezava za ponastavitev ni veljavna.");
+          return;
+        }
+
+        handledCallback.current = true;
+        setReady(true);
+        return;
+      }
+
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        handledCallback.current = true;
+        setError("Odpri povezavo iz e-maila za ponastavitev gesla.");
+        return;
+      } else {
+        handledCallback.current = true;
+        setReady(true);
+      }
     })();
-  }, [incomingUrl]);
+  }, [incomingUrl, ready, routeParams]);
 
   async function handleUpdatePassword() {
     if (password.length < 8) {
