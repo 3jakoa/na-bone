@@ -16,13 +16,20 @@
       "supportsTablet": false,
       "bundleIdentifier": "si.bonibuddy.app",
       "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Boni Buddy potrebuje dostop do fotografij, da lahko dodaš profilne slike.",
+        "NSCalendarsUsageDescription": "Boni Buddy potrebuje dostop do koledarja, da lahko shraniš dogovorjen bon kot dogodek.",
+        "NSCalendarsFullAccessUsageDescription": "Boni Buddy potrebuje dostop do koledarja, da lahko shraniš dogovorjen bon kot dogodek.",
         "UIBackgroundModes": [
           "remote-notification"
         ]
       }
     },
     "android": {
-      "package": "si.bonibuddy.app"
+      "package": "si.bonibuddy.app",
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "plugins": [
       "expo-router",
