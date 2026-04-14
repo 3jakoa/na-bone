@@ -21,7 +21,8 @@
         "NSCalendarsFullAccessUsageDescription": "Boni Buddy potrebuje dostop do koledarja, da lahko shraniš dogovorjen bon kot dogodek.",
         "UIBackgroundModes": [
           "remote-notification"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
