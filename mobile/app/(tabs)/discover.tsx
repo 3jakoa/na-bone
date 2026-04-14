@@ -1,26 +1,35 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   Image,
   Pressable,
   Alert,
-  Animated,
-  PanResponder,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  interpolate,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { supabase, type Profile } from "../../lib/supabase";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
-
 export default function Discover() {
+  const { width: screenWidth } = useWindowDimensions();
+  const swipeThreshold = screenWidth * 0.25;
   const [me, setMe] = useState<Profile | null>(null);
   const [deck, setDeck] = useState<Profile[]>([]);
   const [idx, setIdx] = useState(0);
-  const position = useRef(new Animated.ValueXY()).current;
+  const [cardVisible, setCardVisible] = useState(true);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const swiping = useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -64,89 +73,142 @@ export default function Discover() {
     })();
   }, []);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      // Don't steal the gesture on touch-down — that would kill taps on the
-      // child Pressable (which opens the profile detail).
-      onStartShouldSetPanResponder: () => false,
-      onStartShouldSetPanResponderCapture: () => false,
-      // Steal on horizontal movement via the CAPTURE phase (top-down). The
-      // bubble-phase onMoveShouldSetPanResponder would never fire here
-      // because the inner Pressable already owns the touch; the capture
-      // variant runs before children get the event, so we can reclaim.
-      onMoveShouldSetPanResponderCapture: (_, g) =>
-        Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy),
-      onMoveShouldSetPanResponder: (_, g) =>
-        Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy),
-      // Ensure we hold on to the gesture once granted, even if a child
-      // tries to become responder mid-drag.
-      onPanResponderTerminationRequest: () => false,
-      onPanResponderMove: (_, gesture) => {
-        position.setValue({ x: gesture.dx, y: gesture.dy });
-      },
-      onPanResponderRelease: (_, gesture) => {
-        if (gesture.dx > SWIPE_THRESHOLD) {
-          swipeOut("right");
-        } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          swipeOut("left");
-        } else {
-          Animated.spring(position, {
-            toValue: { x: 0, y: 0 },
-            useNativeDriver: false,
-          }).start();
-        }
-      },
-      onPanResponderTerminate: () => {
-        // Another view stole the gesture — snap back to rest.
-        Animated.spring(position, {
-          toValue: { x: 0, y: 0 },
-          useNativeDriver: false,
-        }).start();
-      },
-    })
-  ).current;
+  function resetCardPosition() {
+    translateX.value = 0;
+    translateY.value = 0;
+    swiping.current = false;
+  }
+
+  function completeSwipe(direction: "left" | "right") {
+    void handleSwipe(direction);
+  }
 
   function swipeOut(direction: "left" | "right") {
-    const toX =
-      direction === "right" ? SCREEN_WIDTH + 100 : -SCREEN_WIDTH - 100;
-    Animated.timing(position, {
-      toValue: { x: toX, y: 0 },
-      duration: 250,
-      useNativeDriver: false,
-    }).start(() => {
-      handleSwipe(direction);
-      position.setValue({ x: 0, y: 0 });
-    });
+    if (swiping.current) return;
+    swiping.current = true;
+    const toX = direction === "right" ? screenWidth + 120 : -screenWidth - 120;
+
+    translateX.value = withTiming(
+      toX,
+      { duration: 220 },
+      (finished) => {
+        if (finished) {
+          runOnJS(completeSwipe)(direction);
+        }
+      }
+    );
+    translateY.value = withTiming(0, { duration: 220 });
   }
 
   async function handleSwipe(direction: "left" | "right") {
-    if (!me || !deck[idx]) return;
+    if (!me || !deck[idx]) {
+      resetCardPosition();
+      return;
+    }
     const target = deck[idx];
+
+    // Hide during the index/value swap so the previous card cannot flash back
+    // at the center for a frame on slower simulator renders.
+    setCardVisible(false);
     setIdx((i) => i + 1);
-    const { error } = await supabase.from("profile_swipes").insert({
-      swiper_id: me.id,
-      swiped_id: target.id,
-      direction,
-    });
+    setTimeout(() => {
+      resetCardPosition();
+      setCardVisible(true);
+    }, 0);
+
+    const swipedAt = new Date().toISOString();
+    const { error } = await supabase
+      .from("profile_swipes")
+      .upsert(
+        {
+          swiper_id: me.id,
+          swiped_id: target.id,
+          direction,
+          created_at: swipedAt,
+        },
+        { onConflict: "swiper_id,swiped_id" }
+      );
+
     if (error) Alert.alert("Napaka", error.message);
+
+    if (direction === "right") {
+      const { data: match } = await supabase
+        .from("buddy_matches")
+        .select("id")
+        .or(
+          `and(user1_id.eq.${me.id},user2_id.eq.${target.id}),and(user1_id.eq.${target.id},user2_id.eq.${me.id})`
+        )
+        .maybeSingle();
+
+      if (match?.id) {
+        Alert.alert("Match!", `Ujel/a si se z ${target.name}.`, [
+          {
+            text: "Kasneje",
+            style: "cancel",
+          },
+          {
+            text: "Odpri chat",
+            onPress: () => router.push(`/matches/${match.id}`),
+          },
+        ]);
+      }
+    }
   }
 
-  const rotate = position.x.interpolate({
-    inputRange: [-SCREEN_WIDTH, 0, SCREEN_WIDTH],
-    outputRange: ["-12deg", "0deg", "12deg"],
+  const panGesture = Gesture.Pan()
+    .activeOffsetX([-12, 12])
+    .failOffsetY([-10, 10])
+    .onUpdate((event) => {
+      translateX.value = event.translationX;
+      translateY.value = event.translationY * 0.2;
+    })
+    .onEnd((event) => {
+      if (event.translationX > swipeThreshold) {
+        runOnJS(swipeOut)("right");
+        return;
+      }
+      if (event.translationX < -swipeThreshold) {
+        runOnJS(swipeOut)("left");
+        return;
+      }
+
+      translateX.value = withSpring(0, { damping: 18, stiffness: 180 });
+      translateY.value = withSpring(0, { damping: 18, stiffness: 180 });
+    });
+
+  const cardAnimatedStyle = useAnimatedStyle(() => {
+    const rotate = interpolate(
+      translateX.value,
+      [-screenWidth, 0, screenWidth],
+      [-12, 0, 12]
+    );
+
+    return {
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        { rotate: `${rotate}deg` },
+      ],
+    };
   });
 
-  const likeOpacity = position.x.interpolate({
-    inputRange: [0, SCREEN_WIDTH * 0.25],
-    outputRange: [0, 1],
-    extrapolate: "clamp",
-  });
+  const likeAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      translateX.value,
+      [0, screenWidth * 0.25],
+      [0, 1],
+      "clamp"
+    ),
+  }));
 
-  const nopeOpacity = position.x.interpolate({
-    inputRange: [-SCREEN_WIDTH * 0.25, 0],
-    outputRange: [1, 0],
-    extrapolate: "clamp",
-  });
+  const nopeAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      translateX.value,
+      [-screenWidth * 0.25, 0],
+      [1, 0],
+      "clamp"
+    ),
+  }));
 
   const card = deck[idx];
   const nextCard = deck[idx + 1];
@@ -177,44 +239,39 @@ export default function Discover() {
             )}
 
             {/* Current card (draggable) */}
-            <Animated.View
-              {...panResponder.panHandlers}
-              style={{
-                transform: [
-                  { translateX: position.x },
-                  { translateY: position.y },
-                  { rotate },
-                ],
-                width: "100%",
-                height: "100%",
-              }}
-              className="bg-white dark:bg-neutral-900 rounded-3xl shadow-lg overflow-hidden"
-            >
-              {/* Like / Nope stamps */}
+            <GestureDetector gesture={panGesture}>
               <Animated.View
-                style={{ opacity: likeOpacity }}
-                className="absolute top-8 left-6 z-10 border-4 border-green-500 rounded-xl px-4 py-2"
+                style={[
+                  {
+                    width: "100%",
+                    height: "100%",
+                    opacity: cardVisible ? 1 : 0,
+                  },
+                  cardAnimatedStyle,
+                ]}
+                className="bg-white dark:bg-neutral-900 rounded-3xl shadow-lg overflow-hidden"
               >
-                <Text className="text-green-500 text-2xl font-black">
-                  LIKE
-                </Text>
-              </Animated.View>
-              <Animated.View
-                style={{ opacity: nopeOpacity }}
-                className="absolute top-8 right-6 z-10 border-4 border-red-500 rounded-xl px-4 py-2"
-              >
-                <Text className="text-red-500 text-2xl font-black">NOPE</Text>
-              </Animated.View>
+                {/* Like / Nope stamps */}
+                <Animated.View
+                  style={likeAnimatedStyle}
+                  className="absolute top-8 left-6 z-10 border-4 border-green-500 rounded-xl px-4 py-2"
+                >
+                  <Text className="text-green-500 text-2xl font-black">
+                    LIKE
+                  </Text>
+                </Animated.View>
+                <Animated.View
+                  style={nopeAnimatedStyle}
+                  className="absolute top-8 right-6 z-10 border-4 border-red-500 rounded-xl px-4 py-2"
+                >
+                  <Text className="text-red-500 text-2xl font-black">NOPE</Text>
+                </Animated.View>
 
-              <Pressable
-                onPress={() =>
-                  router.push(`/profile-detail?id=${card.id}`)
-                }
-                className="flex-1"
-              >
-                <CardContent profile={card} />
-              </Pressable>
-            </Animated.View>
+                <View className="flex-1">
+                  <CardContent profile={card} />
+                </View>
+              </Animated.View>
+            </GestureDetector>
 
             {/* Action buttons */}
             <View className="flex-row justify-center gap-6 mt-5">
