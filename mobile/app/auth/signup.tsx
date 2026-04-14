@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { View, Text, TextInput, Pressable, Alert, Image } from "react-native";
 import { Link, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
 import { signInWithGoogle } from "../../lib/auth";
 
@@ -47,6 +46,7 @@ export default function Signup() {
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
+          autoCorrect={false}
           keyboardType="email-address"
           placeholder="ime@student.uni-lj.si"
           placeholderTextColor="#888"

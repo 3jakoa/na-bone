@@ -22,7 +22,18 @@ function getRedirectTo() {
   });
 }
 
-function getOAuthParams(url: string) {
+export function getPasswordResetRedirectTo() {
+  if (Constants.appOwnership === "expo") {
+    return Linking.createURL("auth/reset-password");
+  }
+
+  return makeRedirectUri({
+    scheme: "bonibuddy",
+    path: "auth/reset-password",
+  });
+}
+
+function getAuthParams(url: string) {
   const parsedUrl = new URL(url);
   const params = new URLSearchParams(parsedUrl.search);
   const hash = parsedUrl.hash.startsWith("#") ? parsedUrl.hash.slice(1) : parsedUrl.hash;
@@ -37,6 +48,32 @@ function getOAuthParams(url: string) {
   return params;
 }
 
+export async function completeAuthCallbackFromUrl(url: string): Promise<{ ok: boolean; error?: string }> {
+  const params = getAuthParams(url);
+  const authError = params.get("error_description") ?? params.get("error");
+  if (authError) return { ok: false, error: authError };
+
+  const code = params.get("code");
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  }
+
+  const accessToken = params.get("access_token");
+  const refreshToken = params.get("refresh_token");
+  if (accessToken && refreshToken) {
+    const { error } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  }
+
+  return { ok: false, error: "Manjka potrditvena koda." };
+}
+
 export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string }> {
   const redirectTo = getRedirectTo();
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -48,7 +85,7 @@ export async function signInWithGoogle(): Promise<{ ok: boolean; error?: string 
   const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
   if (result.type !== "success") return { ok: false, error: "cancelled" };
 
-  const params = getOAuthParams(result.url);
+  const params = getAuthParams(result.url);
   const authError = params.get("error_description") ?? params.get("error");
   if (authError) return { ok: false, error: authError };
 

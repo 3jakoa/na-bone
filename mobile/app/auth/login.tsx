@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { View, Text, TextInput, Pressable, Alert, Image } from "react-native";
 import { Link, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
 import { signInWithGoogle } from "../../lib/auth";
 
@@ -43,6 +42,7 @@ export default function Login() {
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
+          autoCorrect={false}
           keyboardType="email-address"
           placeholder="ime@student.uni-lj.si"
           placeholderTextColor="#888"
@@ -55,8 +55,14 @@ export default function Login() {
           secureTextEntry
           placeholder="Geslo"
           placeholderTextColor="#888"
-          className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-6"
+          className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-3"
         />
+        <Link
+          href="./forgot-password"
+          className="self-end text-sm font-semibold text-brand mb-6"
+        >
+          Pozabil/a sem geslo
+        </Link>
 
         <Pressable
           onPress={handleLogin}
