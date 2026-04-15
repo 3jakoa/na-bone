@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Bone, type Profile } from "../../lib/supabase";
 import { formatScheduledDate } from "../../lib/formatDate";
@@ -30,22 +30,34 @@ export default function Feed() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+    let myProfile: Profile | null = null;
     if (user) {
       const { data: p } = await supabase
         .from("profiles")
         .select("*")
         .eq("user_id", user.id)
         .single();
-      setMe(p as Profile);
+      myProfile = (p as Profile) ?? null;
     }
-    const { data: bones } = await supabase
+    setMe(myProfile);
+
+    let bonesQuery = supabase
       .from("meal_invites")
       .select("*")
-      .eq("visibility", "public")
       .eq("status", "open")
       .gte("scheduled_at", new Date().toISOString())
       .order("scheduled_at", { ascending: true })
       .limit(100);
+
+    if (myProfile?.id) {
+      bonesQuery = bonesQuery.or(
+        `visibility.eq.public,user_id.eq.${myProfile.id}`
+      );
+    } else {
+      bonesQuery = bonesQuery.eq("visibility", "public");
+    }
+
+    const { data: bones } = await bonesQuery;
 
     // Fetch authors
     const ids = Array.from(
@@ -97,9 +109,11 @@ export default function Feed() {
     setRefreshing(false);
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   async function respond(boneId: string) {
     const { data, error } = await supabase.rpc("respond_to_public_bone", {
@@ -107,22 +121,59 @@ export default function Feed() {
     });
     if (error) return Alert.alert("Napaka", error.message);
 
-    const prefill =
-      me?.gender === "ženska"
-        ? "Odgovorila sem na tvoje povabilo za boni buddy!"
-        : me?.gender === "moški"
-          ? "Odgovoril sem na tvoje povabilo za boni buddy!"
-          : "Odgovoril/a sem na tvoje povabilo za boni buddy!";
+    const prefill = "Oj, greva skupaj na bone?";
 
     router.push(
       `/matches/${data as string}?prefill=${encodeURIComponent(prefill)}`
     );
   }
 
+  function confirmCancelBone(boneId: string) {
+    Alert.alert(
+      "Umakni bon?",
+      "Bon ne bo več prikazan drugim uporabnikom.",
+      [
+        { text: "Nazaj", style: "cancel" },
+        {
+          text: "Umakni",
+          style: "destructive",
+          onPress: () => cancelBone(boneId),
+        },
+      ]
+    );
+  }
+
+  async function cancelBone(boneId: string) {
+    if (!me) return;
+
+    const previousItems = items;
+    const previousSelected = selectedBone;
+    setItems((current) => current.filter((item) => item.id !== boneId));
+    if (selectedBone?.id === boneId) setSelectedBone(null);
+
+    const { data, error } = await supabase
+      .from("meal_invites")
+      .update({ status: "expired" })
+      .eq("id", boneId)
+      .eq("user_id", me.id)
+      .eq("status", "open")
+      .select("id")
+      .maybeSingle();
+
+    if (error || !data) {
+      setItems(previousItems);
+      setSelectedBone(previousSelected);
+      Alert.alert(
+        "Napaka",
+        error?.message ?? "Tega bona trenutno ni mogoče umakniti."
+      );
+    }
+  }
+
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
       <Text className="text-3xl font-bold text-gray-900 dark:text-white px-6 mb-4">
-        Javne objave
+        Aktivni boni
       </Text>
       <FlatList
         data={items}
@@ -135,7 +186,7 @@ export default function Feed() {
           <View className="items-center mt-16">
             <Ionicons name="restaurant-outline" size={48} color="#888" />
             <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
-              Ni javnih objav
+              Ni aktivnih bonov
             </Text>
             <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
               Bodi prvi — objavi bon!
@@ -144,12 +195,27 @@ export default function Feed() {
         }
         renderItem={({ item }) => {
           const isMine = me && item.user_id === me.id;
+          const isPrivate = item.visibility === "private";
           const ri = item.restaurant_info;
           return (
             <Pressable
               onPress={() => setSelectedBone(item)}
               className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm"
             >
+              {isMine && (
+                <Pressable
+                  onPress={(event) => {
+                    event.stopPropagation();
+                    confirmCancelBone(item.id);
+                  }}
+                  className="absolute top-4 right-4 z-10 rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
+                >
+                  <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
+                    Umakni bon
+                  </Text>
+                </Pressable>
+              )}
+
               {/* Author row */}
               {item.author && (
                 <Pressable
@@ -183,6 +249,33 @@ export default function Feed() {
                   </View>
                 </Pressable>
               )}
+
+              <View className="flex-row flex-wrap gap-2 mb-3">
+                {isMine && (
+                  <View className="rounded-full bg-brand/10 px-3 py-1">
+                    <Text className="text-xs font-semibold text-brand">
+                      Tvoj bon
+                    </Text>
+                  </View>
+                )}
+                <View
+                  className={`rounded-full px-3 py-1 ${
+                    isPrivate
+                      ? "bg-gray-100 dark:bg-neutral-800"
+                      : "bg-blue-50 dark:bg-brand/20"
+                  }`}
+                >
+                  <Text
+                    className={`text-xs font-semibold ${
+                      isPrivate
+                        ? "text-gray-500 dark:text-gray-300"
+                        : "text-brand"
+                    }`}
+                  >
+                    {isPrivate ? "Zasebno" : "Javno"}
+                  </Text>
+                </View>
+              </View>
 
               {/* Restaurant info */}
               <View className="mb-2">
@@ -281,18 +374,31 @@ export default function Feed() {
               const b = selectedBone;
               const ri = b.restaurant_info;
               const isMine = me && b.user_id === me.id;
+              const isPrivate = b.visibility === "private";
               return (
                 <>
                   <View className="flex-row items-center justify-between px-5 pt-5 pb-2">
                     <Text className="text-lg font-bold text-gray-900 dark:text-white">
-                      Javni bon
+                      {isPrivate ? "Zasebni bon" : "Javni bon"}
                     </Text>
-                    <Pressable
-                      onPress={() => setSelectedBone(null)}
-                      hitSlop={10}
-                    >
-                      <Ionicons name="close" size={26} color="#888" />
-                    </Pressable>
+                    <View className="flex-row items-center gap-2">
+                      {isMine && (
+                        <Pressable
+                          onPress={() => confirmCancelBone(b.id)}
+                          className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
+                        >
+                          <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
+                            Umakni bon
+                          </Text>
+                        </Pressable>
+                      )}
+                      <Pressable
+                        onPress={() => setSelectedBone(null)}
+                        hitSlop={10}
+                      >
+                        <Ionicons name="close" size={26} color="#888" />
+                      </Pressable>
+                    </View>
                   </View>
 
                   <ScrollView
@@ -322,6 +428,33 @@ export default function Feed() {
                         </View>
                       </View>
                     )}
+
+                    <View className="flex-row flex-wrap gap-2 mb-4">
+                      {isMine && (
+                        <View className="rounded-full bg-brand/10 px-3 py-1">
+                          <Text className="text-xs font-semibold text-brand">
+                            Tvoj bon
+                          </Text>
+                        </View>
+                      )}
+                      <View
+                        className={`rounded-full px-3 py-1 ${
+                          isPrivate
+                            ? "bg-gray-100 dark:bg-neutral-800"
+                            : "bg-blue-50 dark:bg-brand/20"
+                        }`}
+                      >
+                        <Text
+                          className={`text-xs font-semibold ${
+                            isPrivate
+                              ? "text-gray-500 dark:text-gray-300"
+                              : "text-brand"
+                          }`}
+                        >
+                          {isPrivate ? "Zasebno" : "Javno"}
+                        </Text>
+                      </View>
+                    </View>
 
                     <View className="flex-row items-start mb-2">
                       <Ionicons

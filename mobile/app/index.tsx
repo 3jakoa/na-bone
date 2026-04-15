@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, Pressable } from "react-native";
 import { router } from "expo-router";
 import { supabase } from "../lib/supabase";
+import { getPendingBuddyInviteToken } from "../lib/buddyInvites";
 
 export default function Index() {
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +53,11 @@ export default function Index() {
           .from("profiles")
           .update({ is_onboarded: true })
           .eq("id", profile.id);
+      }
+
+      const pendingInviteToken = await getPendingBuddyInviteToken();
+      if (pendingInviteToken) {
+        return router.replace(`/invite/${pendingInviteToken}` as any);
       }
 
       router.replace("/(tabs)/discover");

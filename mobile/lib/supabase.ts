@@ -45,7 +45,7 @@ export type Bone = {
   } | null;
   scheduled_at: string;
   note: string | null;
-  status: "open" | "accepted" | "declined" | "done";
+  status: "open" | "accepted" | "declined" | "done" | "expired";
   visibility: "public" | "private";
   created_at: string;
 };

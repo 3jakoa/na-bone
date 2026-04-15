@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { supabase, capitalizeName } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
 import { UNIVERSITIES, UNIVERSITY_NAMES } from "../lib/universities";
+import { getPendingBuddyInviteToken } from "../lib/buddyInvites";
 
 const { width } = Dimensions.get("window");
 const STEPS = 5;
@@ -95,6 +96,10 @@ export default function Onboarding() {
         is_onboarded: true,
       } as any);
       if (error) throw error;
+      const pendingInviteToken = await getPendingBuddyInviteToken();
+      if (pendingInviteToken) {
+        return router.replace(`/invite/${pendingInviteToken}` as any);
+      }
       router.replace("/(tabs)/discover");
     } catch (e: any) {
       Alert.alert("Napaka", e.message ?? String(e));

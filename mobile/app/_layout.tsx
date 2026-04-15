@@ -15,6 +15,7 @@ export default function RootLayout() {
           <Stack.Screen name="auth/forgot-password" />
           <Stack.Screen name="auth/reset-password" />
           <Stack.Screen name="onboarding" />
+          <Stack.Screen name="invite/[token]" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="edit-profile" options={{ presentation: "modal" }} />
           <Stack.Screen name="profile-detail" options={{ presentation: "modal" }} />

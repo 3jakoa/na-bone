@@ -346,12 +346,13 @@ export default function CreateBone() {
 
       setShowInvite(false);
       const n = selectedBuddies.size;
-      setSelectedBuddies(new Set());
+      reset();
       Toast.show({
         type: "success",
         text1: "Povabila poslana!",
         text2: `${n} povabil${n === 1 ? "o poslano" : "a poslana"}.`,
       });
+      router.navigate("/(tabs)/feed");
     } catch (e: any) {
       Toast.show({ type: "error", text1: "Napaka", text2: e.message ?? String(e) });
     } finally {

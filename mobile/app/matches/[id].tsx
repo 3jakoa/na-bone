@@ -532,6 +532,12 @@ export default function Chat() {
                         Zavrnjeno
                       </Text>
                     </View>
+                  ) : status === "expired" ? (
+                    <View className="mt-3 bg-gray-100 dark:bg-neutral-800 rounded-xl py-2 items-center">
+                      <Text className="text-gray-500 dark:text-gray-300 font-semibold text-sm">
+                        Umaknjeno
+                      </Text>
+                    </View>
                   ) : !mine ? (
                     <View className="flex-row gap-2 mt-3">
                       <Pressable

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Image,
-  Pressable,
   Alert,
   useWindowDimensions,
 } from "react-native";
@@ -192,26 +191,60 @@ export default function Discover() {
     };
   });
 
-  const likeAnimatedStyle = useAnimatedStyle(() => ({
+  const buddyFeedbackStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
       translateX.value,
-      [0, screenWidth * 0.25],
+      [screenWidth * 0.08, screenWidth * 0.28],
       [0, 1],
       "clamp"
     ),
+    transform: [
+      {
+        scale: interpolate(
+          translateX.value,
+          [screenWidth * 0.08, screenWidth * 0.28],
+          [0.92, 1],
+          "clamp"
+        ),
+      },
+    ],
   }));
 
-  const nopeAnimatedStyle = useAnimatedStyle(() => ({
+  const nextFeedbackStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
       translateX.value,
-      [-screenWidth * 0.25, 0],
+      [-screenWidth * 0.28, -screenWidth * 0.08],
       [1, 0],
       "clamp"
     ),
+    transform: [
+      {
+        scale: interpolate(
+          translateX.value,
+          [-screenWidth * 0.28, -screenWidth * 0.08],
+          [1, 0.92],
+          "clamp"
+        ),
+      },
+    ],
   }));
 
   const card = deck[idx];
   const nextCard = deck[idx + 1];
+
+  function openProfile(profileId: string) {
+    router.push(`/profile-detail?id=${profileId}`);
+  }
+
+  const tapGesture = Gesture.Tap()
+    .maxDistance(8)
+    .onEnd((_event, success) => {
+      if (success && card?.id) {
+        runOnJS(openProfile)(card.id);
+      }
+    });
+
+  const cardGesture = Gesture.Exclusive(panGesture, tapGesture);
 
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
@@ -239,7 +272,7 @@ export default function Discover() {
             )}
 
             {/* Current card (draggable) */}
-            <GestureDetector gesture={panGesture}>
+            <GestureDetector gesture={cardGesture}>
               <Animated.View
                 style={[
                   {
@@ -251,20 +284,23 @@ export default function Discover() {
                 ]}
                 className="bg-white dark:bg-neutral-900 rounded-3xl shadow-lg overflow-hidden"
               >
-                {/* Like / Nope stamps */}
                 <Animated.View
-                  style={likeAnimatedStyle}
-                  className="absolute top-8 left-6 z-10 border-4 border-green-500 rounded-xl px-4 py-2"
+                  pointerEvents="none"
+                  style={buddyFeedbackStyle}
+                  className="absolute top-6 left-6 z-10 rounded-full bg-brand px-4 py-2 shadow-sm"
                 >
-                  <Text className="text-green-500 text-2xl font-black">
-                    LIKE
+                  <Text className="text-white text-base font-bold">
+                    Buddy
                   </Text>
                 </Animated.View>
                 <Animated.View
-                  style={nopeAnimatedStyle}
-                  className="absolute top-8 right-6 z-10 border-4 border-red-500 rounded-xl px-4 py-2"
+                  pointerEvents="none"
+                  style={nextFeedbackStyle}
+                  className="absolute top-6 right-6 z-10 rounded-full bg-gray-500/90 px-4 py-2 shadow-sm dark:bg-neutral-600"
                 >
-                  <Text className="text-red-500 text-2xl font-black">NOPE</Text>
+                  <Text className="text-white text-base font-bold">
+                    Naprej
+                  </Text>
                 </Animated.View>
 
                 <View className="flex-1">
@@ -273,28 +309,13 @@ export default function Discover() {
               </Animated.View>
             </GestureDetector>
 
-            {/* Action buttons */}
-            <View className="flex-row justify-center gap-6 mt-5">
-              <Pressable
-                onPress={() => swipeOut("left")}
-                className="w-16 h-16 rounded-full bg-white dark:bg-neutral-900 shadow items-center justify-center border border-gray-100 dark:border-neutral-800"
-              >
-                <Ionicons name="close" size={32} color="#ef4444" />
-              </Pressable>
-              <Pressable
-                onPress={() =>
-                  router.push(`/profile-detail?id=${card.id}`)
-                }
-                className="w-14 h-14 rounded-full bg-white dark:bg-neutral-900 shadow items-center justify-center border border-gray-100 dark:border-neutral-800"
-              >
-                <Ionicons name="information" size={24} color="#00A6F6" />
-              </Pressable>
-              <Pressable
-                onPress={() => swipeOut("right")}
-                className="w-16 h-16 rounded-full bg-white dark:bg-neutral-900 shadow items-center justify-center border border-gray-100 dark:border-neutral-800"
-              >
-                <Ionicons name="heart" size={30} color="#22c55e" />
-              </Pressable>
+            <View className="items-center px-6 mt-4 mb-2">
+              <Text className="text-sm font-semibold text-gray-400 dark:text-gray-500 text-center">
+                Povleci levo za naprej, desno za buddyja
+              </Text>
+              <Text className="text-xs text-gray-300 dark:text-gray-600 text-center mt-1">
+                Tapni kartico za več informacij
+              </Text>
             </View>
           </View>
         )}

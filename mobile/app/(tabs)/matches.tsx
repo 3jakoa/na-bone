@@ -1,9 +1,18 @@
 import { useCallback, useState } from "react";
-import { View, Text, FlatList, Pressable, Image } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  Image,
+  Alert,
+  Share,
+} from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Profile } from "../../lib/supabase";
 
+const INVITE_BASE_URL = "https://na-bone-vggw.vercel.app/invite";
 const DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
 
 type LastMessage = {
@@ -42,6 +51,7 @@ function formatListTime(iso: string): string {
 export default function Matches() {
   const [items, setItems] = useState<Item[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [inviteLoading, setInviteLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -119,15 +129,46 @@ export default function Matches() {
     }, [])
   );
 
+  async function inviteBuddy() {
+    setInviteLoading(true);
+    const { data, error } = await supabase.rpc("create_buddy_invite");
+    setInviteLoading(false);
+
+    if (error || !data) {
+      return Alert.alert(
+        "Napaka",
+        error?.message ?? "Povabila trenutno ni mogoče ustvariti."
+      );
+    }
+
+    const inviteUrl = `${INVITE_BASE_URL}/${data as string}`;
+    await Share.share({
+      message: `Dodaj me kot buddyja na Boni Buddy: ${inviteUrl}`,
+      url: inviteUrl,
+    });
+  }
+
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
-      <View className="px-6 mb-4">
-        <Text className="text-3xl font-bold text-gray-900 dark:text-white">Buddies</Text>
-        {loaded && items.length > 0 && (
-          <Text className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
-            {items.length} {items.length === 1 ? "pogovor" : "pogovorov"}
+      <View className="px-6 mb-4 flex-row items-start justify-between">
+        <View>
+          <Text className="text-3xl font-bold text-gray-900 dark:text-white">Buddies</Text>
+          {loaded && items.length > 0 && (
+            <Text className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
+              {items.length} {items.length === 1 ? "pogovor" : "pogovorov"}
+            </Text>
+          )}
+        </View>
+        <Pressable
+          onPress={inviteBuddy}
+          disabled={inviteLoading}
+          className="bg-brand-light dark:bg-brand/20 rounded-full px-4 py-2 flex-row items-center"
+        >
+          <Ionicons name="person-add-outline" size={16} color="#00A6F6" />
+          <Text className="text-brand font-bold text-sm ml-1.5">
+            {inviteLoading ? "..." : "Povabi"}
           </Text>
-        )}
+        </Pressable>
       </View>
       <FlatList
         data={items}
@@ -139,7 +180,7 @@ export default function Matches() {
               <Ionicons name="chatbubbles-outline" size={48} color="#888" />
               <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">Še ni matchev</Text>
               <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
-                Swipaj da najdeš buddyje
+                Swipaj ali povabi frenda z linkom
               </Text>
             </View>
           ) : null
