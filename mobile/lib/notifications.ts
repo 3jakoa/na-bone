@@ -82,7 +82,7 @@ export async function registerForPushNotifications(): Promise<string | null> {
  * Shapes we handle:
  *   { type: "chat",       match_id: "..." }            → /matches/:id
  *   { type: "match",      match_id: "..." }            → /matches/:id
- *   { type: "bone_new",   match_id: "..." }            → /matches/:id
+ *   { type: "bone_new",   bone_id: "..." }             → /(tabs)/feed
  *   { type: "bone_reply", match_id: "..." }            → /matches/:id
  */
 export function handleNotificationTap(
@@ -97,13 +97,12 @@ export function handleNotificationTap(
 
   if (!type) return;
 
-  if (
-    matchId &&
-    (type === "chat" ||
-      type === "match" ||
-      type === "bone_new" ||
-      type === "bone_reply")
-  ) {
+  if (type === "bone_new") {
+    router.push("/(tabs)/feed" as any);
+    return;
+  }
+
+  if (matchId && (type === "chat" || type === "match" || type === "bone_reply")) {
     router.push(`/matches/${matchId}` as any);
   }
 }

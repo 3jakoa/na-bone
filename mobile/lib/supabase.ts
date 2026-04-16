@@ -47,6 +47,8 @@ export type Bone = {
   note: string | null;
   status: "open" | "accepted" | "declined" | "done" | "expired";
   visibility: "public" | "private";
+  invite_group_id: string | null;
+  source_public_invite_id: string | null;
   created_at: string;
 };
 
