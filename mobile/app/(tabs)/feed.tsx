@@ -43,7 +43,6 @@ export default function Feed() {
 
     let bones: any[] | null = null;
     let bonesError: { message: string } | null = null;
-    const pendingPublicSourceIds = new Set<string>();
 
     if (myProfile?.id) {
       const { data: matches, error: matchesError } = await supabase
@@ -65,18 +64,6 @@ export default function Feed() {
       ];
       if (matchIds.length > 0) {
         visibilityFilters.push(`match_id.in.(${matchIds.join(",")})`);
-
-        const { data: pendingRequests } = await supabase
-          .from("meal_invites")
-          .select("source_public_invite_id")
-          .eq("status", "open")
-          .not("source_public_invite_id", "is", null)
-          .in("match_id", matchIds);
-        for (const request of pendingRequests ?? []) {
-          if (request.source_public_invite_id) {
-            pendingPublicSourceIds.add(request.source_public_invite_id);
-          }
-        }
       }
 
       const result = await supabase
@@ -161,12 +148,6 @@ export default function Feed() {
     const visibleItems: FeedItem[] = [];
     for (const item of mapped) {
       if (item.source_public_invite_id) continue;
-      if (
-        item.visibility === "public" &&
-        pendingPublicSourceIds.has(item.id)
-      ) {
-        continue;
-      }
 
       const shouldGroupOwnPrivate =
         myProfile?.id === item.user_id &&

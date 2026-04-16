@@ -18,6 +18,7 @@ const DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
 type LastMessage = {
   preview: string;
   time: string;
+  createdAt: string;
   mine: boolean;
   isInvite: boolean;
 };
@@ -26,6 +27,7 @@ type Item = {
   matchId: string;
   other: Profile;
   last?: LastMessage;
+  lastActivityAt: string;
   streak: number;
 };
 
@@ -105,6 +107,7 @@ export default function Matches() {
             last = {
               preview,
               time: formatListTime(msg.created_at),
+              createdAt: msg.created_at,
               mine: msg.sender_id === me.id,
               isInvite,
             };
@@ -120,9 +123,16 @@ export default function Matches() {
             matchId: m.id,
             other: other as Profile,
             last,
+            lastActivityAt: last?.createdAt ?? m.created_at,
             streak,
           });
         }
+        out.sort((a, b) => {
+          const byActivity =
+            Date.parse(b.lastActivityAt) - Date.parse(a.lastActivityAt);
+          if (byActivity !== 0) return byActivity;
+          return a.matchId.localeCompare(b.matchId);
+        });
         setItems(out);
         setLoaded(true);
       })();
