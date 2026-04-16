@@ -41,23 +41,62 @@ export default function Feed() {
     }
     setMe(myProfile);
 
-    let bonesQuery = supabase
-      .from("meal_invites")
-      .select("*")
-      .eq("status", "open")
-      .gte("scheduled_at", new Date().toISOString())
-      .order("scheduled_at", { ascending: true })
-      .limit(100);
+    let bones: any[] | null = null;
+    let bonesError: { message: string } | null = null;
 
     if (myProfile?.id) {
-      bonesQuery = bonesQuery.or(
-        `visibility.eq.public,user_id.eq.${myProfile.id}`
-      );
+      const { data: matches, error: matchesError } = await supabase
+        .from("buddy_matches")
+        .select("id")
+        .or(`user1_id.eq.${myProfile.id},user2_id.eq.${myProfile.id}`);
+
+      if (matchesError) {
+        setItems([]);
+        setRefreshing(false);
+        Alert.alert("Napaka", matchesError.message);
+        return;
+      }
+
+      const matchIds = (matches ?? []).map((match: any) => match.id);
+      const visibilityFilters = [
+        "visibility.eq.public",
+        `user_id.eq.${myProfile.id}`,
+      ];
+      if (matchIds.length > 0) {
+        visibilityFilters.push(`match_id.in.(${matchIds.join(",")})`);
+      }
+
+      const result = await supabase
+        .from("meal_invites")
+        .select("*")
+        .eq("status", "open")
+        .is("source_public_invite_id", null)
+        .gte("scheduled_at", new Date().toISOString())
+        .or(visibilityFilters.join(","))
+        .order("scheduled_at", { ascending: true })
+        .limit(100);
+      bones = result.data;
+      bonesError = result.error;
     } else {
-      bonesQuery = bonesQuery.eq("visibility", "public");
+      const result = await supabase
+          .from("meal_invites")
+          .select("*")
+          .eq("status", "open")
+          .eq("visibility", "public")
+          .is("source_public_invite_id", null)
+          .gte("scheduled_at", new Date().toISOString())
+          .order("scheduled_at", { ascending: true })
+          .limit(100);
+      bones = result.data;
+      bonesError = result.error;
     }
 
-    const { data: bones } = await bonesQuery;
+    if (bonesError) {
+      setItems([]);
+      setRefreshing(false);
+      Alert.alert("Napaka", bonesError.message);
+      return;
+    }
 
     // Fetch authors
     const ids = Array.from(
@@ -84,28 +123,44 @@ export default function Feed() {
       }
     }
 
-    setItems(
-      ((bones ?? []) as Bone[]).map((b) => {
-        // Use embedded data, or backfill from restaurants table
-        if (!b.restaurant_info && restLookup.has(b.restaurant)) {
-          const r = restLookup.get(b.restaurant);
-          b = {
-            ...b,
-            restaurant_info: {
-              address: r.address,
-              city: r.city,
-              rating: r.rating,
-              supplement_price: r.supplement_price,
-              meal_price: r.meal_price,
-            },
-          };
-        }
-        return {
+    const mapped = ((bones ?? []) as Bone[]).map((b) => {
+      // Use embedded data, or backfill from restaurants table
+      if (!b.restaurant_info && restLookup.has(b.restaurant)) {
+        const r = restLookup.get(b.restaurant);
+        b = {
           ...b,
-          author: authorMap.get(b.user_id),
+          restaurant_info: {
+            address: r.address,
+            city: r.city,
+            rating: r.rating,
+            supplement_price: r.supplement_price,
+            meal_price: r.meal_price,
+          },
         };
-      })
-    );
+      }
+      return {
+        ...b,
+        author: authorMap.get(b.user_id),
+      };
+    });
+
+    const seenOwnPrivateGroups = new Set<string>();
+    const visibleItems: FeedItem[] = [];
+    for (const item of mapped) {
+      if (item.source_public_invite_id) continue;
+
+      const shouldGroupOwnPrivate =
+        myProfile?.id === item.user_id &&
+        item.visibility === "private" &&
+        !!item.invite_group_id;
+      if (shouldGroupOwnPrivate) {
+        if (seenOwnPrivateGroups.has(item.invite_group_id!)) continue;
+        seenOwnPrivateGroups.add(item.invite_group_id!);
+      }
+      visibleItems.push(item);
+    }
+
+    setItems(visibleItems);
     setRefreshing(false);
   }, []);
 
@@ -115,20 +170,30 @@ export default function Feed() {
     }, [load])
   );
 
-  async function respond(boneId: string) {
+  function openPrivateInvite(item: FeedItem) {
+    if (!item.match_id) {
+      return Alert.alert("Napaka", "Povabilo nima pogovora.");
+    }
+    setSelectedBone(null);
+    router.push(`/matches/${item.match_id}`);
+  }
+
+  async function respond(item: FeedItem) {
+    if (item.visibility === "private") {
+      openPrivateInvite(item);
+      return;
+    }
+
     const { data, error } = await supabase.rpc("respond_to_public_bone", {
-      p_bone_id: boneId,
+      p_bone_id: item.id,
     });
     if (error) return Alert.alert("Napaka", error.message);
 
-    const prefill = "Oj, greva skupaj na bone?";
-
-    router.push(
-      `/matches/${data as string}?prefill=${encodeURIComponent(prefill)}`
-    );
+    setSelectedBone(null);
+    router.push(`/matches/${data as string}`);
   }
 
-  function confirmCancelBone(boneId: string) {
+  function confirmCancelBone(item: FeedItem) {
     Alert.alert(
       "Umakni bon?",
       "Bon ne bo več prikazan drugim uporabnikom.",
@@ -137,30 +202,50 @@ export default function Feed() {
         {
           text: "Umakni",
           style: "destructive",
-          onPress: () => cancelBone(boneId),
+          onPress: () => cancelBone(item),
         },
       ]
     );
   }
 
-  async function cancelBone(boneId: string) {
+  async function cancelBone(item: FeedItem) {
     if (!me) return;
 
     const previousItems = items;
     const previousSelected = selectedBone;
-    setItems((current) => current.filter((item) => item.id !== boneId));
-    if (selectedBone?.id === boneId) setSelectedBone(null);
+    setItems((current) =>
+      current.filter((currentItem) =>
+        item.invite_group_id
+          ? currentItem.invite_group_id !== item.invite_group_id
+          : currentItem.id !== item.id
+      )
+    );
+    if (
+      selectedBone?.id === item.id ||
+      (item.invite_group_id &&
+        selectedBone?.invite_group_id === item.invite_group_id)
+    ) {
+      setSelectedBone(null);
+    }
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("meal_invites")
       .update({ status: "expired" })
-      .eq("id", boneId)
       .eq("user_id", me.id)
       .eq("status", "open")
-      .select("id")
-      .maybeSingle();
+      .select("id");
 
-    if (error || !data) {
+    if (item.invite_group_id) {
+      query = query.eq("invite_group_id", item.invite_group_id);
+    } else if (item.visibility === "public") {
+      query = query.or(`id.eq.${item.id},source_public_invite_id.eq.${item.id}`);
+    } else {
+      query = query.eq("id", item.id);
+    }
+
+    const { data, error } = await query;
+
+    if (error || !data || data.length === 0) {
       setItems(previousItems);
       setSelectedBone(previousSelected);
       Alert.alert(
@@ -199,14 +284,20 @@ export default function Feed() {
           const ri = item.restaurant_info;
           return (
             <Pressable
-              onPress={() => setSelectedBone(item)}
+              onPress={() => {
+                if (!isMine) {
+                  respond(item);
+                  return;
+                }
+                setSelectedBone(item);
+              }}
               className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm"
             >
               {isMine && (
                 <Pressable
                   onPress={(event) => {
                     event.stopPropagation();
-                    confirmCancelBone(item.id);
+                    confirmCancelBone(item);
                   }}
                   className="absolute top-4 right-4 z-10 rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
                 >
@@ -343,10 +434,15 @@ export default function Feed() {
 
               {!isMine && (
                 <Pressable
-                  onPress={() => respond(item.id)}
+                  onPress={(event) => {
+                    event.stopPropagation();
+                    respond(item);
+                  }}
                   className="bg-brand rounded-2xl py-3 items-center"
                 >
-                  <Text className="text-white font-bold">Pridruži se</Text>
+                  <Text className="text-white font-bold">
+                    Odpri povabilo
+                  </Text>
                 </Pressable>
               )}
             </Pressable>
@@ -384,7 +480,7 @@ export default function Feed() {
                     <View className="flex-row items-center gap-2">
                       {isMine && (
                         <Pressable
-                          onPress={() => confirmCancelBone(b.id)}
+                          onPress={() => confirmCancelBone(b)}
                           className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
                         >
                           <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
@@ -514,14 +610,13 @@ export default function Feed() {
                     {!isMine && (
                       <Pressable
                         onPress={() => {
-                          const id = b.id;
                           setSelectedBone(null);
-                          respond(id);
+                          respond(b);
                         }}
                         className="bg-brand rounded-2xl py-4 items-center"
                       >
                         <Text className="text-white font-bold text-base">
-                          Pridruži se
+                          Odpri povabilo
                         </Text>
                       </Pressable>
                     )}

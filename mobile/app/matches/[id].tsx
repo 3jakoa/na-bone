@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  FlatList,
+  ScrollView,
   TextInput,
   Pressable,
   KeyboardAvoidingView,
@@ -65,7 +65,7 @@ export default function Chat() {
   const [restMap, setRestMap] = useState<Map<string, RestaurantInfo>>(new Map());
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
-  const listRef = useRef<FlatList>(null);
+  const scrollRef = useRef<ScrollView>(null);
   const prefillApplied = useRef(false);
 
   useEffect(() => {
@@ -437,15 +437,14 @@ export default function Chat() {
       })()}
 
       {/* Messages */}
-      <FlatList
-        ref={listRef}
-        data={messages}
-        keyExtractor={(m) => m.id}
-        contentContainerStyle={{ padding: 16, gap: 6 }}
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={{ padding: 16, gap: 10 }}
         onContentSizeChange={() =>
-          listRef.current?.scrollToEnd({ animated: true })
+          scrollRef.current?.scrollToEnd({ animated: true })
         }
-        renderItem={({ item }) => {
+      >
+        {messages.map((item) => {
           const mine = me && item.sender_id === me.id;
           const invite = parseInviteCard(item.content);
 
@@ -460,9 +459,16 @@ export default function Chat() {
             const mealPrice = invite.restaurant_meal_price ?? fallback?.meal_price;
             return (
               <View
-                className={`max-w-[85%] ${mine ? "self-end" : "self-start"}`}
+                key={item.id}
+                style={{
+                  alignSelf: mine ? "flex-end" : "flex-start",
+                  width: "85%",
+                }}
               >
-                <View className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-3xl p-4 shadow-sm">
+                <View
+                  className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-3xl p-4 shadow-sm"
+                  style={{ width: "100%" }}
+                >
                   <View className="mb-2">
                     <View className="flex-row items-start">
                       <Ionicons
@@ -471,7 +477,10 @@ export default function Chat() {
                         color="#00A6F6"
                         style={{ marginTop: 2 }}
                       />
-                      <Text className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-2">
+                      <Text
+                        className="font-bold text-base text-gray-900 dark:text-white ml-2"
+                        style={{ flex: 1, flexShrink: 1 }}
+                      >
                         {invite.restaurant}
                       </Text>
                       {rating != null && rating > 0 && (
@@ -492,12 +501,18 @@ export default function Chat() {
                       </Text>
                     )}
                     {supplement != null && (
-                      <View className="flex-row items-center ml-7 gap-2">
+                      <View
+                        className="flex-row flex-wrap items-center ml-7"
+                        style={{ columnGap: 8, rowGap: 2 }}
+                      >
                         <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
                           {Number(supplement).toFixed(2)} EUR doplačilo
                         </Text>
                         {mealPrice != null && (
-                          <Text className="text-xs text-gray-400 dark:text-gray-500">
+                          <Text
+                            className="text-xs text-gray-400 dark:text-gray-500"
+                            style={{ flexShrink: 1 }}
+                          >
                             (cena obroka {Number(mealPrice).toFixed(2)})
                           </Text>
                         )}
@@ -521,30 +536,33 @@ export default function Chat() {
                   )}
 
                   {status === "accepted" ? (
-                    <View className="mt-3 bg-green-50 dark:bg-green-500/20 rounded-xl py-2 items-center">
+                    <View className="mt-3 bg-green-50 dark:bg-green-500/20 rounded-xl px-4 py-3 items-center">
                       <Text className="text-green-600 dark:text-green-400 font-semibold text-sm">
                         Sprejeto
                       </Text>
                     </View>
                   ) : status === "declined" ? (
-                    <View className="mt-3 bg-red-50 dark:bg-red-500/20 rounded-xl py-2 items-center">
+                    <View className="mt-3 bg-red-50 dark:bg-red-500/20 rounded-xl px-4 py-3 items-center">
                       <Text className="text-red-500 font-semibold text-sm">
                         Zavrnjeno
                       </Text>
                     </View>
                   ) : status === "expired" ? (
-                    <View className="mt-3 bg-gray-100 dark:bg-neutral-800 rounded-xl py-2 items-center">
+                    <View className="mt-3 bg-gray-100 dark:bg-neutral-800 rounded-xl px-4 py-3 items-center">
                       <Text className="text-gray-500 dark:text-gray-300 font-semibold text-sm">
                         Umaknjeno
                       </Text>
                     </View>
                   ) : !mine ? (
-                    <View className="flex-row gap-2 mt-3">
+                    <View
+                      className="flex-row mt-3"
+                      style={{ gap: 8, alignItems: "stretch" }}
+                    >
                       <Pressable
                         onPress={() =>
                           respondToInvite(invite.bone_id, "accepted", invite)
                         }
-                        className="flex-1 bg-brand rounded-xl py-2.5 items-center"
+                        className="flex-1 bg-brand rounded-xl px-4 py-3 items-center"
                       >
                         <Text className="text-white font-semibold text-sm">
                           Sprejmi
@@ -554,7 +572,7 @@ export default function Chat() {
                         onPress={() =>
                           respondToInvite(invite.bone_id, "declined")
                         }
-                        className="flex-1 bg-gray-100 dark:bg-neutral-800 rounded-xl py-2.5 items-center"
+                        className="flex-1 bg-gray-100 dark:bg-neutral-800 rounded-xl px-4 py-3 items-center"
                       >
                         <Text className="text-gray-600 dark:text-gray-200 font-semibold text-sm">
                           Zavrni
@@ -575,6 +593,7 @@ export default function Chat() {
 
           return (
             <View
+              key={item.id}
               className={`max-w-[78%] px-4 py-3 rounded-3xl ${mine ? "self-end bg-brand" : "self-start bg-white dark:bg-neutral-900 shadow-sm"}`}
             >
               <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
@@ -582,8 +601,8 @@ export default function Chat() {
               </Text>
             </View>
           );
-        }}
-      />
+        })}
+      </ScrollView>
 
       {/* Input */}
       <View className="flex-row items-center gap-2 px-4 py-3 pb-8 bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800">
