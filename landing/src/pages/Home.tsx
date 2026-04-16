@@ -50,11 +50,11 @@ export default function Home() {
                 Spoznaj študente v tvoji bližini in pojdi na bone skupaj.
               </p>
 
-              <div className="mt-10 lg:hidden">
+              <div className="mt-6 lg:hidden">
                 <HeroCards />
               </div>
 
-              <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
+              <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
                 <StoreButton
                   icon={ASSETS.appStore}
                   label="Naloži na app store"
@@ -397,7 +397,7 @@ function StoreButton({
 
 function HeroCards() {
   return (
-    <div className="relative mx-auto flex min-h-[360px] w-full max-w-[620px] items-center justify-center sm:min-h-[473px]">
+    <div className="relative mx-auto flex w-full max-w-[620px] items-center justify-center sm:min-h-[473px]">
       <img
         src={ASSETS.heroImage}
         alt="Boni Buddy profile cards"
