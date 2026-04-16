@@ -24,7 +24,12 @@ const DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
 export default function Home() {
   return (
     <div className="min-h-screen bg-white font-sans text-black">
-      <section className="bg-[linear-gradient(129deg,rgba(146,220,243,0.4)_0%,rgba(75,194,244,0.4)_50%,rgba(4,167,246,0.4)_100%)]">
+      <section
+        style={{
+          backgroundImage:
+            "linear-gradient(129.19478524043487deg, rgba(75, 194, 244, 0.4) 0%, rgba(146, 220, 243, 0.4) 53.365%, rgba(255, 255, 255, 0.4) 100%)",
+        }}
+      >
         <div className="mx-auto flex min-h-[760px] max-w-[1440px] flex-col gap-16 px-5 py-6 sm:px-10 lg:min-h-[893px] lg:gap-[130px] lg:px-20 lg:py-10">
           <Header />
 
@@ -45,13 +50,27 @@ export default function Home() {
                 Spoznaj študente v tvoji bližini in pojdi na bone skupaj.
               </p>
 
-              <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
-                <StoreButton icon={ASSETS.appStore} label="Naloži na app store" />
-                <StoreButton icon={ASSETS.googlePlay} label="Naloži na google play" />
+              <div className="mt-10 lg:hidden">
+                <HeroCards />
+              </div>
+
+              <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
+                <StoreButton
+                  icon={ASSETS.appStore}
+                  label="Naloži na app store"
+                  fixed
+                />
+                <StoreButton
+                  icon={ASSETS.googlePlay}
+                  label="Naloži na google play"
+                  fixed
+                />
               </div>
             </div>
 
-            <HeroCards />
+            <div className="hidden lg:block">
+              <HeroCards />
+            </div>
           </div>
         </div>
       </section>
@@ -93,7 +112,7 @@ export default function Home() {
             "linear-gradient(180deg, rgba(245, 252, 255, 0.2) 0%, rgba(29, 176, 246, 0.2) 100%), linear-gradient(90deg, #f5fcff 0%, #f5fcff 100%)",
         }}
       >
-        <div className="absolute left-1/2 top-[64.72px] flex w-[min(605.56px,calc(100%-40px))] -translate-x-1/2 flex-col items-center gap-11 text-center">
+        <div className="absolute left-1/2 top-[42px] flex w-[min(605.56px,calc(100%-40px))] -translate-x-1/2 flex-col items-center gap-11 text-center lg:top-[64.72px]">
           <h2 className="w-full font-['Poppins'] text-[42px] font-semibold leading-[1.18] sm:text-[56px] sm:leading-[76px]">
             Prenesi app in najdi svojega buddyja.
           </h2>
@@ -106,7 +125,7 @@ export default function Home() {
         <img
           src={ASSETS.logoFace}
           alt=""
-          className="absolute bottom-[-210.53px] left-[calc(50%-0.27px)] h-[421.813px] w-[717.463px] -translate-x-1/2"
+          className="absolute bottom-[-210.53px] left-[calc(50%-0.27px)] h-[421.813px] w-[717.463px] max-w-none -translate-x-1/2"
         />
       </section>
     </div>
@@ -354,14 +373,24 @@ function Header() {
   );
 }
 
-function StoreButton({ icon, label }: { icon: string; label: string }) {
+function StoreButton({
+  icon,
+  label,
+  fixed = false,
+}: {
+  icon: string;
+  label: string;
+  fixed?: boolean;
+}) {
   return (
     <a
       href={APP_URL}
-      className="inline-flex h-[50px] items-center justify-center gap-3 rounded-[20px] bg-white px-4 text-[18px] shadow-[0_2px_4px_#47bdef] transition hover:-translate-y-0.5 hover:shadow-[0_5px_10px_rgba(71,189,239,0.45)] sm:text-[23px]"
+      className={`inline-flex h-[50px] items-center justify-center gap-3 rounded-[20px] bg-white px-4 text-[18px] shadow-[0_2px_4px_#47bdef] transition hover:-translate-y-0.5 hover:shadow-[0_5px_10px_rgba(71,189,239,0.45)] sm:text-[23px] ${
+        fixed ? "w-[315px] max-w-[calc(100vw-40px)]" : ""
+      }`}
     >
-      <img src={icon} alt="" className="h-6 w-6" />
-      <span>{label}</span>
+      <img src={icon} alt="" className="h-6 w-6 shrink-0" />
+      <span className="whitespace-nowrap">{label}</span>
     </a>
   );
 }
