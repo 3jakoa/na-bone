@@ -363,12 +363,6 @@ function Header() {
         </span>
         <span className="text-[20px] font-bold sm:text-[23px]">BoniBuddy</span>
       </a>
-      <a
-        href="#kako"
-        className="text-[18px] leading-none hover:text-[#0191d7] sm:text-[23px]"
-      >
-        Kako deluje?
-      </a>
     </header>
   );
 }
