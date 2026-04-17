@@ -20,7 +20,7 @@ Things you will need to wire up before shipping:
 - **Supabase Storage** — `avatars` bucket must exist (already required by web).
 - **Swipe gestures** — current `discover` screen uses tap buttons. Add `react-native-gesture-handler` + Reanimated swipe deck if you want the same UX as web.
 - **Face validation** — web has `validateFace.ts` (FaceAPI/canvas). Not ported; mobile equivalent would use `expo-face-detector` or skip.
-- **Push notifications** — not included; add via `expo-notifications` if needed.
+- **Push notifications** — implemented with `expo-notifications` and Supabase triggers. Android builds require Firebase/FCM credentials: place `google-services.json` at `android/app/google-services.json` and upload the FCM V1 service account key in EAS credentials.
 - **Visual polish** — copied the web brand colors but no full design pass.
 
 ## Build
