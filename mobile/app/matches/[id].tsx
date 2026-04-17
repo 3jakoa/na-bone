@@ -14,6 +14,7 @@ import {
 import { useLocalSearchParams, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Calendar from "expo-calendar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { formatScheduledDate } from "../../lib/formatDate";
 import {
   supabase,
@@ -65,6 +66,7 @@ export default function Chat() {
   const [restMap, setRestMap] = useState<Map<string, RestaurantInfo>>(new Map());
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
+  const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
   const prefillApplied = useRef(false);
 
@@ -347,7 +349,7 @@ export default function Chat() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1 bg-gray-50 dark:bg-neutral-950"
     >
       {/* Header */}
@@ -439,7 +441,10 @@ export default function Chat() {
       {/* Messages */}
       <ScrollView
         ref={scrollRef}
+        className="flex-1"
         contentContainerStyle={{ padding: 16, gap: 10 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
         onContentSizeChange={() =>
           scrollRef.current?.scrollToEnd({ animated: true })
         }
@@ -605,7 +610,10 @@ export default function Chat() {
       </ScrollView>
 
       {/* Input */}
-      <View className="flex-row items-center gap-2 px-4 py-3 pb-8 bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800">
+      <View
+        className="flex-row items-center gap-2 px-4 pt-3 bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800"
+        style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+      >
         <TextInput
           value={text}
           onChangeText={setText}
