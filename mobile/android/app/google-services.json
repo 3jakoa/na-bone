@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "985471239994",
+    "project_id": "bonibuddy-45e91",
+    "storage_bucket": "bonibuddy-45e91.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985471239994:android:ea9bd002057f1618da3203",
+        "android_client_info": {
+          "package_name": "si.bonibuddy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZHxsAfqpf5Gzc4FZ9QaU-21zuGrHDlkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
