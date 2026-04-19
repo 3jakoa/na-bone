@@ -27,7 +27,7 @@ export default function Home() {
       <section
         style={{
           backgroundImage:
-            "linear-gradient(129.19478524043487deg, rgba(75, 194, 244, 0.4) 0%, rgba(146, 220, 243, 0.4) 53.365%, rgba(255, 255, 255, 0.4) 100%)",
+            "linear-gradient(187.3901238927963deg, rgba(75, 194, 244, 0.4) 8.6486%, rgba(146, 220, 243, 0.4) 52.783%, #f5fcff 91.351%)",
         }}
       >
         <div className="mx-auto flex min-h-[760px] max-w-[1440px] flex-col gap-16 px-5 py-6 sm:px-10 lg:min-h-[893px] lg:gap-[130px] lg:px-20 lg:py-10">
@@ -362,12 +362,6 @@ function Header() {
           <img src={ASSETS.boniLogo} alt="" className="h-[30px] w-auto" />
         </span>
         <span className="text-[20px] font-bold sm:text-[23px]">BoniBuddy</span>
-      </a>
-      <a
-        href="#kako"
-        className="text-[18px] leading-none hover:text-[#0191d7] sm:text-[23px]"
-      >
-        Kako deluje?
       </a>
     </header>
   );
