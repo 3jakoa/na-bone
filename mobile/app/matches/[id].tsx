@@ -68,11 +68,9 @@ export default function Chat() {
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [androidKeyboardInset, setAndroidKeyboardInset] = useState(0);
-  const [androidKeyboardTop, setAndroidKeyboardTop] = useState<number | null>(null);
   const [composerHeight, setComposerHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
-  const composerRef = useRef<View>(null);
   const prefillApplied = useRef(false);
 
   useEffect(() => {
@@ -82,36 +80,17 @@ export default function Chat() {
     }
   }, [prefill]);
 
-  function scrollToBottom(animated = true) {
-    requestAnimationFrame(() => {
-      scrollRef.current?.scrollToEnd({ animated });
-    });
-  }
-
-  function updateAndroidKeyboardInset(nextKeyboardTop: number) {
-    if (Platform.OS !== "android") return;
-
-    requestAnimationFrame(() => {
-      composerRef.current?.measureInWindow((_x, y, _width, height) => {
-        const overlap = y + height - nextKeyboardTop;
-        const nextInset =
-          overlap > 0 ? Math.ceil(overlap + 8) : 0;
-        setAndroidKeyboardInset(nextInset);
-        scrollToBottom();
-      });
-    });
-  }
-
   useEffect(() => {
     if (Platform.OS !== "android") return;
 
     const showSubscription = Keyboard.addListener("keyboardDidShow", (event) => {
-      const nextKeyboardTop = event.endCoordinates.screenY;
-      setAndroidKeyboardTop(nextKeyboardTop);
-      updateAndroidKeyboardInset(nextKeyboardTop);
+      const nextInset = Math.max(0, event.endCoordinates.height - insets.bottom);
+      setAndroidKeyboardInset(nextInset);
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollToEnd({ animated: true });
+      });
     });
     const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      setAndroidKeyboardTop(null);
       setAndroidKeyboardInset(0);
     });
 
@@ -659,24 +638,17 @@ export default function Chat() {
 
         {/* Input */}
         <View
-          ref={composerRef}
           className="flex-row items-center gap-2 px-4 pt-3 bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800"
           style={{ paddingBottom: Math.max(insets.bottom, 12) }}
-          onLayout={(event) => {
-            setComposerHeight(event.nativeEvent.layout.height);
-            if (Platform.OS === "android" && androidKeyboardTop != null) {
-              updateAndroidKeyboardInset(androidKeyboardTop);
-            }
-          }}
+          onLayout={(event) => setComposerHeight(event.nativeEvent.layout.height)}
         >
           <TextInput
             value={text}
             onChangeText={setText}
             onFocus={() => {
-              scrollToBottom();
-              if (Platform.OS === "android" && androidKeyboardTop != null) {
-                updateAndroidKeyboardInset(androidKeyboardTop);
-              }
+              requestAnimationFrame(() => {
+                scrollRef.current?.scrollToEnd({ animated: true });
+              });
             }}
             placeholder="Sporočilo..."
             placeholderTextColor="#888"
