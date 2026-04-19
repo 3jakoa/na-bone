@@ -6,6 +6,7 @@ import {
   TextInput,
   Pressable,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
   Alert,
   Image,
@@ -66,6 +67,8 @@ export default function Chat() {
   const [restMap, setRestMap] = useState<Map<string, RestaurantInfo>>(new Map());
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
+  const [androidKeyboardInset, setAndroidKeyboardInset] = useState(0);
+  const [composerHeight, setComposerHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
   const prefillApplied = useRef(false);
@@ -76,6 +79,26 @@ export default function Chat() {
       prefillApplied.current = true;
     }
   }, [prefill]);
+
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+
+    const showSubscription = Keyboard.addListener("keyboardDidShow", (event) => {
+      const nextInset = Math.max(0, event.endCoordinates.height - insets.bottom);
+      setAndroidKeyboardInset(nextInset);
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollToEnd({ animated: true });
+      });
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setAndroidKeyboardInset(0);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, [insets.bottom]);
 
   // Fetch all restaurants for info lookup
   useEffect(() => {
@@ -349,7 +372,7 @@ export default function Chat() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       className="flex-1 bg-gray-50 dark:bg-neutral-950"
     >
       {/* Header */}
@@ -438,195 +461,206 @@ export default function Chat() {
         );
       })()}
 
-      {/* Messages */}
-      <ScrollView
-        ref={scrollRef}
+      <View
         className="flex-1"
-        contentContainerStyle={{ padding: 16, gap: 10 }}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
-        }
+        style={Platform.OS === "android" ? { paddingBottom: androidKeyboardInset } : undefined}
       >
-        {messages.map((item) => {
-          const mine = me && item.sender_id === me.id;
-          const invite = parseInviteCard(item.content);
+        {/* Messages */}
+        <ScrollView
+          ref={scrollRef}
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: composerHeight + 16 }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+          onContentSizeChange={() =>
+            scrollRef.current?.scrollToEnd({ animated: true })
+          }
+        >
+          {messages.map((item) => {
+            const mine = me && item.sender_id === me.id;
+            const invite = parseInviteCard(item.content);
 
-          if (invite) {
-            const status = boneStatuses[invite.bone_id];
-            // Use embedded data from invite, fall back to restMap for old messages
-            const fallback = restMap.get(invite.restaurant);
-            const rating = invite.restaurant_rating ?? fallback?.rating;
-            const addr = invite.restaurant_address ?? fallback?.address;
-            const city = invite.restaurant_city ?? fallback?.city;
-            const supplement = invite.restaurant_supplement ?? fallback?.supplement_price;
-            const mealPrice = invite.restaurant_meal_price ?? fallback?.meal_price;
-            return (
-              <View
-                key={item.id}
-                style={{
-                  alignSelf: mine ? "flex-end" : "flex-start",
-                  width: "85%",
-                }}
-              >
+            if (invite) {
+              const status = boneStatuses[invite.bone_id];
+              // Use embedded data from invite, fall back to restMap for old messages
+              const fallback = restMap.get(invite.restaurant);
+              const rating = invite.restaurant_rating ?? fallback?.rating;
+              const addr = invite.restaurant_address ?? fallback?.address;
+              const city = invite.restaurant_city ?? fallback?.city;
+              const supplement = invite.restaurant_supplement ?? fallback?.supplement_price;
+              const mealPrice = invite.restaurant_meal_price ?? fallback?.meal_price;
+              return (
                 <View
-                  className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-3xl p-4 shadow-sm"
-                  style={{ width: "100%" }}
+                  key={item.id}
+                  style={{
+                    alignSelf: mine ? "flex-end" : "flex-start",
+                    width: "85%",
+                  }}
                 >
-                  <View className="mb-2">
-                    <View className="flex-row items-start">
-                      <Ionicons
-                        name="restaurant"
-                        size={18}
-                        color="#00A6F6"
-                        style={{ marginTop: 2 }}
-                      />
-                      <Text
-                        className="font-bold text-base text-gray-900 dark:text-white ml-2"
-                        style={{ flex: 1, flexShrink: 1 }}
-                      >
-                        {invite.restaurant}
-                      </Text>
-                      {rating != null && rating > 0 && (
-                        <View
-                          className="flex-row items-center ml-2 shrink-0"
-                          style={{ marginTop: 4 }}
+                  <View
+                    className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-3xl p-4 shadow-sm"
+                    style={{ width: "100%" }}
+                  >
+                    <View className="mb-2">
+                      <View className="flex-row items-start">
+                        <Ionicons
+                          name="restaurant"
+                          size={18}
+                          color="#00A6F6"
+                          style={{ marginTop: 2 }}
+                        />
+                        <Text
+                          className="font-bold text-base text-gray-900 dark:text-white ml-2"
+                          style={{ flex: 1, flexShrink: 1 }}
                         >
-                          <Ionicons name="star" size={11} color="#F59E0B" />
-                          <Text className="text-xs font-semibold text-amber-500 ml-0.5">
-                            {rating}
+                          {invite.restaurant}
+                        </Text>
+                        {rating != null && rating > 0 && (
+                          <View
+                            className="flex-row items-center ml-2 shrink-0"
+                            style={{ marginTop: 4 }}
+                          >
+                            <Ionicons name="star" size={11} color="#F59E0B" />
+                            <Text className="text-xs font-semibold text-amber-500 ml-0.5">
+                              {rating}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                      {(addr || city) && (
+                        <Text className="text-xs text-gray-400 dark:text-gray-500 ml-7">
+                          {[addr, city].filter(Boolean).join(", ")}
+                        </Text>
+                      )}
+                      {supplement != null && (
+                        <View
+                          className="flex-row flex-wrap items-center ml-7"
+                          style={{ columnGap: 8, rowGap: 2 }}
+                        >
+                          <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
+                            {Number(supplement).toFixed(2)} EUR doplačilo
                           </Text>
+                          {mealPrice != null && (
+                            <Text
+                              className="text-xs text-gray-400 dark:text-gray-500"
+                              style={{ flexShrink: 1 }}
+                            >
+                              (cena obroka {Number(mealPrice).toFixed(2)})
+                            </Text>
+                          )}
                         </View>
                       )}
                     </View>
-                    {(addr || city) && (
-                      <Text className="text-xs text-gray-400 dark:text-gray-500 ml-7">
-                        {[addr, city].filter(Boolean).join(", ")}
+                    <View className="flex-row items-center mb-1">
+                      <Ionicons
+                        name="calendar-outline"
+                        size={14}
+                        color="#999"
+                      />
+                      <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1.5">
+                        {formatScheduledDate(invite.scheduled_at)}
+                      </Text>
+                    </View>
+                    {invite.note && (
+                      <Text className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        {invite.note}
                       </Text>
                     )}
-                    {supplement != null && (
-                      <View
-                        className="flex-row flex-wrap items-center ml-7"
-                        style={{ columnGap: 8, rowGap: 2 }}
-                      >
-                        <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
-                          {Number(supplement).toFixed(2)} EUR doplačilo
+
+                    {status === "accepted" ? (
+                      <View className="mt-3 bg-green-50 dark:bg-green-500/20 rounded-xl px-4 py-3 items-center">
+                        <Text className="text-green-600 dark:text-green-400 font-semibold text-sm">
+                          Sprejeto
                         </Text>
-                        {mealPrice != null && (
-                          <Text
-                            className="text-xs text-gray-400 dark:text-gray-500"
-                            style={{ flexShrink: 1 }}
-                          >
-                            (cena obroka {Number(mealPrice).toFixed(2)})
+                      </View>
+                    ) : status === "declined" ? (
+                      <View className="mt-3 bg-red-50 dark:bg-red-500/20 rounded-xl px-4 py-3 items-center">
+                        <Text className="text-red-500 font-semibold text-sm">
+                          Zavrnjeno
+                        </Text>
+                      </View>
+                    ) : status === "expired" ? (
+                      <View className="mt-3 bg-gray-100 dark:bg-neutral-800 rounded-xl px-4 py-3 items-center">
+                        <Text className="text-gray-500 dark:text-gray-300 font-semibold text-sm">
+                          Umaknjeno
+                        </Text>
+                      </View>
+                    ) : !mine ? (
+                      <View
+                        className="flex-row mt-3"
+                        style={{ gap: 8, alignItems: "stretch" }}
+                      >
+                        <Pressable
+                          onPress={() =>
+                            respondToInvite(invite.bone_id, "accepted", invite)
+                          }
+                          className="flex-1 bg-brand rounded-xl px-4 py-3 items-center"
+                        >
+                          <Text className="text-white font-semibold text-sm">
+                            Sprejmi
                           </Text>
-                        )}
+                        </Pressable>
+                        <Pressable
+                          onPress={() =>
+                            respondToInvite(invite.bone_id, "declined")
+                          }
+                          className="flex-1 bg-gray-100 dark:bg-neutral-800 rounded-xl px-4 py-3 items-center"
+                        >
+                          <Text className="text-gray-600 dark:text-gray-200 font-semibold text-sm">
+                            Zavrni
+                          </Text>
+                        </Pressable>
+                      </View>
+                    ) : (
+                      <View className="mt-3 bg-blue-50 dark:bg-brand/20 rounded-xl py-3 px-4 items-center">
+                        <Text className="text-brand font-semibold text-sm">
+                          Čaka na odgovor
+                        </Text>
                       </View>
                     )}
                   </View>
-                  <View className="flex-row items-center mb-1">
-                    <Ionicons
-                      name="calendar-outline"
-                      size={14}
-                      color="#999"
-                    />
-                    <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1.5">
-                      {formatScheduledDate(invite.scheduled_at)}
-                    </Text>
-                  </View>
-                  {invite.note && (
-                    <Text className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                      {invite.note}
-                    </Text>
-                  )}
-
-                  {status === "accepted" ? (
-                    <View className="mt-3 bg-green-50 dark:bg-green-500/20 rounded-xl px-4 py-3 items-center">
-                      <Text className="text-green-600 dark:text-green-400 font-semibold text-sm">
-                        Sprejeto
-                      </Text>
-                    </View>
-                  ) : status === "declined" ? (
-                    <View className="mt-3 bg-red-50 dark:bg-red-500/20 rounded-xl px-4 py-3 items-center">
-                      <Text className="text-red-500 font-semibold text-sm">
-                        Zavrnjeno
-                      </Text>
-                    </View>
-                  ) : status === "expired" ? (
-                    <View className="mt-3 bg-gray-100 dark:bg-neutral-800 rounded-xl px-4 py-3 items-center">
-                      <Text className="text-gray-500 dark:text-gray-300 font-semibold text-sm">
-                        Umaknjeno
-                      </Text>
-                    </View>
-                  ) : !mine ? (
-                    <View
-                      className="flex-row mt-3"
-                      style={{ gap: 8, alignItems: "stretch" }}
-                    >
-                      <Pressable
-                        onPress={() =>
-                          respondToInvite(invite.bone_id, "accepted", invite)
-                        }
-                        className="flex-1 bg-brand rounded-xl px-4 py-3 items-center"
-                      >
-                        <Text className="text-white font-semibold text-sm">
-                          Sprejmi
-                        </Text>
-                      </Pressable>
-                      <Pressable
-                        onPress={() =>
-                          respondToInvite(invite.bone_id, "declined")
-                        }
-                        className="flex-1 bg-gray-100 dark:bg-neutral-800 rounded-xl px-4 py-3 items-center"
-                      >
-                        <Text className="text-gray-600 dark:text-gray-200 font-semibold text-sm">
-                          Zavrni
-                        </Text>
-                      </Pressable>
-                    </View>
-                  ) : (
-                    <View className="mt-3 bg-blue-50 dark:bg-brand/20 rounded-xl py-3 px-4 items-center">
-                      <Text className="text-brand font-semibold text-sm">
-                        Čaka na odgovor
-                      </Text>
-                    </View>
-                  )}
                 </View>
+              );
+            }
+
+            return (
+              <View
+                key={item.id}
+                className={`max-w-[78%] px-4 py-3 rounded-3xl ${mine ? "self-end bg-brand" : "self-start bg-white dark:bg-neutral-900 shadow-sm"}`}
+              >
+                <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
+                  {item.content}
+                </Text>
               </View>
             );
-          }
+          })}
+        </ScrollView>
 
-          return (
-            <View
-              key={item.id}
-              className={`max-w-[78%] px-4 py-3 rounded-3xl ${mine ? "self-end bg-brand" : "self-start bg-white dark:bg-neutral-900 shadow-sm"}`}
-            >
-              <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
-                {item.content}
-              </Text>
-            </View>
-          );
-        })}
-      </ScrollView>
-
-      {/* Input */}
-      <View
-        className="flex-row items-center gap-2 px-4 pt-3 bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800"
-        style={{ paddingBottom: Math.max(insets.bottom, 12) }}
-      >
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          placeholder="Sporočilo..."
-          placeholderTextColor="#888"
-          className="flex-1 bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3 text-base text-gray-900 dark:text-white"
-        />
-        <Pressable
-          onPress={send}
-          className="w-11 h-11 bg-brand rounded-full items-center justify-center"
+        {/* Input */}
+        <View
+          className="flex-row items-center gap-2 px-4 pt-3 bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800"
+          style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+          onLayout={(event) => setComposerHeight(event.nativeEvent.layout.height)}
         >
-          <Ionicons name="send" size={18} color="#fff" />
-        </Pressable>
+          <TextInput
+            value={text}
+            onChangeText={setText}
+            onFocus={() => {
+              requestAnimationFrame(() => {
+                scrollRef.current?.scrollToEnd({ animated: true });
+              });
+            }}
+            placeholder="Sporočilo..."
+            placeholderTextColor="#888"
+            className="flex-1 bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3 text-base text-gray-900 dark:text-white"
+          />
+          <Pressable
+            onPress={send}
+            className="w-11 h-11 bg-brand rounded-full items-center justify-center"
+          >
+            <Ionicons name="send" size={18} color="#fff" />
+          </Pressable>
+        </View>
       </View>
 
       {/* Action menu modal */}
