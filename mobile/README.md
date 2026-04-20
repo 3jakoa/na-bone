@@ -10,6 +10,12 @@ cp .env.example .env
 npx expo start
 ```
 
+Required environment variables in `.env`:
+- `EXPO_PUBLIC_SUPABASE_URL`
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY`
+
+If you add or change `.env`, restart Expo so the values are picked up.
+
 ## Notes & known gaps
 This is a **scaffold port** of the Next.js web app. Screens included: auth (login/signup + Google), onboarding, discover (basic swipe), feed (public bones), matches list, chat (with realtime + active bone banner), profile.
 
