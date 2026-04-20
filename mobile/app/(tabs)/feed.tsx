@@ -268,14 +268,22 @@ export default function Feed() {
           <RefreshControl refreshing={refreshing} onRefresh={load} />
         }
         ListEmptyComponent={
-          <View className="items-center mt-16">
-            <Ionicons name="restaurant-outline" size={48} color="#888" />
-            <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
+          <View className="items-center mt-16 bg-white dark:bg-neutral-900 rounded-3xl px-6 py-8 shadow-sm">
+            <View className="w-16 h-16 rounded-full bg-brand/10 items-center justify-center">
+              <Ionicons name="restaurant-outline" size={30} color="#00A6F6" />
+            </View>
+            <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
               Ni aktivnih bonov
             </Text>
-            <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
-              Bodi prvi — objavi bon!
+            <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
+              Bodi prvi in objavi nov bon za kosilo.
             </Text>
+            <Pressable
+              onPress={() => router.navigate("/(tabs)/create")}
+              className="mt-6 bg-brand rounded-2xl px-6 py-3 min-w-[160px] items-center"
+            >
+              <Text className="text-white font-bold text-base">Nov bon</Text>
+            </Pressable>
           </View>
         }
         renderItem={({ item }) => {
