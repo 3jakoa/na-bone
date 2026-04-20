@@ -72,6 +72,42 @@ export default function Chat() {
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
   const prefillApplied = useRef(false);
+  const matchClosedRef = useRef(false);
+
+  function leaveRemovedBuddy(message = "Ta buddy ni več na voljo.") {
+    if (matchClosedRef.current) return;
+    matchClosedRef.current = true;
+    setShowMenu(false);
+    setOther(null);
+    setMessages([]);
+    setActiveBone(null);
+    Alert.alert("Buddy odstranjen", message, [
+      {
+        text: "V redu",
+        onPress: () => router.replace("/matches"),
+      },
+    ]);
+  }
+
+  async function handleMatchActionError(message: string) {
+    if (!matchId) {
+      Alert.alert("Napaka", message);
+      return;
+    }
+
+    const { data: match, error } = await supabase
+      .from("buddy_matches")
+      .select("id")
+      .eq("id", matchId)
+      .maybeSingle();
+
+    if (!error && !match) {
+      leaveRemovedBuddy("Ta buddy je bil odstranjen.");
+      return;
+    }
+
+    Alert.alert("Napaka", message);
+  }
 
   useEffect(() => {
     if (prefill && !prefillApplied.current) {
@@ -143,6 +179,8 @@ export default function Chat() {
 
   useEffect(() => {
     if (!matchId) return;
+    let cancelled = false;
+
     (async () => {
       const {
         data: { user },
@@ -153,14 +191,20 @@ export default function Chat() {
         .select("*")
         .eq("user_id", user.id)
         .single();
+      if (!myP || cancelled) return;
       setMe(myP as Profile);
 
       const { data: m } = await supabase
         .from("buddy_matches")
         .select("*")
         .eq("id", matchId)
-        .single();
-      if (!m) return;
+        .maybeSingle();
+      if (!m) {
+        if (!cancelled) {
+          leaveRemovedBuddy("Ta buddy je bil odstranjen.");
+        }
+        return;
+      }
       const otherId =
         m.user1_id === (myP as Profile).id ? m.user2_id : m.user1_id;
       const { data: o } = await supabase
@@ -168,6 +212,7 @@ export default function Chat() {
         .select("*")
         .eq("id", otherId)
         .single();
+      if (cancelled) return;
       setOther(o as Profile);
 
       const { data: msgs } = await supabase
@@ -175,6 +220,7 @@ export default function Chat() {
         .select("*")
         .eq("match_id", matchId)
         .order("created_at", { ascending: true });
+      if (cancelled) return;
       setMessages((msgs ?? []) as Message[]);
 
       // Prioritize accepted bones, then most recent open
@@ -186,6 +232,7 @@ export default function Chat() {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
+      if (cancelled) return;
       if (acceptedBone) {
         setActiveBone(acceptedBone as Bone);
       } else {
@@ -197,6 +244,7 @@ export default function Chat() {
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
+        if (cancelled) return;
         setActiveBone((openBone as Bone) ?? null);
       }
     })();
@@ -271,8 +319,21 @@ export default function Chat() {
           })();
         }
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "buddy_matches",
+          filter: `id=eq.${matchId}`,
+        },
+        () => {
+          leaveRemovedBuddy("Ta buddy je bil odstranjen.");
+        }
+      )
       .subscribe();
     return () => {
+      cancelled = true;
       supabase.removeChannel(channel);
     };
   }, [matchId]);
@@ -303,7 +364,7 @@ export default function Chat() {
 
     if (error) {
       setMessages((prev) => prev.filter((m) => m.id !== tempMsg.id));
-      Alert.alert("Napaka", error.message);
+      await handleMatchActionError(error.message);
     } else if (data) {
       setMessages((prev) =>
         prev.map((m) => (m.id === tempMsg.id ? (data as Message) : m))
@@ -344,7 +405,10 @@ export default function Chat() {
       p_bone_id: boneId,
       p_response: response,
     });
-    if (error) return Alert.alert("Napaka", error.message);
+    if (error) {
+      await handleMatchActionError(error.message);
+      return;
+    }
     setBoneStatuses((prev) => ({ ...prev, [boneId]: response }));
 
     if (response === "accepted") {
