@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,7 @@ import {
   Alert,
   useWindowDimensions,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -30,47 +30,91 @@ export default function Discover() {
   const translateY = useSharedValue(0);
   const swiping = useRef(false);
 
-  useEffect(() => {
-    (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: myProfile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
-      setMe(myProfile as Profile);
+  const loadDeck = useCallback(async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setMe(null);
+      setDeck([]);
+      setIdx(0);
+      setCardVisible(true);
+      swiping.current = false;
+      translateX.value = 0;
+      translateY.value = 0;
+      return;
+    }
 
-      const { data: swiped } = await supabase
+    const { data: myProfile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
+    if (!myProfile) {
+      setMe(null);
+      setDeck([]);
+      setIdx(0);
+      return;
+    }
+
+    const meProfile = myProfile as Profile;
+    setMe(meProfile);
+
+    const [
+      { data: swiped },
+      { data: blockedRows },
+      { data: blockedByRows },
+      { data: matches },
+      { data: candidates },
+    ] = await Promise.all([
+      supabase
         .from("profile_swipes")
         .select("swiped_id")
-        .eq("swiper_id", (myProfile as Profile).id);
-      const { data: blockedRows } = await supabase
+        .eq("swiper_id", meProfile.id),
+      supabase
         .from("blocked_users")
         .select("blocked_id")
-        .eq("blocker_id", (myProfile as Profile).id);
-      const { data: blockedByRows } = await supabase
+        .eq("blocker_id", meProfile.id),
+      supabase
         .from("blocked_users")
         .select("blocker_id")
-        .eq("blocked_id", (myProfile as Profile).id);
-      const exclude = new Set([
-        (myProfile as Profile).id,
-        ...((swiped ?? []).map((s) => s.swiped_id)),
-        ...((blockedRows ?? []).map((b) => b.blocked_id)),
-        ...((blockedByRows ?? []).map((b) => b.blocker_id)),
-      ]);
-
-      const { data: candidates } = await supabase
+        .eq("blocked_id", meProfile.id),
+      supabase
+        .from("buddy_matches")
+        .select("user1_id, user2_id")
+        .or(`user1_id.eq.${meProfile.id},user2_id.eq.${meProfile.id}`),
+      supabase
         .from("profiles")
         .select("*")
-        .eq("is_onboarded", true);
-      setDeck(
-        ((candidates ?? []) as Profile[]).filter((p) => !exclude.has(p.id))
-      );
-    })();
-  }, []);
+        .eq("is_onboarded", true),
+    ]);
+
+    const buddyIds = (matches ?? []).map((match) =>
+      match.user1_id === meProfile.id ? match.user2_id : match.user1_id
+    );
+    const exclude = new Set([
+      meProfile.id,
+      ...((swiped ?? []).map((s) => s.swiped_id)),
+      ...((blockedRows ?? []).map((b) => b.blocked_id)),
+      ...((blockedByRows ?? []).map((b) => b.blocker_id)),
+      ...buddyIds,
+    ]);
+
+    setDeck(
+      ((candidates ?? []) as Profile[]).filter((profile) => !exclude.has(profile.id))
+    );
+    setIdx(0);
+    setCardVisible(true);
+    swiping.current = false;
+    translateX.value = 0;
+    translateY.value = 0;
+  }, [translateX, translateY]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void loadDeck();
+    }, [loadDeck])
+  );
 
   function resetCardPosition() {
     translateX.value = 0;
@@ -128,7 +172,10 @@ export default function Discover() {
         { onConflict: "swiper_id,swiped_id" }
       );
 
-    if (error) Alert.alert("Napaka", error.message);
+    if (error) {
+      Alert.alert("Napaka", error.message);
+      return;
+    }
 
     if (direction === "right") {
       const { data: match } = await supabase
