@@ -60,6 +60,19 @@ export default function Buddies() {
     }, [load])
   );
 
+  async function unmatchBuddy(buddy: Buddy) {
+    const { error } = await supabase.rpc("remove_buddy", {
+      p_match_id: buddy.matchId,
+    });
+
+    if (error) {
+      Alert.alert("Napaka", error.message);
+      return false;
+    }
+
+    return true;
+  }
+
   function removeBuddy(buddy: Buddy) {
     setActionBuddy(null);
     Alert.alert(
@@ -71,13 +84,9 @@ export default function Buddies() {
           text: "Odstrani",
           style: "destructive",
           onPress: async () => {
-            await supabase
-              .from("buddy_matches")
-              .delete()
-              .eq("id", buddy.matchId);
-            setBuddies((prev) =>
-              prev.filter((b) => b.matchId !== buddy.matchId)
-            );
+            const removed = await unmatchBuddy(buddy);
+            if (!removed) return;
+            setBuddies((prev) => prev.filter((b) => b.matchId !== buddy.matchId));
           },
         },
       ]
@@ -96,17 +105,22 @@ export default function Buddies() {
           style: "destructive",
           onPress: async () => {
             if (!meId) return;
-            await supabase.from("blocked_users").insert({
+            const { error: blockError } = await supabase.from("blocked_users").insert({
               blocker_id: meId,
               blocked_id: buddy.profile.id,
             });
-            await supabase
-              .from("buddy_matches")
-              .delete()
-              .eq("id", buddy.matchId);
-            setBuddies((prev) =>
-              prev.filter((b) => b.matchId !== buddy.matchId)
-            );
+            if (blockError) {
+              Alert.alert("Napaka", blockError.message);
+              return;
+            }
+
+            const removed = await unmatchBuddy(buddy);
+            if (removed) {
+              setBuddies((prev) => prev.filter((b) => b.matchId !== buddy.matchId));
+              return;
+            }
+
+            await load();
           },
         },
       ]
