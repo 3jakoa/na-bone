@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import * as Calendar from "expo-calendar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { formatScheduledDate } from "../../lib/formatDate";
@@ -54,6 +55,36 @@ function parseInviteCard(content: string): InviteCard | null {
   return null;
 }
 
+function sortMessages(a: Message, b: Message) {
+  const timeDelta = Date.parse(a.created_at) - Date.parse(b.created_at);
+  if (timeDelta !== 0) return timeDelta;
+  return a.id.localeCompare(b.id);
+}
+
+function upsertMessage(prev: Message[], incoming: Message) {
+  if (prev.some((message) => message.id === incoming.id)) return prev;
+
+  const tempIdx = prev.findIndex(
+    (message) =>
+      message.id.startsWith("temp-") &&
+      message.sender_id === incoming.sender_id &&
+      message.content === incoming.content
+  );
+
+  if (tempIdx >= 0) {
+    const next = [...prev];
+    next[tempIdx] = incoming;
+    next.sort(sortMessages);
+    return next;
+  }
+
+  return [...prev, incoming].sort(sortMessages);
+}
+
+function mergeMessages(prev: Message[], incoming: Message[]) {
+  return incoming.reduce((next, message) => upsertMessage(next, message), prev);
+}
+
 export default function Chat() {
   const { id: matchId, prefill } = useLocalSearchParams<{
     id: string;
@@ -73,6 +104,13 @@ export default function Chat() {
   const scrollRef = useRef<ScrollView>(null);
   const prefillApplied = useRef(false);
   const matchClosedRef = useRef(false);
+  const channelRef = useRef<RealtimeChannel | null>(null);
+  const channelReadyRef = useRef(false);
+  const latestMessageRef = useRef<Message | null>(null);
+
+  useEffect(() => {
+    latestMessageRef.current = messages.length > 0 ? messages[messages.length - 1] : null;
+  }, [messages]);
 
   function leaveRemovedBuddy(message = "Ta buddy ni več na voljo.") {
     if (matchClosedRef.current) return;
@@ -180,6 +218,7 @@ export default function Chat() {
   useEffect(() => {
     if (!matchId) return;
     let cancelled = false;
+    let polling = false;
 
     (async () => {
       const {
@@ -194,17 +233,48 @@ export default function Chat() {
       if (!myP || cancelled) return;
       setMe(myP as Profile);
 
-      const { data: m } = await supabase
-        .from("buddy_matches")
-        .select("*")
-        .eq("id", matchId)
-        .maybeSingle();
+      const [
+        { data: m },
+        { data: msgs },
+        { data: acceptedBone },
+        { data: openBone },
+      ] = await Promise.all([
+        supabase.from("buddy_matches").select("*").eq("id", matchId).maybeSingle(),
+        supabase
+          .from("chat_messages")
+          .select("*")
+          .eq("match_id", matchId)
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("meal_invites")
+          .select("*")
+          .eq("match_id", matchId)
+          .eq("status", "accepted")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("meal_invites")
+          .select("*")
+          .eq("match_id", matchId)
+          .eq("status", "open")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
+
       if (!m) {
         if (!cancelled) {
           leaveRemovedBuddy("Ta buddy je bil odstranjen.");
         }
         return;
       }
+
+      if (!cancelled) {
+        setMessages(((msgs ?? []) as Message[]).sort(sortMessages));
+        setActiveBone(((acceptedBone as Bone) ?? (openBone as Bone)) ?? null);
+      }
+
       const otherId =
         m.user1_id === (myP as Profile).id ? m.user2_id : m.user1_id;
       const { data: o } = await supabase
@@ -214,43 +284,21 @@ export default function Chat() {
         .single();
       if (cancelled) return;
       setOther(o as Profile);
-
-      const { data: msgs } = await supabase
-        .from("chat_messages")
-        .select("*")
-        .eq("match_id", matchId)
-        .order("created_at", { ascending: true });
-      if (cancelled) return;
-      setMessages((msgs ?? []) as Message[]);
-
-      // Prioritize accepted bones, then most recent open
-      const { data: acceptedBone } = await supabase
-        .from("meal_invites")
-        .select("*")
-        .eq("match_id", matchId)
-        .eq("status", "accepted")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (cancelled) return;
-      if (acceptedBone) {
-        setActiveBone(acceptedBone as Bone);
-      } else {
-        const { data: openBone } = await supabase
-          .from("meal_invites")
-          .select("*")
-          .eq("match_id", matchId)
-          .eq("status", "open")
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (cancelled) return;
-        setActiveBone((openBone as Bone) ?? null);
-      }
     })();
 
     const channel = supabase
-      .channel(`chat-${matchId}`)
+      .channel(`chat-${matchId}`, {
+        config: {
+          broadcast: {
+            self: false,
+          },
+        },
+      })
+      .on("broadcast", { event: "chat-message" }, ({ payload }) => {
+        const message = (payload as { message?: Message }).message;
+        if (!message || message.match_id !== matchId) return;
+        setMessages((prev) => upsertMessage(prev, message));
+      })
       .on(
         "postgres_changes",
         {
@@ -261,21 +309,7 @@ export default function Chat() {
         },
         (payload) => {
           const newMsg = payload.new as Message;
-          setMessages((prev) => {
-            if (prev.find((m) => m.id === newMsg.id)) return prev;
-            const tempIdx = prev.findIndex(
-              (m) =>
-                m.id.startsWith("temp-") &&
-                m.sender_id === newMsg.sender_id &&
-                m.content === newMsg.content
-            );
-            if (tempIdx >= 0) {
-              const updated = [...prev];
-              updated[tempIdx] = newMsg;
-              return updated;
-            }
-            return [...prev, newMsg];
-          });
+          setMessages((prev) => upsertMessage(prev, newMsg));
         }
       )
       .on(
@@ -331,9 +365,44 @@ export default function Chat() {
           leaveRemovedBuddy("Ta buddy je bil odstranjen.");
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        channelReadyRef.current = status === "SUBSCRIBED";
+      });
+
+    channelRef.current = channel;
+
+    const pollMessages = async () => {
+      if (polling || cancelled) return;
+      polling = true;
+
+      const latestMessage = latestMessageRef.current;
+      let query = supabase
+        .from("chat_messages")
+        .select("*")
+        .eq("match_id", matchId)
+        .order("created_at", { ascending: true });
+
+      if (latestMessage) {
+        query = query.gt("created_at", latestMessage.created_at);
+      }
+
+      const { data } = await query;
+      if (!cancelled && data && data.length > 0) {
+        setMessages((prev) => mergeMessages(prev, data as Message[]));
+      }
+
+      polling = false;
+    };
+
+    const pollInterval = setInterval(() => {
+      void pollMessages();
+    }, 1000);
+
     return () => {
       cancelled = true;
+      channelReadyRef.current = false;
+      channelRef.current = null;
+      clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
   }, [matchId]);
@@ -366,9 +435,16 @@ export default function Chat() {
       setMessages((prev) => prev.filter((m) => m.id !== tempMsg.id));
       await handleMatchActionError(error.message);
     } else if (data) {
-      setMessages((prev) =>
-        prev.map((m) => (m.id === tempMsg.id ? (data as Message) : m))
-      );
+      const savedMessage = data as Message;
+      setMessages((prev) => upsertMessage(prev, savedMessage));
+
+      if (channelRef.current && channelReadyRef.current) {
+        void channelRef.current.send({
+          type: "broadcast",
+          event: "chat-message",
+          payload: { message: savedMessage },
+        });
+      }
     }
   }
 
