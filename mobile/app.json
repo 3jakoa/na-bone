@@ -27,6 +27,11 @@
     },
     "android": {
       "package": "si.bonibuddy.app",
+      "icon": "./assets/icon.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
       "softwareKeyboardLayoutMode": "resize",
       "googleServicesFile": "./android/app/google-services.json",
       "blockedPermissions": [
