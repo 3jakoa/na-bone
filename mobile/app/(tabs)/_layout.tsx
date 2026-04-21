@@ -24,6 +24,7 @@ export default function TabsLayout() {
   const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
   const { scheme } = useTheme();
   const isDark = scheme === "dark";
+  const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const androidBottomPadding = Math.max(insets.bottom, 8);
   const androidTabBarHeight = 64 + androidBottomPadding;
@@ -55,10 +56,10 @@ export default function TabsLayout() {
   // Route taps on push notifications to the right screen.
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(
-      handleNotificationTap
+      (response) => handleNotificationTap(response, { pathname })
     );
     return () => sub.remove();
-  }, []);
+  }, [pathname]);
 
   return (
     <View style={{ flex: 1 }}>

@@ -85,24 +85,95 @@ export async function registerForPushNotifications(): Promise<string | null> {
  *   { type: "bone_new",   bone_id: "..." }             → /(tabs)/feed
  *   { type: "bone_reply", match_id: "..." }            → /matches/:id
  */
-export function handleNotificationTap(
-  response: Notifications.NotificationResponse
-) {
-  const data = response.notification.request.content.data as
-    | Record<string, unknown>
-    | undefined;
-  if (!data) return;
-  const matchId = typeof data.match_id === "string" ? data.match_id : null;
-  const type = typeof data.type === "string" ? data.type : null;
+type NotificationType = "chat" | "match" | "bone_new" | "bone_reply";
 
-  if (!type) return;
+type NotificationTarget =
+  | { kind: "feed" }
+  | { kind: "match"; matchId: string };
+
+type NotificationTapContext = {
+  pathname?: string | null;
+};
+
+function isNotificationType(value: unknown): value is NotificationType {
+  return (
+    value === "chat" ||
+    value === "match" ||
+    value === "bone_new" ||
+    value === "bone_reply"
+  );
+}
+
+function asNonEmptyString(value: unknown) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function parseNotificationTarget(
+  response: Notifications.NotificationResponse
+): NotificationTarget | null {
+  const rawData = response.notification.request.content.data;
+  if (!rawData || typeof rawData !== "object") {
+    console.warn("[notifications] Ignoring tap with missing payload");
+    return null;
+  }
+
+  const data = rawData as Record<string, unknown>;
+  const type = data.type;
+
+  if (!isNotificationType(type)) {
+    console.warn("[notifications] Ignoring tap with unsupported type", type);
+    return null;
+  }
 
   if (type === "bone_new") {
+    return { kind: "feed" };
+  }
+
+  const matchId = asNonEmptyString(data.match_id);
+  if (!matchId) {
+    console.warn("[notifications] Ignoring tap with missing match_id", data);
+    return null;
+  }
+
+  return { kind: "match", matchId };
+}
+
+function getActiveMatchId(pathname?: string | null) {
+  if (!pathname) return null;
+
+  const [pathOnly] = pathname.split("?");
+  const parts = pathOnly.split("/").filter(Boolean);
+  if (parts[0] !== "matches" || parts.length < 2) return null;
+
+  return asNonEmptyString(parts[1]);
+}
+
+export function handleNotificationTap(
+  response: Notifications.NotificationResponse,
+  context: NotificationTapContext = {}
+) {
+  const target = parseNotificationTarget(response);
+  if (!target) return;
+
+  if (target.kind === "feed") {
     router.push("/(tabs)/feed" as any);
     return;
   }
 
-  if (matchId && (type === "chat" || type === "match" || type === "bone_reply")) {
-    router.push(`/matches/${matchId}` as any);
+  const activeMatchId = getActiveMatchId(context.pathname);
+
+  // Avoid stacking the same chat route on top of itself when the user taps
+  // a notification while already viewing that thread.
+  if (activeMatchId === target.matchId) {
+    return;
   }
+
+  if (activeMatchId) {
+    router.replace(`/matches/${target.matchId}` as any);
+    return;
+  }
+
+  router.push(`/matches/${target.matchId}` as any);
 }
