@@ -17,7 +17,7 @@ Required environment variables in `.env`:
 If you add or change `.env`, restart Expo so the values are picked up.
 
 ## Notes & known gaps
-This is a **scaffold port** of the Next.js web app. Screens included: auth (login/signup + Google), onboarding, discover (basic swipe), feed (public bones), matches list, chat (with realtime + active bone banner), profile.
+This is a **scaffold port** of the Next.js web app. Screens included: auth (login/signup + Google), onboarding, discover (basic swipe), feed (public bones), matches list, chat (with realtime invite cards), profile.
 
 Things you will need to wire up before shipping:
 - **Google OAuth** — mobile uses Supabase OAuth with a native deep link callback. In Google Cloud Console, the only redirect URI should stay `https://<your-supabase-project>.supabase.co/auth/v1/callback`. In Supabase Auth URL Configuration, add the mobile redirect URLs your environment uses:
