@@ -29,7 +29,7 @@ const FAQ = [
   },
   {
     q: "Kako delujejo boni?",
-    a: "Objavi bon z restavracijo in časom — drugi študentje se lahko pridružijo. Lahko objaviš javno (vsi vidijo) ali zasebno (samo tvoji buddyji).",
+    a: "Objavi bon z lokacijo ali delom mesta in časom — drugi študentje se lahko pridružijo. Lahko objaviš javno (vsi vidijo) ali zasebno (samo tvoji buddyji).",
   },
   {
     q: "Kako dobim buddyja?",
