@@ -22,7 +22,6 @@ import {
   supabase,
   type Message,
   type Profile,
-  type Bone,
 } from "../../lib/supabase";
 
 type InviteCard = {
@@ -93,7 +92,6 @@ export default function Chat() {
   const [me, setMe] = useState<Profile | null>(null);
   const [other, setOther] = useState<Profile | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [activeBone, setActiveBone] = useState<Bone | null>(null);
   const [boneStatuses, setBoneStatuses] = useState<Record<string, string>>({});
   const [restMap, setRestMap] = useState<Map<string, RestaurantInfo>>(new Map());
   const [text, setText] = useState("");
@@ -118,7 +116,6 @@ export default function Chat() {
     setShowMenu(false);
     setOther(null);
     setMessages([]);
-    setActiveBone(null);
     Alert.alert("Buddy odstranjen", message, [
       {
         text: "V redu",
@@ -265,8 +262,6 @@ export default function Chat() {
       const [
         { data: m },
         { data: msgs },
-        { data: acceptedBone },
-        { data: openBone },
       ] = await Promise.all([
         supabase.from("buddy_matches").select("*").eq("id", matchId).maybeSingle(),
         supabase
@@ -274,22 +269,6 @@ export default function Chat() {
           .select("*")
           .eq("match_id", matchId)
           .order("created_at", { ascending: true }),
-        supabase
-          .from("meal_invites")
-          .select("*")
-          .eq("match_id", matchId)
-          .eq("status", "accepted")
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        supabase
-          .from("meal_invites")
-          .select("*")
-          .eq("match_id", matchId)
-          .eq("status", "open")
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
       ]);
 
       if (!m) {
@@ -301,7 +280,6 @@ export default function Chat() {
 
       if (!cancelled) {
         setMessages(((msgs ?? []) as Message[]).sort(sortMessages));
-        setActiveBone(((acceptedBone as Bone) ?? (openBone as Bone)) ?? null);
       }
 
       const otherId =
@@ -351,35 +329,10 @@ export default function Chat() {
         },
         (payload) => {
           const updated = payload.new as { id: string; status: string };
-          // Update bone status in invite cards
           setBoneStatuses((prev) => ({
             ...prev,
             [updated.id]: updated.status,
           }));
-          // Refresh active bone banner
-          (async () => {
-            const { data: acceptedBone } = await supabase
-              .from("meal_invites")
-              .select("*")
-              .eq("match_id", matchId)
-              .eq("status", "accepted")
-              .order("created_at", { ascending: false })
-              .limit(1)
-              .maybeSingle();
-            if (acceptedBone) {
-              setActiveBone(acceptedBone as Bone);
-            } else {
-              const { data: openBone } = await supabase
-                .from("meal_invites")
-                .select("*")
-                .eq("match_id", matchId)
-                .eq("status", "open")
-                .order("created_at", { ascending: false })
-                .limit(1)
-                .maybeSingle();
-              setActiveBone((openBone as Bone) ?? null);
-            }
-          })();
         }
       )
       .on(
@@ -517,16 +470,6 @@ export default function Chat() {
     setBoneStatuses((prev) => ({ ...prev, [boneId]: response }));
 
     if (response === "accepted") {
-      const { data: bone } = await supabase
-        .from("meal_invites")
-        .select("*")
-        .eq("match_id", matchId)
-        .in("status", ["open", "accepted"])
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      setActiveBone((bone as Bone) ?? null);
-
       if (invite) {
         Alert.alert("Sprejeto!", "Dodaj v koledar?", [
           { text: "Ne" },
@@ -581,54 +524,6 @@ export default function Chat() {
           <Ionicons name="ellipsis-vertical" size={18} color="#999" />
         </Pressable>
       </View>
-
-      {/* Active bone banner */}
-      {activeBone && (() => {
-        const ri = activeBone.restaurant_info ?? restMap.get(activeBone.restaurant) ?? null;
-        return (
-          <View className="bg-white dark:bg-neutral-900 mx-4 mt-3 p-4 rounded-2xl shadow-sm flex-row items-start">
-            <Ionicons name="restaurant" size={18} color="#00A6F6" style={{ marginTop: 2 }} />
-            <View className="ml-2.5 flex-1">
-              <View className="flex-row items-start gap-1.5">
-                <Text className="flex-1 font-semibold text-gray-900 dark:text-white">
-                  {activeBone.restaurant}
-                </Text>
-                {ri?.rating != null && ri.rating > 0 && (
-                  <View
-                    className="flex-row items-center shrink-0"
-                    style={{ marginTop: 2 }}
-                  >
-                    <Ionicons name="star" size={11} color="#F59E0B" />
-                    <Text className="text-xs font-semibold text-amber-500 ml-0.5">
-                      {ri.rating}
-                    </Text>
-                  </View>
-                )}
-              </View>
-              {ri && (ri.address || ri.city) && (
-                <Text className="text-xs text-gray-400 dark:text-gray-500">
-                  {[ri.address, ri.city].filter(Boolean).join(", ")}
-                </Text>
-              )}
-              {ri?.supplement_price != null && (
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
-                    {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
-                  </Text>
-                  {ri.meal_price != null && (
-                    <Text className="text-xs text-gray-400 dark:text-gray-500">
-                      (cena obroka {Number(ri.meal_price).toFixed(2)})
-                    </Text>
-                  )}
-                </View>
-              )}
-              <Text className="text-xs text-gray-400 dark:text-gray-500">
-                {formatScheduledDate(activeBone.scheduled_at)}
-              </Text>
-            </View>
-          </View>
-        );
-      })()}
 
       <View
         className="flex-1"
