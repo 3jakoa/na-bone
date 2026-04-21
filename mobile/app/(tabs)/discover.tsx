@@ -22,6 +22,10 @@ import { supabase, type Profile } from "../../lib/supabase";
 const RIGHT_SWIPE_LIMIT_MESSAGE =
   "Porabil si vse današnje buddyje. Jutri lahko spet iščeš buddyja.";
 
+function hasUploadedPhoto(profile: Profile | null) {
+  return profile?.photos.some((photo) => photo.trim().length > 0) ?? false;
+}
+
 export default function Discover() {
   const { width: screenWidth } = useWindowDimensions();
   const swipeThreshold = screenWidth * 0.25;
@@ -123,8 +127,26 @@ export default function Discover() {
     void handleSwipe(direction);
   }
 
+  function promptPhotoRequired() {
+    springCardBack();
+    Alert.alert("Dodaj sliko", "Dodaj vsaj eno sliko, da lahko swipaš.", [
+      {
+        text: "Kasneje",
+        style: "cancel",
+      },
+      {
+        text: "Dodaj sliko",
+        onPress: () => router.push("/edit-profile"),
+      },
+    ]);
+  }
+
   function swipeOut(direction: "left" | "right") {
     if (swiping.current) return;
+    if (!hasUploadedPhoto(me)) {
+      promptPhotoRequired();
+      return;
+    }
     if (direction === "right" && remainingRightSwipes <= 0) {
       springCardBack();
       showRightSwipeLimitMessage();
@@ -149,6 +171,10 @@ export default function Discover() {
   async function handleSwipe(direction: "left" | "right") {
     if (!me || !deck[idx]) {
       resetCardPosition();
+      return;
+    }
+    if (!hasUploadedPhoto(me)) {
+      promptPhotoRequired();
       return;
     }
     const target = deck[idx];
