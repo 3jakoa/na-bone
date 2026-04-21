@@ -19,6 +19,14 @@ type FeedItem = Bone & {
   author?: Pick<Profile, "id" | "name" | "photos" | "faculty">;
 };
 
+function inviteDisplayKey(item: Pick<Bone, "user_id" | "restaurant" | "scheduled_at">) {
+  return [
+    item.user_id,
+    item.restaurant.trim().toLowerCase(),
+    item.scheduled_at,
+  ].join("::");
+}
+
 export default function Feed() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [me, setMe] = useState<Profile | null>(null);
@@ -145,9 +153,23 @@ export default function Feed() {
     });
 
     const seenOwnPrivateGroups = new Set<string>();
+    const publicInviteKeys = new Set(
+      mapped
+        .filter((item) => item.visibility === "public")
+        .map((item) => inviteDisplayKey(item))
+    );
     const visibleItems: FeedItem[] = [];
     for (const item of mapped) {
       if (item.source_public_invite_id) continue;
+
+      // If the same author already has an active public bon for this slot,
+      // show buddies only the public card, not a duplicate private one.
+      if (
+        item.visibility === "private" &&
+        publicInviteKeys.has(inviteDisplayKey(item))
+      ) {
+        continue;
+      }
 
       const shouldGroupOwnPrivate =
         myProfile?.id === item.user_id &&
@@ -449,7 +471,7 @@ export default function Feed() {
                   className="bg-brand rounded-2xl py-3 items-center"
                 >
                   <Text className="text-white font-bold">
-                    Odpri povabilo
+                    Odpri chat
                   </Text>
                 </Pressable>
               )}
@@ -624,7 +646,7 @@ export default function Feed() {
                         className="bg-brand rounded-2xl py-4 items-center"
                       >
                         <Text className="text-white font-bold text-base">
-                          Odpri povabilo
+                          Odpri chat
                         </Text>
                       </Pressable>
                     )}

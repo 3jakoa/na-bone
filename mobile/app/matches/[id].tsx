@@ -37,6 +37,11 @@ type InviteCard = {
   note: string | null;
 };
 
+type InviteState = {
+  status: string;
+  sourcePublicInviteId: string | null;
+};
+
 type RestaurantInfo = {
   name: string;
   address: string | null;
@@ -92,7 +97,9 @@ export default function Chat() {
   const [me, setMe] = useState<Profile | null>(null);
   const [other, setOther] = useState<Profile | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [boneStatuses, setBoneStatuses] = useState<Record<string, string>>({});
+  const [inviteStates, setInviteStates] = useState<Record<string, InviteState>>(
+    {}
+  );
   const [restMap, setRestMap] = useState<Map<string, RestaurantInfo>>(new Map());
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
@@ -220,26 +227,33 @@ export default function Chat() {
       .map((m) => parseInviteCard(m.content))
       .filter((inv): inv is InviteCard => inv !== null)
       .map((inv) => inv.bone_id)
-      .filter((id) => !(id in boneStatuses));
+      .filter((id) => !(id in inviteStates));
 
     if (unknownIds.length === 0) return;
 
     (async () => {
       const { data } = await supabase
         .from("meal_invites")
-        .select("id, status")
+        .select("id, status, source_public_invite_id")
         .in("id", unknownIds);
       if (data) {
-        setBoneStatuses((prev) => {
+        setInviteStates((prev) => {
           const next = { ...prev };
-          for (const b of data as { id: string; status: string }[]) {
-            next[b.id] = b.status;
+          for (const b of data as {
+            id: string;
+            status: string;
+            source_public_invite_id: string | null;
+          }[]) {
+            next[b.id] = {
+              status: b.status,
+              sourcePublicInviteId: b.source_public_invite_id,
+            };
           }
           return next;
         });
       }
     })();
-  }, [messages]);
+  }, [inviteStates, messages]);
 
   useEffect(() => {
     if (!matchId) return;
@@ -328,10 +342,20 @@ export default function Chat() {
           filter: `match_id=eq.${matchId}`,
         },
         (payload) => {
-          const updated = payload.new as { id: string; status: string };
-          setBoneStatuses((prev) => ({
+          const updated = payload.new as {
+            id: string;
+            status: string;
+            source_public_invite_id?: string | null;
+          };
+          setInviteStates((prev) => ({
             ...prev,
-            [updated.id]: updated.status,
+            [updated.id]: {
+              status: updated.status,
+              sourcePublicInviteId:
+                updated.source_public_invite_id ??
+                prev[updated.id]?.sourcePublicInviteId ??
+                null,
+            },
           }));
         }
       )
@@ -467,7 +491,13 @@ export default function Chat() {
       await handleMatchActionError(error.message);
       return;
     }
-    setBoneStatuses((prev) => ({ ...prev, [boneId]: response }));
+    setInviteStates((prev) => ({
+      ...prev,
+      [boneId]: {
+        status: response,
+        sourcePublicInviteId: prev[boneId]?.sourcePublicInviteId ?? null,
+      },
+    }));
 
     if (response === "accepted") {
       if (invite) {
@@ -545,7 +575,10 @@ export default function Chat() {
             const invite = parseInviteCard(item.content);
 
             if (invite) {
-              const status = boneStatuses[invite.bone_id];
+              const inviteState = inviteStates[invite.bone_id];
+              const status = inviteState?.status;
+              const isLegacyPublicResponse =
+                inviteState?.sourcePublicInviteId != null;
               // Use embedded data from invite, fall back to restMap for old messages
               const fallback = restMap.get(invite.restaurant);
               const rating = invite.restaurant_rating ?? fallback?.rating;
@@ -647,6 +680,18 @@ export default function Chat() {
                       <View className="mt-3 bg-gray-100 dark:bg-neutral-800 rounded-xl px-4 py-3 items-center">
                         <Text className="text-gray-500 dark:text-gray-300 font-semibold text-sm">
                           Umaknjeno
+                        </Text>
+                      </View>
+                    ) : isLegacyPublicResponse ? (
+                      <View className="mt-3 bg-blue-50 dark:bg-brand/20 rounded-xl py-3 px-4 items-center">
+                        <Text className="text-brand font-semibold text-sm text-center">
+                          Javni bon je še odprt. Piši in se dogovorita.
+                        </Text>
+                      </View>
+                    ) : !inviteState ? (
+                      <View className="mt-3 bg-gray-100 dark:bg-neutral-800 rounded-xl px-4 py-3 items-center">
+                        <Text className="text-gray-500 dark:text-gray-300 font-semibold text-sm">
+                          Nalagam stanje...
                         </Text>
                       </View>
                     ) : !mine ? (
