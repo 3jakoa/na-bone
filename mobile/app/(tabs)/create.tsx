@@ -8,10 +8,7 @@ import {
   Keyboard,
   ActivityIndicator,
   TouchableWithoutFeedback,
-  TouchableOpacity,
   Image,
-  Modal,
-  FlatList,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
@@ -19,7 +16,6 @@ import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { supabase, type Profile } from "../../lib/supabase";
-import { RESTAURANTS as FALLBACK } from "../../lib/restaurants";
 import { createGuard } from "../../lib/createGuard";
 
 const HOURS = Array.from({ length: 16 }, (_, i) => {
@@ -51,29 +47,22 @@ function buildDayOptions() {
 }
 
 const DAY_OPTIONS = buildDayOptions();
+const LOCATION_SUGGESTIONS = [
+  "Center",
+  "Blizu faksa",
+  "Rožna",
+  "Bežigrad",
+  "Vič",
+  "Šiška",
+  "BTC",
+];
 
-type Restaurant = {
-  id: string;
-  name: string;
-  city: string | null;
-  address: string | null;
-  supplement_price: number | null;
-  meal_price: number | null;
-  rating: number | null;
-  features: string[] | null;
-};
 type Buddy = { matchId: string; profile: Profile };
 
 export default function CreateBone() {
   const scrollRef = useRef<ScrollView>(null);
   const [noteFocused, setNoteFocused] = useState(false);
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [loadingList, setLoadingList] = useState(true);
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
-  const [search, setSearch] = useState("");
-  const [showPicker, setShowPicker] = useState(true);
-  const [showAllModal, setShowAllModal] = useState(false);
-  const [modalSearch, setModalSearch] = useState("");
+  const [location, setLocation] = useState("");
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [selectedDate, setSelectedDate] = useState(0);
   const [selectedTime, setSelectedTime] = useState("");
@@ -127,29 +116,6 @@ export default function CreateBone() {
   useFocusEffect(
     useCallback(() => {
       (async () => {
-        if (restaurants.length === 0) setLoadingList(true);
-        const { data, error } = await supabase
-          .from("restaurants")
-          .select("id, name, city, address, supplement_price, meal_price, rating, features")
-          .order("name");
-        if (error || !data || data.length === 0) {
-          setRestaurants(
-            FALLBACK.map((name, i) => ({
-              id: String(i),
-              name,
-              city: null,
-              address: null,
-              supplement_price: null,
-              meal_price: null,
-              rating: null,
-              features: null,
-            }))
-          );
-        } else {
-          setRestaurants(data as Restaurant[]);
-        }
-        setLoadingList(false);
-
         const {
           data: { user },
         } = await supabase.auth.getUser();
@@ -165,14 +131,6 @@ export default function CreateBone() {
         }
       })();
     }, [])
-  );
-
-  const q = search.toLowerCase();
-  const filtered = restaurants.filter(
-    (r) =>
-      r.name.toLowerCase().includes(q) ||
-      (r.city && r.city.toLowerCase().includes(q)) ||
-      (r.address && r.address.toLowerCase().includes(q))
   );
 
   function getScheduledDate() {
@@ -228,9 +186,7 @@ export default function CreateBone() {
   }
 
   function reset() {
-    setRestaurant(null);
-    setSearch("");
-    setShowPicker(true);
+    setLocation("");
     setSelectedTime("");
     setNote("");
     setVisibility("public");
@@ -241,8 +197,8 @@ export default function CreateBone() {
 
   // Track dirty state for navigation guard
   useEffect(() => {
-    createGuard.dirty = !!(restaurant?.name || selectedTime || note.trim());
-  }, [restaurant, selectedTime, note]);
+    createGuard.dirty = !!(location.trim() || selectedTime || note.trim());
+  }, [location, selectedTime, note]);
 
   useEffect(() => {
     createGuard.reset = reset;
@@ -252,7 +208,8 @@ export default function CreateBone() {
   }, []);
 
   async function submit() {
-    if (!restaurant) return Toast.show({ type: "error", text1: "Izberi restavracijo." });
+    const trimmedLocation = location.trim();
+    if (!trimmedLocation) return Toast.show({ type: "error", text1: "Vpiši kam na bone." });
     if (!selectedTime) return Toast.show({ type: "error", text1: "Izberi uro." });
     if (getScheduledDate().getTime() <= Date.now()) {
       return Toast.show({
@@ -266,13 +223,6 @@ export default function CreateBone() {
     try {
       if (!meId) throw new Error("No profile");
       const scheduledAt = getScheduledAt();
-      const restaurantInfo = {
-        address: restaurant.address,
-        city: restaurant.city,
-        rating: restaurant.rating,
-        supplement_price: restaurant.supplement_price,
-        meal_price: restaurant.meal_price,
-      };
 
       if (visibility === "private") {
         const selectedMatchIds = buddies
@@ -287,8 +237,8 @@ export default function CreateBone() {
 
         const { error } = await supabase.rpc("create_private_meal_invites", {
           p_match_ids: selectedMatchIds,
-          p_restaurant: restaurant.name,
-          p_restaurant_info: restaurantInfo,
+          p_restaurant: trimmedLocation,
+          p_restaurant_info: null,
           p_scheduled_at: scheduledAt,
           p_note: note.trim() || null,
         });
@@ -307,8 +257,8 @@ export default function CreateBone() {
 
       const { error } = await supabase.from("meal_invites").insert({
         user_id: meId,
-        restaurant: restaurant.name,
-        restaurant_info: restaurantInfo,
+        restaurant: trimmedLocation,
+        restaurant_info: null,
         scheduled_at: scheduledAt,
         note: note.trim() || null,
         visibility: "public",
@@ -344,190 +294,51 @@ export default function CreateBone() {
           <Text className="text-gray-500 dark:text-gray-400 mt-1">Povabi nekoga na kosilo</Text>
         </View>
 
-        {/* Restaurant */}
+        {/* Location */}
         <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
           <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
-            Restavracija
+            Kam na bone?
           </Text>
 
-          {restaurant && !showPicker ? (
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPressIn={() => {
-                setRestaurant(null);
-                setShowPicker(true);
-                setSearch("");
+          <View className="flex-row items-center bg-gray-50 dark:bg-neutral-800 rounded-2xl px-4 py-3">
+            <Ionicons name="location-outline" size={18} color="#999" />
+            <TextInput
+              value={location}
+              onChangeText={setLocation}
+              placeholder="Npr. center, blizu faksa, rožna, kardeljeva, btc"
+              placeholderTextColor="#888"
+              className="flex-1 ml-2 text-base text-gray-900 dark:text-white"
+              autoCorrect={false}
+              maxLength={80}
+              returnKeyType="done"
+              onSubmitEditing={Keyboard.dismiss}
+            />
+            {location.length > 0 && (
+              <Pressable onPress={() => setLocation("")}>
+                <Ionicons name="close-circle" size={18} color="#ccc" />
+              </Pressable>
+            )}
+          </View>
 
-              }}
-            >
-              <View className="flex-row items-start justify-between">
-                <View className="flex-row flex-1 mr-3">
-                  <Ionicons name="restaurant" size={18} color="#00A6F6" style={{ marginTop: 2 }} />
-                  <View className="ml-2 flex-1">
-                    <Text className="text-base text-gray-900 dark:text-white font-semibold">
-                      {restaurant?.name}
-                    </Text>
-                    <View className="flex-row items-center mt-0.5 gap-2">
-                      {restaurant?.rating != null && restaurant.rating > 0 && (
-                        <View className="flex-row items-center">
-                          <Ionicons name="star" size={12} color="#F59E0B" />
-                          <Text className="text-xs font-semibold text-amber-500 ml-0.5">
-                            {restaurant.rating}
-                          </Text>
-                        </View>
-                      )}
-                      <Text className="text-xs text-gray-400 dark:text-gray-500">
-                        {[restaurant?.address, restaurant?.city].filter(Boolean).join(", ")}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                <Ionicons name="close-circle" size={22} color="#999" style={{ marginTop: 2 }} />
-              </View>
-              {restaurant?.supplement_price != null && (
-                <View className="flex-row items-center mt-0.5 ml-7 gap-2">
-                  <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
-                    {Number(restaurant.supplement_price).toFixed(2)} EUR doplačilo
-                  </Text>
-                  {restaurant.meal_price != null && (
-                    <Text className="text-xs text-gray-400 dark:text-gray-500">
-                      (cena obroka {Number(restaurant.meal_price).toFixed(2)})
-                    </Text>
-                  )}
-                </View>
-              )}
-            </TouchableOpacity>
-          ) : (
-            <>
-            <View className="flex-row items-center bg-gray-50 dark:bg-neutral-800 rounded-2xl px-4 py-3 mb-2">
-              <Ionicons name="search" size={18} color="#999" />
-              <TextInput
-                value={search}
-                onChangeText={setSearch}
-                placeholder="Išči restavracijo..."
-                placeholderTextColor="#888"
-                className="flex-1 ml-2 text-base text-gray-900 dark:text-white"
-                autoCorrect={false}
-                returnKeyType="done"
-                onSubmitEditing={Keyboard.dismiss}
-              />
-              {search.length > 0 && (
-                <Pressable onPress={() => setSearch("")}>
-                  <Ionicons name="close-circle" size={18} color="#ccc" />
-                </Pressable>
-              )}
-            </View>
-
-            <View style={{ maxHeight: 240 }}>
-              {loadingList ? (
-                <ActivityIndicator color="#00A6F6" className="py-4" />
-              ) : (
-                <ScrollView
-                  showsVerticalScrollIndicator
-                  keyboardShouldPersistTaps="handled"
-                  nestedScrollEnabled
-                >
-                  {filtered.slice(0, 30).map((r) => (
-                    <Pressable
-                      key={r.id}
-                      onPress={() => {
-                        setRestaurant(r);
-                        setSearch("");
-                        setShowPicker(false);
-                        Keyboard.dismiss();
-                      }}
-                      className="flex-row items-center py-3 px-3 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
-                    >
-                      <Ionicons
-                        name="restaurant-outline"
-                        size={16}
-                        color="#999"
-                      />
-                      <View className="ml-2 flex-1">
-                        <View className="flex-row items-center gap-1.5">
-                          <Text
-                            className="flex-1 text-base text-gray-800 dark:text-gray-100"
-                            numberOfLines={1}
-                          >
-                            {r.name}
-                          </Text>
-                          {r.rating != null && r.rating > 0 && (
-                            <View className="flex-row items-center shrink-0">
-                              <Ionicons name="star" size={12} color="#F59E0B" />
-                              <Text className="text-xs font-semibold text-amber-500 ml-0.5">
-                                {r.rating}
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-                        <Text className="text-xs text-gray-400 dark:text-gray-500" numberOfLines={1}>
-                          {[r.address, r.city]
-                            .filter(Boolean)
-                            .join(", ")}
-                        </Text>
-                        {r.supplement_price != null && (
-                          <View className="flex-row items-center gap-2">
-                            <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
-                              {Number(r.supplement_price).toFixed(2)} EUR doplačilo
-                            </Text>
-                            {r.meal_price != null && (
-                              <Text className="text-xs text-gray-400 dark:text-gray-500">
-                                (cena obroka {Number(r.meal_price).toFixed(2)})
-                              </Text>
-                            )}
-                          </View>
-                        )}
-                      </View>
-                    </Pressable>
-                  ))}
-                  {filtered.length === 0 && search.length > 0 && (
-                    <Pressable
-                      onPress={async () => {
-                        const name = search.trim();
-                        setRestaurant({
-                          id: "custom",
-                          name,
-                          city: null,
-                          address: null,
-                          supplement_price: null,
-                          meal_price: null,
-                          rating: null,
-                          features: null,
-                        });
-                        setSearch("");
-                        setShowPicker(false);
-                        Keyboard.dismiss();
-                        await supabase
-                          .from("restaurants")
-                          .insert({ name });
-                      }}
-                      className="flex-row items-center py-3 px-3 rounded-2xl"
-                    >
-                      <Ionicons
-                        name="add-circle-outline"
-                        size={16}
-                        color="#00A6F6"
-                      />
-                      <Text className="ml-2 text-base text-brand font-semibold">
-                        Dodaj &quot;{search.trim()}&quot;
-                      </Text>
-                    </Pressable>
-                  )}
-                  {filtered.length > 30 && (
-                    <Pressable
-                      onPress={() => { setShowAllModal(true); setModalSearch(search); }}
-                      className="py-3 px-3 items-center"
-                    >
-                      <Text className="text-brand font-semibold text-sm">
-                        Poglej vse ({filtered.length})
-                      </Text>
-                    </Pressable>
-                  )}
-                </ScrollView>
-              )}
-            </View>
-          </>
-          )}
+          <Text className="text-xs text-gray-400 dark:text-gray-500 mt-3 mb-2">
+            Predlogi
+          </Text>
+          <View className="flex-row flex-wrap gap-2">
+            {LOCATION_SUGGESTIONS.map((suggestion) => (
+              <Pressable
+                key={suggestion}
+                onPress={() => {
+                  setLocation(suggestion);
+                  Keyboard.dismiss();
+                }}
+                className="bg-gray-100 dark:bg-neutral-800 rounded-full px-4 py-2"
+              >
+                <Text className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                  {suggestion}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         </View>
 
         {/* Date */}
@@ -779,115 +590,6 @@ export default function CreateBone() {
             </Text>
           </Pressable>
         </View>
-
-        {/* Browse all restaurants modal */}
-        <Modal
-          visible={showAllModal}
-          animationType="slide"
-          presentationStyle="pageSheet"
-          onRequestClose={() => setShowAllModal(false)}
-        >
-          <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
-            <View className="flex-row items-center px-5 pt-16 pb-3 bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-800">
-              <Pressable onPress={() => setShowAllModal(false)}>
-                <Ionicons name="close" size={28} color="#888" />
-              </Pressable>
-              <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
-                Vse restavracije
-              </Text>
-            </View>
-
-            <View className="flex-row items-center bg-white dark:bg-neutral-900 mx-4 mt-3 rounded-2xl px-4 py-3">
-              <Ionicons name="search" size={18} color="#999" />
-              <TextInput
-                value={modalSearch}
-                onChangeText={setModalSearch}
-                placeholder="Išči restavracijo..."
-                placeholderTextColor="#888"
-                className="flex-1 ml-2 text-base text-gray-900 dark:text-white"
-                autoCorrect={false}
-                autoFocus
-              />
-              {modalSearch.length > 0 && (
-                <Pressable onPress={() => setModalSearch("")}>
-                  <Ionicons name="close-circle" size={18} color="#888" />
-                </Pressable>
-              )}
-            </View>
-
-            <FlatList
-              data={restaurants.filter((r) => {
-                if (!modalSearch.trim()) return true;
-                const q = modalSearch.toLowerCase();
-                return (
-                  r.name.toLowerCase().includes(q) ||
-                  (r.city && r.city.toLowerCase().includes(q)) ||
-                  (r.address && r.address.toLowerCase().includes(q))
-                );
-              })}
-              keyExtractor={(r) => r.id}
-              keyboardShouldPersistTaps="handled"
-              initialNumToRender={15}
-              maxToRenderPerBatch={10}
-              windowSize={5}
-              contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-              renderItem={({ item: r }) => (
-                <Pressable
-                  onPress={() => {
-                    setRestaurant(r);
-                    setSearch("");
-                    setShowPicker(false);
-                    setShowAllModal(false);
-                    setModalSearch("");
-                  }}
-                  className="flex-row items-center py-3 px-3 mb-1 bg-white dark:bg-neutral-900 rounded-2xl"
-                >
-                  <Ionicons name="restaurant-outline" size={16} color="#999" />
-                  <View className="ml-2 flex-1">
-                    <View className="flex-row items-center gap-1.5">
-                      <Text
-                        className="flex-1 text-base text-gray-800 dark:text-gray-100"
-                        numberOfLines={1}
-                      >
-                        {r.name}
-                      </Text>
-                      {r.rating != null && r.rating > 0 && (
-                        <View className="flex-row items-center shrink-0">
-                          <Ionicons name="star" size={12} color="#F59E0B" />
-                          <Text className="text-xs font-semibold text-amber-500 ml-0.5">
-                            {r.rating}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text className="text-xs text-gray-400 dark:text-gray-500" numberOfLines={1}>
-                      {[r.address, r.city].filter(Boolean).join(", ")}
-                    </Text>
-                    {r.supplement_price != null && (
-                      <View className="flex-row items-center gap-2">
-                        <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
-                          {Number(r.supplement_price).toFixed(2)} EUR doplačilo
-                        </Text>
-                        {r.meal_price != null && (
-                          <Text className="text-xs text-gray-400 dark:text-gray-500">
-                            (cena obroka {Number(r.meal_price).toFixed(2)})
-                          </Text>
-                        )}
-                      </View>
-                    )}
-                  </View>
-                </Pressable>
-              )}
-              ListEmptyComponent={
-                modalSearch.length > 0 ? (
-                  <View className="items-center py-8">
-                    <Text className="text-gray-400 dark:text-gray-500">Ni rezultatov</Text>
-                  </View>
-                ) : null
-              }
-            />
-          </View>
-        </Modal>
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
