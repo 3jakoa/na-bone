@@ -48,8 +48,6 @@ export default function Signup() {
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="email-address"
-          placeholder="ime@student.uni-lj.si"
-          placeholderTextColor="#888"
           className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-4"
         />
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">Geslo</Text>
@@ -57,8 +55,6 @@ export default function Signup() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="Geslo"
-          placeholderTextColor="#888"
           className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-4"
         />
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">Ponovi geslo</Text>
@@ -66,8 +62,6 @@ export default function Signup() {
           value={confirm}
           onChangeText={setConfirm}
           secureTextEntry
-          placeholder="Ponovi geslo"
-          placeholderTextColor="#888"
           className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-6"
         />
 

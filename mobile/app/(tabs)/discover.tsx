@@ -21,7 +21,6 @@ import { supabase, type Profile } from "../../lib/supabase";
 
 const RIGHT_SWIPE_LIMIT_MESSAGE =
   "Porabil si vse današnje buddyje. Jutri lahko spet iščeš buddyja.";
-
 function hasUploadedPhoto(profile: Profile | null) {
   return profile?.photos.some((photo) => photo.trim().length > 0) ?? false;
 }
@@ -152,7 +151,6 @@ export default function Discover() {
       showRightSwipeLimitMessage();
       return;
     }
-
     swiping.current = true;
     const toX = direction === "right" ? screenWidth + 120 : -screenWidth - 120;
 
