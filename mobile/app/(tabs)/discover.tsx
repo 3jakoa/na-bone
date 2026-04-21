@@ -19,6 +19,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { supabase, type Profile } from "../../lib/supabase";
 
+const RIGHT_SWIPE_LIMIT_MESSAGE =
+  "Porabil si vse današnje buddyje. Jutri lahko spet iščeš buddyja.";
 function hasUploadedPhoto(profile: Profile | null) {
   return profile?.photos.some((photo) => photo.trim().length > 0) ?? false;
 }
@@ -30,6 +32,7 @@ export default function Discover() {
   const [deck, setDeck] = useState<Profile[]>([]);
   const [idx, setIdx] = useState(0);
   const [cardVisible, setCardVisible] = useState(true);
+  const [remainingRightSwipes, setRemainingRightSwipes] = useState(10);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const swiping = useRef(false);
@@ -43,6 +46,7 @@ export default function Discover() {
       setDeck([]);
       setIdx(0);
       setCardVisible(true);
+      setRemainingRightSwipes(10);
       swiping.current = false;
       translateX.value = 0;
       translateY.value = 0;
@@ -58,6 +62,7 @@ export default function Discover() {
       setMe(null);
       setDeck([]);
       setIdx(0);
+      setRemainingRightSwipes(10);
       return;
     }
 
@@ -65,48 +70,29 @@ export default function Discover() {
     setMe(meProfile);
 
     const [
-      { data: swiped },
-      { data: blockedRows },
-      { data: blockedByRows },
-      { data: matches },
-      { data: candidates },
+      { data: candidates, error: candidatesError },
+      { data: remaining, error: remainingError },
     ] = await Promise.all([
-      supabase
-        .from("profile_swipes")
-        .select("swiped_id")
-        .eq("swiper_id", meProfile.id),
-      supabase
-        .from("blocked_users")
-        .select("blocked_id")
-        .eq("blocker_id", meProfile.id),
-      supabase
-        .from("blocked_users")
-        .select("blocker_id")
-        .eq("blocked_id", meProfile.id),
-      supabase
-        .from("buddy_matches")
-        .select("user1_id, user2_id")
-        .or(`user1_id.eq.${meProfile.id},user2_id.eq.${meProfile.id}`),
-      supabase
-        .from("profiles")
-        .select("*")
-        .eq("is_onboarded", true),
+      supabase.rpc("get_discover_candidates"),
+      supabase.rpc("remaining_daily_right_swipes"),
     ]);
 
-    const buddyIds = (matches ?? []).map((match) =>
-      match.user1_id === meProfile.id ? match.user2_id : match.user1_id
-    );
-    const exclude = new Set([
-      meProfile.id,
-      ...((swiped ?? []).map((s) => s.swiped_id)),
-      ...((blockedRows ?? []).map((b) => b.blocked_id)),
-      ...((blockedByRows ?? []).map((b) => b.blocker_id)),
-      ...buddyIds,
-    ]);
+    if (candidatesError) {
+      Alert.alert("Napaka", candidatesError.message);
+      setDeck([]);
+    } else {
+      setDeck((candidates ?? []) as Profile[]);
+    }
 
-    setDeck(
-      ((candidates ?? []) as Profile[]).filter((profile) => !exclude.has(profile.id))
-    );
+    if (remainingError) {
+      Alert.alert("Napaka", remainingError.message);
+      setRemainingRightSwipes(10);
+    } else {
+      setRemainingRightSwipes(
+        typeof remaining === "number" ? remaining : 10
+      );
+    }
+
     setIdx(0);
     setCardVisible(true);
     swiping.current = false;
@@ -126,14 +112,22 @@ export default function Discover() {
     swiping.current = false;
   }
 
+  function springCardBack() {
+    translateX.value = withSpring(0, { damping: 18, stiffness: 180 });
+    translateY.value = withSpring(0, { damping: 18, stiffness: 180 });
+    swiping.current = false;
+  }
+
+  function showRightSwipeLimitMessage() {
+    Alert.alert("", RIGHT_SWIPE_LIMIT_MESSAGE);
+  }
+
   function completeSwipe(direction: "left" | "right") {
     void handleSwipe(direction);
   }
 
   function promptPhotoRequired() {
-    translateX.value = withSpring(0, { damping: 18, stiffness: 180 });
-    translateY.value = withSpring(0, { damping: 18, stiffness: 180 });
-    swiping.current = false;
+    springCardBack();
     Alert.alert("Dodaj sliko", "Dodaj vsaj eno sliko, da lahko swipaš.", [
       {
         text: "Kasneje",
@@ -150,6 +144,11 @@ export default function Discover() {
     if (swiping.current) return;
     if (!hasUploadedPhoto(me)) {
       promptPhotoRequired();
+      return;
+    }
+    if (direction === "right" && remainingRightSwipes <= 0) {
+      springCardBack();
+      showRightSwipeLimitMessage();
       return;
     }
     swiping.current = true;
@@ -201,11 +200,20 @@ export default function Discover() {
       );
 
     if (error) {
+      if (direction === "right" && error.message === RIGHT_SWIPE_LIMIT_MESSAGE) {
+        showRightSwipeLimitMessage();
+        void loadDeck();
+        return;
+      }
+
       Alert.alert("Napaka", error.message);
+      void loadDeck();
       return;
     }
 
     if (direction === "right") {
+      setRemainingRightSwipes((current) => Math.max(0, current - 1));
+
       const { data: match } = await supabase
         .from("buddy_matches")
         .select("id")
