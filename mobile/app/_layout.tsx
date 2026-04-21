@@ -27,7 +27,6 @@ export default function RootLayout() {
             <Stack.Screen name="settings/help" />
             <Stack.Screen name="settings/terms" />
             <Stack.Screen name="settings/buddies" />
-            <Stack.Screen name="settings/appearance" />
             <Stack.Screen name="matches/[id]" />
           </Stack>
           <Toast />

@@ -1,16 +1,9 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { useColorScheme } from "nativewind";
 
 export type ThemePref = "light" | "dark" | "system";
 
-const STORAGE_KEY = "theme_pref";
+const STABLE_THEME: "light" = "light";
 
 type ThemeContextValue = {
   pref: ThemePref;
@@ -23,59 +16,37 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const { colorScheme, setColorScheme } = useColorScheme();
-  const [pref, setPrefState] = useState<ThemePref>("system");
-  const [ready, setReady] = useState(false);
+  const { setColorScheme } = useColorScheme();
 
-  // Load persisted preference on mount.
-  useEffect(() => {
-    (async () => {
-      try {
-        const stored = (await AsyncStorage.getItem(STORAGE_KEY)) as
-          | ThemePref
-          | null;
-        const initial: ThemePref =
-          stored === "light" || stored === "dark" || stored === "system"
-            ? stored
-            : "system";
-        setPrefState(initial);
-        applyScheme(initial);
-      } finally {
-        setReady(true);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // NativeWind's setColorScheme throws if the compiled CSS wasn't built with
-  // darkMode: "class". That happens when Metro is serving a stale bundle from
-  // before tailwind.config.js was updated. Catch it so we don't crash; a
-  // clear log tells the user how to fix it.
-  function applyScheme(p: ThemePref) {
+  // Theme switching is temporarily disabled. Keep one stable app theme until
+  // the NativeWind class-based switching flow is reliable enough to expose.
+  function applyStableScheme() {
     try {
-      setColorScheme(p);
+      setColorScheme(STABLE_THEME);
     } catch (e) {
       console.warn(
-        "[theme] setColorScheme failed — NativeWind is probably running on a stale CSS bundle. " +
+        "[theme] forcing the app theme to light failed — NativeWind is probably running on a stale CSS bundle. " +
           "Stop Metro and restart with `npx expo start --clear`, or do a full native rebuild.",
         e
       );
     }
   }
 
-  function setPref(p: ThemePref) {
-    setPrefState(p);
-    applyScheme(p);
-    AsyncStorage.setItem(STORAGE_KEY, p).catch(() => {});
+  useEffect(() => {
+    applyStableScheme();
+  }, [setColorScheme]);
+
+  function setPref(_: ThemePref) {
+    applyStableScheme();
   }
 
   return (
     <ThemeContext.Provider
       value={{
-        pref,
+        pref: STABLE_THEME,
         setPref,
-        scheme: colorScheme === "dark" ? "dark" : "light",
-        ready,
+        scheme: STABLE_THEME,
+        ready: true,
       }}
     >
       {children}
