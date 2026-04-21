@@ -147,6 +147,35 @@ export default function Chat() {
     Alert.alert("Napaka", message);
   }
 
+  function removeBuddy() {
+    if (!other || !matchId) return;
+
+    setShowMenu(false);
+    Alert.alert(
+      "Odstrani buddyja",
+      `Ali res želiš odstraniti ${other.name}?`,
+      [
+        { text: "Prekliči", style: "cancel" },
+        {
+          text: "Odstrani",
+          style: "destructive",
+          onPress: async () => {
+            const { error } = await supabase.rpc("remove_buddy", {
+              p_match_id: matchId,
+            });
+
+            if (error) {
+              await handleMatchActionError(error.message);
+              return;
+            }
+
+            leaveRemovedBuddy("Ta buddy je bil odstranjen.");
+          },
+        },
+      ]
+    );
+  }
+
   useEffect(() => {
     if (prefill && !prefillApplied.current) {
       setText(prefill);
@@ -863,6 +892,21 @@ export default function Chat() {
                   </View>
                   <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
                     Poglej profil
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={removeBuddy}
+                  className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
+                >
+                  <View
+                    className="w-10 h-10 rounded-full items-center justify-center"
+                    style={{ backgroundColor: "#ef444415" }}
+                  >
+                    <Ionicons name="person-remove-outline" size={20} color="#ef4444" />
+                  </View>
+                  <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
+                    Odstrani buddyja
                   </Text>
                 </Pressable>
 
