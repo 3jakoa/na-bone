@@ -19,6 +19,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { supabase, type Profile } from "../../lib/supabase";
 
+function hasUploadedPhoto(profile: Profile | null) {
+  return profile?.photos.some((photo) => photo.trim().length > 0) ?? false;
+}
+
 export default function Discover() {
   const { width: screenWidth } = useWindowDimensions();
   const swipeThreshold = screenWidth * 0.25;
@@ -126,8 +130,28 @@ export default function Discover() {
     void handleSwipe(direction);
   }
 
+  function promptPhotoRequired() {
+    translateX.value = withSpring(0, { damping: 18, stiffness: 180 });
+    translateY.value = withSpring(0, { damping: 18, stiffness: 180 });
+    swiping.current = false;
+    Alert.alert("Dodaj sliko", "Dodaj vsaj eno sliko, da lahko swipaš.", [
+      {
+        text: "Kasneje",
+        style: "cancel",
+      },
+      {
+        text: "Dodaj sliko",
+        onPress: () => router.push("/edit-profile"),
+      },
+    ]);
+  }
+
   function swipeOut(direction: "left" | "right") {
     if (swiping.current) return;
+    if (!hasUploadedPhoto(me)) {
+      promptPhotoRequired();
+      return;
+    }
     swiping.current = true;
     const toX = direction === "right" ? screenWidth + 120 : -screenWidth - 120;
 
@@ -146,6 +170,10 @@ export default function Discover() {
   async function handleSwipe(direction: "left" | "right") {
     if (!me || !deck[idx]) {
       resetCardPosition();
+      return;
+    }
+    if (!hasUploadedPhoto(me)) {
+      promptPhotoRequired();
       return;
     }
     const target = deck[idx];
