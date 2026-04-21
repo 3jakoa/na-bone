@@ -221,12 +221,6 @@ export default function ProfileScreen() {
         />
         <Sep />
         <SettingsRow
-          icon="moon-outline"
-          label="Videz"
-          onPress={() => router.push("/settings/appearance" as any)}
-        />
-        <Sep />
-        <SettingsRow
           icon="shield-checkmark-outline"
           label="Zasebnost"
           onPress={() => router.push("/settings/privacy")}
