@@ -18,7 +18,7 @@ const EDU_LABELS: Record<string, string> = {
 
 export default function ProfileScreen() {
   const [me, setMe] = useState<Profile | null>(null);
-  const [boneCount, setBoneCount] = useState(0);
+  const [pokeCount, setPokeCount] = useState(0);
   const [matchCount, setMatchCount] = useState(0);
 
   useFocusEffect(
@@ -37,16 +37,12 @@ export default function ProfileScreen() {
         setMe(p);
 
         if (p) {
-          const { data: boneData } = await supabase
-            .from("meal_invites")
-            .select("restaurant, scheduled_at")
-            .eq("user_id", p.id);
-          const uniqueBones = new Set(
-            (boneData ?? []).map(
-              (b: any) => `${b.restaurant}|${b.scheduled_at}`
-            )
-          );
-          setBoneCount(uniqueBones.size);
+          const { count: pc } = await supabase
+            .from("product_events")
+            .select("id", { count: "exact", head: true })
+            .eq("profile_id", p.id)
+            .eq("event_type", "poke_sent");
+          setPokeCount(pc ?? 0);
 
           const { count: mc } = await supabase
             .from("buddy_matches")
@@ -125,11 +121,11 @@ export default function ProfileScreen() {
       {/* Stats */}
       <View className="flex-row mx-4 gap-3 mb-4">
         <View className="flex-1 bg-white dark:bg-neutral-900 rounded-3xl py-4 items-center shadow-sm">
-          <Ionicons name="restaurant" size={20} color="#00A6F6" />
+          <Ionicons name="paper-plane-outline" size={20} color="#00A6F6" />
           <Text className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-            {boneCount}
+            {pokeCount}
           </Text>
-          <Text className="text-xs text-gray-400 dark:text-gray-500">Boni</Text>
+          <Text className="text-xs text-gray-400 dark:text-gray-500">Povabila</Text>
         </View>
         <Pressable
           onPress={() => router.push("/settings/buddies")}

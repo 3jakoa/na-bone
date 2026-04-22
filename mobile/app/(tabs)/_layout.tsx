@@ -1,18 +1,10 @@
 import { useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  Platform,
-  View,
-  Image,
-  Modal,
-  Text,
-  Pressable,
-} from "react-native";
+import { Platform, View, Image, Text, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import { supabase } from "../../lib/supabase";
-import { createGuard } from "../../lib/createGuard";
 import {
   registerForPushNotifications,
   handleNotificationTap,
@@ -21,7 +13,6 @@ import { useTheme } from "../../lib/theme";
 
 export default function TabsLayout() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
   const { scheme } = useTheme();
   const isDark = scheme === "dark";
   const pathname = usePathname();
@@ -38,22 +29,21 @@ export default function TabsLayout() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
+
       const { data: me } = await supabase
         .from("profiles")
         .select("id, photos")
         .eq("user_id", user.id)
         .single();
-      if (!me) return;
-      if (me.photos?.[0]) setPhotoUrl(me.photos[0]);
 
-      // Register for push notifications on first entry into the tabs layout
-      // (post-login, after onboarding). Non-blocking — failure just means
-      // the user doesn't get pushes.
+      if (me?.photos?.[0]) {
+        setPhotoUrl(me.photos[0]);
+      }
+
       registerForPushNotifications();
     })();
   }, []);
 
-  // Route taps on push notifications to the right screen.
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(
       (response) => handleNotificationTap(response, { pathname })
@@ -61,10 +51,16 @@ export default function TabsLayout() {
     return () => sub.remove();
   }, [pathname]);
 
+  useEffect(() => {
+    if (pathname.startsWith("/feed") || pathname.startsWith("/create")) {
+      router.replace("/(tabs)/matches");
+    }
+  }, [pathname]);
+
   return (
     <View style={{ flex: 1 }}>
       <Tabs
-        screenOptions={({ route }) => ({
+        screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: "#00A6F6",
           tabBarInactiveTintColor: isDark ? "#666" : "#999",
@@ -85,21 +81,7 @@ export default function TabsLayout() {
             fontSize: 11,
             fontWeight: "600" as const,
           },
-          ...(route.name !== "create" && {
-            tabBarButton: (props: any) => (
-              <Pressable
-                {...props}
-                onPress={(e: any) => {
-                  if (createGuard.dirty) {
-                    setLeaveRoute(route.name);
-                    return;
-                  }
-                  props.onPress?.(e);
-                }}
-              />
-            ),
-          }),
-        })}
+        }}
       >
         <Tabs.Screen
           name="discover"
@@ -113,47 +95,13 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="feed"
           options={{
-            title: "Boni",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="restaurant" size={size} color={color} />
-            ),
+            href: null,
           }}
         />
         <Tabs.Screen
           name="create"
           options={{
-            title: "",
-            tabBarIcon: () => (
-              <View
-                style={{
-                  width: 62,
-                  height: 62,
-                  borderRadius: 31,
-                  backgroundColor: isDark ? "#171717" : "#f2f2f7",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: Platform.OS === "ios" ? 20 : 8,
-                }}
-              >
-                <View
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 25,
-                    backgroundColor: "#00A6F6",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    shadowColor: "#00A6F6",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 6,
-                  }}
-                >
-                  <Ionicons name="add" size={28} color="#fff" />
-                </View>
-              </View>
-            ),
+            href: null,
           }}
         />
         <Tabs.Screen
@@ -194,108 +142,13 @@ export default function TabsLayout() {
           height={androidTabBarHeight}
           isDark={isDark}
           photoUrl={photoUrl}
-          onBlockedNavigate={setLeaveRoute}
         />
       ) : null}
-
-      {/* Leave create guard modal — OUTSIDE Tabs to avoid Screen-only children warning */}
-      <Modal
-        visible={!!leaveRoute}
-        transparent
-        animationType="none"
-        onRequestClose={() => setLeaveRoute(null)}
-      >
-        <Pressable
-          onPress={() => setLeaveRoute(null)}
-          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center", paddingHorizontal: 32 }}
-        >
-          <Pressable
-            onPress={() => {}}
-            style={{ backgroundColor: isDark ? "#171717" : "#fff", borderRadius: 24, width: "100%", paddingHorizontal: 24, paddingVertical: 28 }}
-          >
-            <View style={{ alignItems: "center", marginBottom: 20 }}>
-              <View
-                style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 28,
-                  backgroundColor: isDark ? "#3b0f0f" : "#FEF2F2",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 12,
-                }}
-              >
-                <Ionicons name="warning-outline" size={28} color="#ef4444" />
-              </View>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "700",
-                  color: isDark ? "#f5f5f5" : "#111827",
-                  textAlign: "center",
-                }}
-              >
-                Zapuščaš ustvarjanje bona
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: isDark ? "#a3a3a3" : "#6b7280",
-                  textAlign: "center",
-                  marginTop: 8,
-                }}
-              >
-                Vsi podatki se bodo ponastavili. Želiš nadaljevati?
-              </Text>
-            </View>
-            <Pressable
-              onPress={() => {
-                const target = leaveRoute;
-                setLeaveRoute(null);
-                if (createGuard.reset) createGuard.reset();
-                if (target) {
-                  requestAnimationFrame(() =>
-                    router.navigate(`/(tabs)/${target}` as any)
-                  );
-                }
-              }}
-              android_ripple={{ color: "#dc2626" }}
-              style={{
-                backgroundColor: "#ef4444",
-                borderRadius: 16,
-                paddingVertical: 14,
-                alignItems: "center" as const,
-                marginBottom: 12,
-              }}
-            >
-              <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
-                Zapusti
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setLeaveRoute(null)}
-              android_ripple={{ color: "#d1d5db" }}
-              style={{
-                backgroundColor: isDark ? "#262626" : "#f3f4f6",
-                borderRadius: 16,
-                paddingVertical: 14,
-                alignItems: "center" as const,
-              }}
-            >
-              <Text
-                style={{ color: isDark ? "#e5e5e5" : "#374151", fontWeight: "700", fontSize: 16 }}
-              >
-                Ostani
-              </Text>
-            </Pressable>
-          </Pressable>
-        </Pressable>
-      </Modal>
     </View>
   );
 }
 
-type AndroidTabName = "discover" | "feed" | "create" | "matches" | "profile";
+type AndroidTabName = "discover" | "matches" | "profile";
 
 const androidTabs: {
   name: AndroidTabName;
@@ -303,8 +156,6 @@ const androidTabs: {
   icon: keyof typeof Ionicons.glyphMap;
 }[] = [
   { name: "discover", title: "Išči", icon: "flame" },
-  { name: "feed", title: "Boni", icon: "restaurant" },
-  { name: "create", title: "", icon: "add" },
   { name: "matches", title: "Buddies", icon: "chatbubbles" },
   { name: "profile", title: "Profil", icon: "person-circle" },
 ];
@@ -314,26 +165,15 @@ function AndroidTabBar({
   height,
   isDark,
   photoUrl,
-  onBlockedNavigate,
 }: {
   bottomPadding: number;
   height: number;
   isDark: boolean;
   photoUrl: string | null;
-  onBlockedNavigate: (route: string) => void;
 }) {
   const pathname = usePathname();
   const activeRoute = (pathname.split("/").filter(Boolean)[0] ??
     "discover") as AndroidTabName;
-
-  function goToTab(name: AndroidTabName) {
-    if (name !== "create" && createGuard.dirty) {
-      onBlockedNavigate(name);
-      return;
-    }
-
-    router.navigate(`/(tabs)/${name}` as any);
-  }
 
   return (
     <View
@@ -358,16 +198,15 @@ function AndroidTabBar({
       {androidTabs.map((tab) => {
         const focused = activeRoute === tab.name;
         const color = focused ? "#00A6F6" : isDark ? "#666" : "#999";
-        const isCreate = tab.name === "create";
 
         return (
           <Pressable
             key={tab.name}
             accessibilityRole="button"
             accessibilityState={focused ? { selected: true } : undefined}
-            accessibilityLabel={tab.title || "Ustvari"}
+            accessibilityLabel={tab.title}
             android_ripple={{ color: isDark ? "#1f1f1f" : "#f3f4f6" }}
-            onPress={() => goToTab(tab.name)}
+            onPress={() => router.navigate(`/(tabs)/${tab.name}` as any)}
             style={{
               flex: 1,
               minHeight: 48,
@@ -375,60 +214,30 @@ function AndroidTabBar({
               justifyContent: "center",
             }}
           >
-            {isCreate ? (
-              <View
+            {tab.name === "profile" && photoUrl ? (
+              <Image
+                source={{ uri: photoUrl }}
                 style={{
-                  width: 58,
-                  height: 58,
-                  borderRadius: 29,
-                  backgroundColor: isDark ? "#171717" : "#f2f2f7",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 12,
+                  width: 24,
+                  height: 24,
+                  borderRadius: 12,
+                  borderWidth: 2,
+                  borderColor: color,
                 }}
-              >
-                <View
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 24,
-                    backgroundColor: "#00A6F6",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    elevation: 6,
-                  }}
-                >
-                  <Ionicons name="add" size={28} color="#fff" />
-                </View>
-              </View>
+              />
             ) : (
-              <>
-                {tab.name === "profile" && photoUrl ? (
-                  <Image
-                    source={{ uri: photoUrl }}
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      borderWidth: 2,
-                      borderColor: color,
-                    }}
-                  />
-                ) : (
-                  <Ionicons name={tab.icon} size={24} color={color} />
-                )}
-                <Text
-                  style={{
-                    marginTop: 2,
-                    color,
-                    fontSize: 11,
-                    fontWeight: "600",
-                  }}
-                >
-                  {tab.title}
-                </Text>
-              </>
+              <Ionicons name={tab.icon} size={24} color={color} />
             )}
+            <Text
+              style={{
+                marginTop: 2,
+                color,
+                fontSize: 11,
+                fontWeight: "600",
+              }}
+            >
+              {tab.title}
+            </Text>
           </Pressable>
         );
       })}

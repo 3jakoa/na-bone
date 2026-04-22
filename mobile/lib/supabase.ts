@@ -16,6 +16,8 @@ export const supabase = createClient(url, anon, {
   },
 });
 
+export type ProductVariant = "control" | "poke_v1";
+
 export type Profile = {
   id: string;
   user_id: string;
@@ -29,6 +31,7 @@ export type Profile = {
   education_level: "dodiplomski" | "magistrski" | "doktorski" | null;
   photos: string[];
   is_onboarded: boolean;
+  product_variant: ProductVariant;
 };
 
 export type Bone = {
