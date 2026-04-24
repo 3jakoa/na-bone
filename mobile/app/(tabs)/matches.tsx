@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,9 @@ import {
   Image,
   Alert,
   Share,
-  TextInput,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import Toast from "react-native-toast-message";
 import { getChatMessagePreview } from "../../lib/chatContent";
 import { supabase, type Profile } from "../../lib/supabase";
 
@@ -41,16 +39,6 @@ const subtleCardShadow = {
   elevation: 1,
 } as const;
 
-function PokeAvatarBadge() {
-  return (
-    <Image
-      source={require("../../assets/logo.png")}
-      style={{ width: 56, height: 56, borderRadius: 28 }}
-      resizeMode="cover"
-    />
-  );
-}
-
 function formatListTime(iso: string) {
   const date = new Date(iso);
   const now = new Date();
@@ -74,17 +62,6 @@ export default function Matches() {
   const [items, setItems] = useState<Item[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [inviteLoading, setInviteLoading] = useState(false);
-  const [messageText, setMessageText] = useState("");
-  const [selectedBuddies, setSelectedBuddies] = useState<Set<string>>(
-    new Set()
-  );
-  const [sendingPokes, setSendingPokes] = useState(false);
-  const [isComposerOpen, setIsComposerOpen] = useState(false);
-  const inputRef = useRef<TextInput>(null);
-  const hasDraftMessage = messageText.trim().length > 0;
-  const selectedCount = selectedBuddies.size;
-  const isSendReady = hasDraftMessage && selectedCount > 0;
-  const selectionMode = isComposerOpen || hasDraftMessage;
 
   const loadMatches = useCallback(async () => {
     const {
@@ -156,10 +133,6 @@ export default function Matches() {
     });
 
     setItems(out);
-    setSelectedBuddies((prev) => {
-      const validIds = new Set(out.map((item) => item.matchId));
-      return new Set([...prev].filter((id) => validIds.has(id)));
-    });
     setLoaded(true);
   }, []);
 
@@ -168,44 +141,6 @@ export default function Matches() {
       void loadMatches();
     }, [loadMatches])
   );
-
-  function toggleBuddy(matchId: string) {
-    setSelectedBuddies((prev) => {
-      const next = new Set(prev);
-      if (next.has(matchId)) next.delete(matchId);
-      else next.add(matchId);
-      if (next.size === 0 && messageText.trim().length === 0) {
-        setIsComposerOpen(false);
-      }
-      return next;
-    });
-  }
-
-  function resetPokeComposer() {
-    setMessageText("");
-    setSelectedBuddies(new Set());
-    setIsComposerOpen(false);
-  }
-
-  function handleMessageChange(nextValue: string) {
-    setMessageText(nextValue);
-    if (nextValue.trim().length > 0) {
-      setIsComposerOpen(true);
-      return;
-    }
-    if (selectedBuddies.size === 0) {
-      setIsComposerOpen(false);
-    }
-  }
-
-  function openComposer({ focusInput = false }: { focusInput?: boolean } = {}) {
-    setIsComposerOpen(true);
-    if (focusInput) {
-      requestAnimationFrame(() => {
-        inputRef.current?.focus();
-      });
-    }
-  }
 
   async function inviteBuddy() {
     setInviteLoading(true);
@@ -226,73 +161,11 @@ export default function Matches() {
     });
   }
 
-  async function sendBulkPokes() {
-    const trimmedMessage = messageText.trim();
-    if (!trimmedMessage) {
-      return Toast.show({
-        type: "error",
-        text1: "Napiši sporočilo povabila.",
-      });
-    }
-
-    const selectedMatchIds = items
-      .map((item) => item.matchId)
-      .filter((matchId) => selectedBuddies.has(matchId));
-
-    if (selectedMatchIds.length === 0) {
-      return Toast.show({
-        type: "error",
-        text1: "Izberi vsaj enega buddyja spodaj.",
-      });
-    }
-
-    setSendingPokes(true);
-    const { data, error } = await supabase.rpc("send_bulk_poke_messages", {
-      p_match_ids: selectedMatchIds,
-      p_message_text: trimmedMessage,
-    });
-    setSendingPokes(false);
-
-    if (error) {
-      return Toast.show({
-        type: "error",
-        text1: "Napaka",
-        text2: error.message,
-      });
-    }
-
-    const sentCount =
-      typeof data === "object" &&
-      data !== null &&
-      "sent_count" in (data as Record<string, unknown>) &&
-      typeof (data as Record<string, unknown>).sent_count === "number"
-        ? ((data as Record<string, unknown>).sent_count as number)
-        : selectedMatchIds.length;
-
-    resetPokeComposer();
-    await loadMatches();
-    Toast.show({
-      type: "success",
-      text1: "Povabilo poslano",
-      text2: `${sentCount} buddy${sentCount === 1 ? " dobi" : "ji dobijo"} sporočilo.`,
-    });
-  }
-
   function handleRowPress(item: Item) {
-    if (selectionMode) {
-      toggleBuddy(item.matchId);
-      return;
-    }
-
     router.push(`/matches/${item.matchId}`);
   }
 
   function handleAvatarPress(item: Item) {
-    if (selectionMode) {
-      toggleBuddy(item.matchId);
-      return;
-    }
-
     router.push(`/profile-detail?id=${item.other.id}`);
   }
 
@@ -321,101 +194,6 @@ export default function Matches() {
     </View>
   );
 
-  const compactPokeCard = (
-    <View
-      style={subtleCardShadow}
-      className={`mb-4 rounded-3xl px-4 py-3.5 flex-row items-center ${
-        selectionMode
-          ? "bg-[#F8FCFF] dark:bg-neutral-900 border border-[#B7E2FA] dark:border-neutral-700"
-          : "bg-white dark:bg-neutral-900 border border-transparent"
-      }`}
-    >
-      <Pressable
-        onPress={() => openComposer({ focusInput: true })}
-        className="shrink-0"
-      >
-        <PokeAvatarBadge />
-      </Pressable>
-
-      <View className="flex-1 ml-3 min-w-0">
-        <View className="flex-row items-center">
-          <Pressable
-            onPress={() => openComposer({ focusInput: true })}
-            className="flex-1 min-w-0"
-          >
-            <Text
-              className="font-bold text-base text-gray-900 dark:text-white"
-              numberOfLines={1}
-            >
-              Povabi Buddyje na bone!
-            </Text>
-          </Pressable>
-
-          <View className="ml-2 flex-row items-center shrink-0" style={{ gap: 8 }}>
-            {selectionMode && selectedCount > 0 ? (
-              <View className="bg-[#ECF8FF] dark:bg-neutral-800 rounded-full px-2 py-0.5">
-                <Text className="text-[11px] font-semibold text-brand">
-                  {selectedCount}
-                </Text>
-              </View>
-            ) : null}
-
-            {selectionMode ? (
-              <Pressable onPress={resetPokeComposer}>
-                <Text className="text-[11px] font-semibold text-gray-400 dark:text-gray-500">
-                  Cancel
-                </Text>
-              </Pressable>
-            ) : null}
-
-            <Pressable
-              onPress={() => {
-                if (!selectionMode && !hasDraftMessage) {
-                  openComposer({ focusInput: true });
-                  return;
-                }
-                if (!isSendReady || sendingPokes) {
-                  return;
-                }
-                void sendBulkPokes();
-              }}
-              disabled={sendingPokes}
-              className={`w-8 h-8 rounded-full items-center justify-center shrink-0 ${
-                isSendReady
-                  ? "bg-brand"
-                  : "bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
-              }`}
-            >
-              <Ionicons
-                name="paper-plane-outline"
-                size={15}
-                color={isSendReady ? "#fff" : "#9CA3AF"}
-              />
-            </Pressable>
-          </View>
-        </View>
-
-        <View className="flex-row items-center mt-0.5">
-          <TextInput
-            ref={inputRef}
-            value={messageText}
-            onChangeText={handleMessageChange}
-            onFocus={() => openComposer()}
-            placeholder="Napiši povabilo..."
-            placeholderTextColor="#9CA3AF"
-            className={`flex-1 text-sm py-0 ${
-              selectionMode
-                ? "text-gray-700 dark:text-gray-200"
-                : "text-gray-500 dark:text-gray-400"
-            }`}
-            autoCorrect={false}
-            maxLength={140}
-          />
-        </View>
-      </View>
-    </View>
-  );
-
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
       {header}
@@ -423,7 +201,6 @@ export default function Matches() {
         data={items}
         keyExtractor={(item) => item.matchId}
         contentContainerStyle={{ padding: 16, gap: 8, paddingBottom: 32 }}
-        ListHeaderComponent={compactPokeCard}
         ListEmptyComponent={
           loaded ? (
             <View className="items-center mt-16">
@@ -438,18 +215,11 @@ export default function Matches() {
           ) : null
         }
         renderItem={({ item }) => {
-          const selected = selectedBuddies.has(item.matchId);
           return (
             <Pressable
               onPress={() => handleRowPress(item)}
               style={subtleCardShadow}
-              className={`rounded-3xl px-4 py-3.5 flex-row items-center ${
-                selectionMode
-                  ? selected
-                    ? "bg-[#FBFDFF] dark:bg-neutral-900 border border-[#D9EEF9] dark:border-neutral-700"
-                    : "bg-white dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800"
-                  : "bg-white dark:bg-neutral-900 active:bg-gray-50 dark:active:bg-neutral-800"
-              }`}
+              className="rounded-3xl px-4 py-3.5 flex-row items-center bg-white dark:bg-neutral-900 active:bg-gray-50 dark:active:bg-neutral-800"
             >
               <Pressable onPress={() => handleAvatarPress(item)}>
                 {item.other.photos[0] ? (
@@ -485,7 +255,7 @@ export default function Matches() {
                       </Text>
                     </View>
                   ) : null}
-                  {!selectionMode && item.last ? (
+                  {item.last ? (
                     <Text className="text-xs text-gray-400 dark:text-gray-500 ml-2 shrink-0">
                       {item.last.time}
                     </Text>
@@ -494,37 +264,15 @@ export default function Matches() {
 
                 <View className="flex-row items-center mt-0.5">
                   <Text
-                    className={`flex-1 text-sm ${
-                      selectionMode && selected
-                        ? "text-gray-600 dark:text-gray-300"
-                        : "text-gray-500 dark:text-gray-400"
-                    }`}
+                    className="flex-1 text-sm text-gray-500 dark:text-gray-400"
                     numberOfLines={1}
                   >
-                    {selectionMode
-                      ? selected
-                        ? "Izbran za povabilo"
-                        : "Tapni za izbor buddyja"
-                      : item.last
-                        ? `${item.last.mine ? "Ti: " : ""}${item.last.preview}`
-                        : "Pozdravita se 👋"}
+                    {item.last
+                      ? `${item.last.mine ? "Ti: " : ""}${item.last.preview}`
+                      : "Pozdravita se 👋"}
                   </Text>
                 </View>
               </View>
-
-              {selectionMode ? (
-                <View
-                  className={`ml-3 w-7 h-7 rounded-full items-center justify-center ${
-                    selected
-                      ? "bg-brand"
-                      : "bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
-                  }`}
-                >
-                  {selected ? (
-                    <Ionicons name="checkmark" size={16} color="#fff" />
-                  ) : null}
-                </View>
-              ) : null}
             </Pressable>
           );
         }}
