@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, Pressable } from "react-native";
 import { router } from "expo-router";
 import * as Network from "expo-network";
+import { useProductVariant } from "../lib/productVariant";
 import { supabase } from "../lib/supabase";
 import { getPendingBuddyInviteToken } from "../lib/buddyInvites";
 
@@ -14,6 +15,7 @@ export default function Index() {
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const { setProductVariant } = useProductVariant();
 
   useEffect(() => {
     if (!offline) return;
@@ -46,6 +48,7 @@ export default function Index() {
         if (cancelled) return;
 
         if (!session) {
+          setProductVariant("control");
           if (sessionErr) {
             const latestNetworkState = await Network.getNetworkStateAsync();
             if (cancelled) return;
@@ -88,7 +91,7 @@ export default function Index() {
         // their data is all there.
         const { data: profile, error: profErr } = await supabase
           .from("profiles")
-          .select("id, is_onboarded")
+          .select("id, is_onboarded, product_variant")
           .eq("user_id", userData.user.id)
           .maybeSingle();
         if (cancelled) return;
@@ -109,9 +112,12 @@ export default function Index() {
         }
 
         if (!profile) {
+          setProductVariant("control");
           // Genuinely no profile row yet → first-run onboarding.
           return router.replace("/onboarding");
         }
+
+        setProductVariant(profile.product_variant ?? "control");
 
         // Self-heal: profile exists but flag was never flipped. Set it now so
         // downstream queries that filter on is_onboarded behave correctly.

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,16 +10,20 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Bone, type Profile } from "../../lib/supabase";
 import { formatScheduledDate } from "../../lib/formatDate";
+import { BoneComposerCard } from "../../components/BoneComposerCard";
+import { createGuard } from "../../lib/createGuard";
 
 type FeedItem = Bone & {
   author?: Pick<Profile, "id" | "name" | "photos" | "faculty">;
 };
 
-function inviteDisplayKey(item: Pick<Bone, "user_id" | "restaurant" | "scheduled_at">) {
+function inviteDisplayKey(
+  item: Pick<Bone, "user_id" | "restaurant" | "scheduled_at">
+) {
   return [
     item.user_id,
     item.restaurant.trim().toLowerCase(),
@@ -32,6 +36,8 @@ export default function Feed() {
   const [me, setMe] = useState<Profile | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedBone, setSelectedBone] = useState<FeedItem | null>(null);
+  const [openComposerSignal, setOpenComposerSignal] = useState(0);
+  const { compose } = useLocalSearchParams<{ compose?: string | string[] }>();
 
   const load = useCallback(async () => {
     setRefreshing(true);
@@ -87,14 +93,14 @@ export default function Feed() {
       bonesError = result.error;
     } else {
       const result = await supabase
-          .from("meal_invites")
-          .select("*")
-          .eq("status", "open")
-          .eq("visibility", "public")
-          .is("source_public_invite_id", null)
-          .gte("scheduled_at", new Date().toISOString())
-          .order("scheduled_at", { ascending: true })
-          .limit(100);
+        .from("meal_invites")
+        .select("*")
+        .eq("status", "open")
+        .eq("visibility", "public")
+        .is("source_public_invite_id", null)
+        .gte("scheduled_at", new Date().toISOString())
+        .order("scheduled_at", { ascending: true })
+        .limit(100);
       bones = result.data;
       bonesError = result.error;
     }
@@ -106,10 +112,7 @@ export default function Feed() {
       return;
     }
 
-    // Fetch authors
-    const ids = Array.from(
-      new Set((bones ?? []).map((b: any) => b.user_id))
-    );
+    const ids = Array.from(new Set((bones ?? []).map((b: any) => b.user_id)));
     const { data: authors } = ids.length
       ? await supabase
           .from("profiles")
@@ -118,9 +121,10 @@ export default function Feed() {
       : { data: [] as any[] };
     const authorMap = new Map((authors ?? []).map((a: any) => [a.id, a]));
 
-    // Fetch restaurant details as fallback for boni without embedded restaurant_info
     const needLookup = (bones ?? []).filter((b: any) => !b.restaurant_info);
-    const lookupNames = Array.from(new Set(needLookup.map((b: any) => b.restaurant as string)));
+    const lookupNames = Array.from(
+      new Set(needLookup.map((b: any) => b.restaurant as string))
+    );
     let restLookup = new Map<string, any>();
     if (lookupNames.length > 0) {
       const { data: rests } = await supabase
@@ -132,7 +136,6 @@ export default function Feed() {
     }
 
     const mapped = ((bones ?? []) as Bone[]).map((b) => {
-      // Use embedded data, or backfill from restaurants table
       if (!b.restaurant_info && restLookup.has(b.restaurant)) {
         const r = restLookup.get(b.restaurant);
         b = {
@@ -162,8 +165,6 @@ export default function Feed() {
     for (const item of mapped) {
       if (item.source_public_invite_id) continue;
 
-      // If the same author already has an active public bon for this slot,
-      // show buddies only the public card, not a duplicate private one.
       if (
         item.visibility === "private" &&
         publicInviteKeys.has(inviteDisplayKey(item))
@@ -192,6 +193,33 @@ export default function Feed() {
     }, [load])
   );
 
+  useEffect(() => {
+    const composeParam = Array.isArray(compose) ? compose[0] : compose;
+    if (composeParam !== "1") return;
+
+    setOpenComposerSignal((prev) => prev + 1);
+    router.setParams({ compose: undefined } as any);
+  }, [compose]);
+
+  function runAfterDiscard(action: () => void) {
+    if (!createGuard.dirty) {
+      action();
+      return;
+    }
+
+    Alert.alert("Zapuščaš ustvarjanje bona", "Vsi podatki se bodo ponastavili.", [
+      { text: "Ostani", style: "cancel" },
+      {
+        text: "Zapusti",
+        style: "destructive",
+        onPress: () => {
+          createGuard.reset?.();
+          action();
+        },
+      },
+    ]);
+  }
+
   function openPrivateInvite(item: FeedItem) {
     if (!item.match_id) {
       return Alert.alert("Napaka", "Povabilo nima pogovora.");
@@ -216,18 +244,14 @@ export default function Feed() {
   }
 
   function confirmCancelBone(item: FeedItem) {
-    Alert.alert(
-      "Umakni bon?",
-      "Bon ne bo več prikazan drugim uporabnikom.",
-      [
-        { text: "Nazaj", style: "cancel" },
-        {
-          text: "Umakni",
-          style: "destructive",
-          onPress: () => cancelBone(item),
-        },
-      ]
-    );
+    Alert.alert("Umakni bon?", "Bon ne bo več prikazan drugim uporabnikom.", [
+      { text: "Nazaj", style: "cancel" },
+      {
+        text: "Umakni",
+        style: "destructive",
+        onPress: () => cancelBone(item),
+      },
+    ]);
   }
 
   async function cancelBone(item: FeedItem) {
@@ -289,23 +313,22 @@ export default function Feed() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={load} />
         }
+        ListHeaderComponent={
+          <BoneComposerCard openSignal={openComposerSignal} onSuccess={load} />
+        }
         ListEmptyComponent={
-          <View className="items-center mt-16 bg-white dark:bg-neutral-900 rounded-3xl px-6 py-8 shadow-sm">
-            <View className="w-16 h-16 rounded-full bg-brand/10 items-center justify-center">
-              <Ionicons name="restaurant-outline" size={30} color="#00A6F6" />
-            </View>
+          <View className="items-center mt-16 px-6 py-8">
+            <Image
+              source={require("../../assets/logo.png")}
+              style={{ width: 64, height: 64, borderRadius: 32 }}
+              resizeMode="cover"
+            />
             <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
               Ni aktivnih bonov
             </Text>
             <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
               Bodi prvi in objavi nov bon za kosilo.
             </Text>
-            <Pressable
-              onPress={() => router.navigate("/(tabs)/create")}
-              className="mt-6 bg-brand rounded-2xl px-6 py-3 min-w-[160px] items-center"
-            >
-              <Text className="text-white font-bold text-base">Nov bon</Text>
-            </Pressable>
           </View>
         }
         renderItem={({ item }) => {
@@ -316,7 +339,9 @@ export default function Feed() {
             <Pressable
               onPress={() => {
                 if (!isMine) {
-                  respond(item);
+                  runAfterDiscard(() => {
+                    void respond(item);
+                  });
                   return;
                 }
                 setSelectedBone(item);
@@ -337,11 +362,12 @@ export default function Feed() {
                 </Pressable>
               )}
 
-              {/* Author row */}
               {item.author && (
                 <Pressable
                   onPress={() =>
-                    router.push(`/profile-detail?id=${item.author!.id}`)
+                    runAfterDiscard(() =>
+                      router.push(`/profile-detail?id=${item.author!.id}`)
+                    )
                   }
                   className="flex-row items-center mb-3"
                 >
@@ -364,7 +390,10 @@ export default function Feed() {
                     >
                       {item.author.name}
                     </Text>
-                    <Text className="text-xs text-gray-400 dark:text-gray-500" numberOfLines={1}>
+                    <Text
+                      className="text-xs text-gray-400 dark:text-gray-500"
+                      numberOfLines={1}
+                    >
                       {item.author.faculty}
                     </Text>
                   </View>
@@ -398,7 +427,6 @@ export default function Feed() {
                 </View>
               </View>
 
-              {/* Restaurant info */}
               <View className="mb-2">
                 <View className="flex-row items-start">
                   <Ionicons
@@ -466,13 +494,13 @@ export default function Feed() {
                 <Pressable
                   onPress={(event) => {
                     event.stopPropagation();
-                    respond(item);
+                    runAfterDiscard(() => {
+                      void respond(item);
+                    });
                   }}
                   className="bg-brand rounded-2xl py-3 items-center"
                 >
-                  <Text className="text-white font-bold">
-                    Odpri chat
-                  </Text>
+                  <Text className="text-white font-bold">Odpri chat</Text>
                 </Pressable>
               )}
             </Pressable>
@@ -480,7 +508,6 @@ export default function Feed() {
         }}
       />
 
-      {/* Detail popup */}
       <Modal
         visible={!!selectedBone}
         transparent
@@ -496,164 +523,167 @@ export default function Feed() {
             className="bg-white dark:bg-neutral-900 rounded-3xl w-full max-w-md"
             style={{ maxHeight: "85%" }}
           >
-            {selectedBone && (() => {
-              const b = selectedBone;
-              const ri = b.restaurant_info;
-              const isMine = me && b.user_id === me.id;
-              const isPrivate = b.visibility === "private";
-              return (
-                <>
-                  <View className="flex-row items-center justify-between px-5 pt-5 pb-2">
-                    <Text className="text-lg font-bold text-gray-900 dark:text-white">
-                      {isPrivate ? "Zasebni bon" : "Javni bon"}
-                    </Text>
-                    <View className="flex-row items-center gap-2">
-                      {isMine && (
+            {selectedBone &&
+              (() => {
+                const b = selectedBone;
+                const ri = b.restaurant_info;
+                const isMine = me && b.user_id === me.id;
+                const isPrivate = b.visibility === "private";
+                return (
+                  <>
+                    <View className="flex-row items-center justify-between px-5 pt-5 pb-2">
+                      <Text className="text-lg font-bold text-gray-900 dark:text-white">
+                        {isPrivate ? "Zasebni bon" : "Javni bon"}
+                      </Text>
+                      <View className="flex-row items-center gap-2">
+                        {isMine && (
+                          <Pressable
+                            onPress={() => confirmCancelBone(b)}
+                            className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
+                          >
+                            <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
+                              Umakni bon
+                            </Text>
+                          </Pressable>
+                        )}
                         <Pressable
-                          onPress={() => confirmCancelBone(b)}
-                          className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
+                          onPress={() => setSelectedBone(null)}
+                          hitSlop={10}
                         >
-                          <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
-                            Umakni bon
-                          </Text>
+                          <Ionicons name="close" size={26} color="#888" />
                         </Pressable>
-                      )}
-                      <Pressable
-                        onPress={() => setSelectedBone(null)}
-                        hitSlop={10}
-                      >
-                        <Ionicons name="close" size={26} color="#888" />
-                      </Pressable>
+                      </View>
                     </View>
-                  </View>
 
-                  <ScrollView
-                    contentContainerStyle={{ padding: 20, paddingTop: 4 }}
-                  >
-                    {b.author && (
-                      <View className="flex-row items-center mb-4">
-                        {b.author.photos?.[0] ? (
-                          <Image
-                            source={{ uri: b.author.photos[0] }}
-                            style={{ width: 48, height: 48, borderRadius: 24 }}
-                          />
-                        ) : (
-                          <View className="w-12 h-12 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
-                            <Text className="font-bold text-brand-dark dark:text-brand">
-                              {b.author.name[0]}
+                    <ScrollView
+                      contentContainerStyle={{ padding: 20, paddingTop: 4 }}
+                    >
+                      {b.author && (
+                        <View className="flex-row items-center mb-4">
+                          {b.author.photos?.[0] ? (
+                            <Image
+                              source={{ uri: b.author.photos[0] }}
+                              style={{ width: 48, height: 48, borderRadius: 24 }}
+                            />
+                          ) : (
+                            <View className="w-12 h-12 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
+                              <Text className="font-bold text-brand-dark dark:text-brand">
+                                {b.author.name[0]}
+                              </Text>
+                            </View>
+                          )}
+                          <View className="ml-3 flex-1">
+                            <Text className="font-semibold text-gray-900 dark:text-white">
+                              {b.author.name}
+                            </Text>
+                            <Text className="text-xs text-gray-400 dark:text-gray-500">
+                              {b.author.faculty}
+                            </Text>
+                          </View>
+                        </View>
+                      )}
+
+                      <View className="flex-row flex-wrap gap-2 mb-4">
+                        {isMine && (
+                          <View className="rounded-full bg-brand/10 px-3 py-1">
+                            <Text className="text-xs font-semibold text-brand">
+                              Tvoj bon
                             </Text>
                           </View>
                         )}
-                        <View className="ml-3 flex-1">
-                          <Text className="font-semibold text-gray-900 dark:text-white">
-                            {b.author.name}
-                          </Text>
-                          <Text className="text-xs text-gray-400 dark:text-gray-500">
-                            {b.author.faculty}
-                          </Text>
-                        </View>
-                      </View>
-                    )}
-
-                    <View className="flex-row flex-wrap gap-2 mb-4">
-                      {isMine && (
-                        <View className="rounded-full bg-brand/10 px-3 py-1">
-                          <Text className="text-xs font-semibold text-brand">
-                            Tvoj bon
-                          </Text>
-                        </View>
-                      )}
-                      <View
-                        className={`rounded-full px-3 py-1 ${
-                          isPrivate
-                            ? "bg-gray-100 dark:bg-neutral-800"
-                            : "bg-blue-50 dark:bg-brand/20"
-                        }`}
-                      >
-                        <Text
-                          className={`text-xs font-semibold ${
+                        <View
+                          className={`rounded-full px-3 py-1 ${
                             isPrivate
-                              ? "text-gray-500 dark:text-gray-300"
-                              : "text-brand"
+                              ? "bg-gray-100 dark:bg-neutral-800"
+                              : "bg-blue-50 dark:bg-brand/20"
                           }`}
                         >
-                          {isPrivate ? "Zasebno" : "Javno"}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View className="flex-row items-start mb-2">
-                      <Ionicons
-                        name="restaurant"
-                        size={18}
-                        color="#00A6F6"
-                        style={{ marginTop: 3 }}
-                      />
-                      <Text className="flex-1 font-bold text-lg text-gray-900 dark:text-white ml-2">
-                        {b.restaurant}
-                      </Text>
-                      {ri?.rating != null && ri.rating > 0 && (
-                        <View
-                          className="flex-row items-center ml-2 shrink-0"
-                          style={{ marginTop: 5 }}
-                        >
-                          <Ionicons name="star" size={13} color="#F59E0B" />
-                          <Text className="text-xs font-semibold text-amber-500 ml-0.5">
-                            {ri.rating}
+                          <Text
+                            className={`text-xs font-semibold ${
+                              isPrivate
+                                ? "text-gray-500 dark:text-gray-300"
+                                : "text-brand"
+                            }`}
+                          >
+                            {isPrivate ? "Zasebno" : "Javno"}
                           </Text>
                         </View>
-                      )}
-                    </View>
-                    {ri && (ri.address || ri.city) && (
-                      <Text className="text-xs text-gray-500 dark:text-gray-400 ml-7 mb-1">
-                        {[ri.address, ri.city].filter(Boolean).join(", ")}
-                      </Text>
-                    )}
-                    {ri?.supplement_price != null && (
-                      <View className="flex-row items-center ml-7 gap-2 mb-3">
-                        <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
-                          {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
+                      </View>
+
+                      <View className="flex-row items-start mb-2">
+                        <Ionicons
+                          name="restaurant"
+                          size={18}
+                          color="#00A6F6"
+                          style={{ marginTop: 3 }}
+                        />
+                        <Text className="flex-1 font-bold text-lg text-gray-900 dark:text-white ml-2">
+                          {b.restaurant}
                         </Text>
-                        {ri.meal_price != null && (
-                          <Text className="text-xs text-gray-400 dark:text-gray-500">
-                            (cena obroka {Number(ri.meal_price).toFixed(2)})
-                          </Text>
+                        {ri?.rating != null && ri.rating > 0 && (
+                          <View
+                            className="flex-row items-center ml-2 shrink-0"
+                            style={{ marginTop: 5 }}
+                          >
+                            <Ionicons name="star" size={13} color="#F59E0B" />
+                            <Text className="text-xs font-semibold text-amber-500 ml-0.5">
+                              {ri.rating}
+                            </Text>
+                          </View>
                         )}
                       </View>
-                    )}
+                      {ri && (ri.address || ri.city) && (
+                        <Text className="text-xs text-gray-500 dark:text-gray-400 ml-7 mb-1">
+                          {[ri.address, ri.city].filter(Boolean).join(", ")}
+                        </Text>
+                      )}
+                      {ri?.supplement_price != null && (
+                        <View className="flex-row items-center ml-7 gap-2 mb-3">
+                          <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
+                            {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
+                          </Text>
+                          {ri.meal_price != null && (
+                            <Text className="text-xs text-gray-400 dark:text-gray-500">
+                              (cena obroka {Number(ri.meal_price).toFixed(2)})
+                            </Text>
+                          )}
+                        </View>
+                      )}
 
-                    <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mt-2 mb-3 self-start">
-                      <Ionicons name="calendar" size={16} color="#00A6F6" />
-                      <Text className="text-sm font-semibold text-brand ml-1.5">
-                        {formatScheduledDate(b.scheduled_at)}
-                      </Text>
-                    </View>
-
-                    {b.note ? (
-                      <View className="bg-gray-50 dark:bg-neutral-800 rounded-2xl p-4 mb-4">
-                        <Text className="text-sm text-gray-700 dark:text-gray-200 leading-5">
-                          {b.note}
+                      <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mt-2 mb-3 self-start">
+                        <Ionicons name="calendar" size={16} color="#00A6F6" />
+                        <Text className="text-sm font-semibold text-brand ml-1.5">
+                          {formatScheduledDate(b.scheduled_at)}
                         </Text>
                       </View>
-                    ) : null}
 
-                    {!isMine && (
-                      <Pressable
-                        onPress={() => {
-                          setSelectedBone(null);
-                          respond(b);
-                        }}
-                        className="bg-brand rounded-2xl py-4 items-center"
-                      >
-                        <Text className="text-white font-bold text-base">
-                          Odpri chat
-                        </Text>
-                      </Pressable>
-                    )}
-                  </ScrollView>
-                </>
-              );
-            })()}
+                      {b.note ? (
+                        <View className="bg-gray-50 dark:bg-neutral-800 rounded-2xl p-4 mb-4">
+                          <Text className="text-sm text-gray-700 dark:text-gray-200 leading-5">
+                            {b.note}
+                          </Text>
+                        </View>
+                      ) : null}
+
+                      {!isMine && (
+                        <Pressable
+                          onPress={() =>
+                            runAfterDiscard(() => {
+                              setSelectedBone(null);
+                              void respond(b);
+                            })
+                          }
+                          className="bg-brand rounded-2xl py-4 items-center"
+                        >
+                          <Text className="text-white font-bold text-base">
+                            Odpri chat
+                          </Text>
+                        </Pressable>
+                      )}
+                    </ScrollView>
+                  </>
+                );
+              })()}
           </Pressable>
         </Pressable>
       </Modal>

@@ -146,7 +146,7 @@ export default function Discover() {
       promptPhotoRequired();
       return;
     }
-    if (direction === "right" && remainingRightSwipes <= 0) {
+    if (remainingRightSwipes <= 0) {
       springCardBack();
       showRightSwipeLimitMessage();
       return;
@@ -200,7 +200,7 @@ export default function Discover() {
       );
 
     if (error) {
-      if (direction === "right" && error.message === RIGHT_SWIPE_LIMIT_MESSAGE) {
+      if (error.message === RIGHT_SWIPE_LIMIT_MESSAGE) {
         showRightSwipeLimitMessage();
         void loadDeck();
         return;
@@ -211,9 +211,9 @@ export default function Discover() {
       return;
     }
 
-    if (direction === "right") {
-      setRemainingRightSwipes((current) => Math.max(0, current - 1));
+    setRemainingRightSwipes((current) => Math.max(0, current - 1));
 
+    if (direction === "right") {
       const { data: match } = await supabase
         .from("buddy_matches")
         .select("id")
