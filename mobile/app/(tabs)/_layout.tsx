@@ -25,6 +25,7 @@ export default function TabsLayout() {
   const { scheme } = useTheme();
   const isDark = scheme === "dark";
   const pathname = usePathname();
+  const activeTab = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "discover";
   const insets = useSafeAreaInsets();
   const androidBottomPadding = Math.max(insets.bottom, 8);
   const androidTabBarHeight = 64 + androidBottomPadding;
@@ -81,20 +82,18 @@ export default function TabsLayout() {
             fontSize: 11,
             fontWeight: "600" as const,
           },
-          ...(route.name !== "create" && {
-            tabBarButton: (props: any) => (
-              <Pressable
-                {...props}
-                onPress={(e: any) => {
-                  if (createGuard.dirty) {
-                    setLeaveRoute(route.name);
-                    return;
-                  }
-                  props.onPress?.(e);
-                }}
-              />
-            ),
-          }),
+          tabBarButton: (props: any) => (
+            <Pressable
+              {...props}
+              onPress={(e: any) => {
+                if (createGuard.dirty && route.name !== activeTab) {
+                  setLeaveRoute(route.name);
+                  return;
+                }
+                props.onPress?.(e);
+              }}
+            />
+          ),
         })}
       >
         <Tabs.Screen
@@ -118,38 +117,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="create"
           options={{
-            title: "",
-            tabBarIcon: () => (
-              <View
-                style={{
-                  width: 62,
-                  height: 62,
-                  borderRadius: 31,
-                  backgroundColor: isDark ? "#171717" : "#f2f2f7",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: Platform.OS === "ios" ? 20 : 8,
-                }}
-              >
-                <View
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 25,
-                    backgroundColor: "#00A6F6",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    shadowColor: "#00A6F6",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 6,
-                  }}
-                >
-                  <Ionicons name="add" size={28} color="#fff" />
-                </View>
-              </View>
-            ),
+            href: null,
           }}
         />
         <Tabs.Screen
@@ -306,7 +274,7 @@ export default function TabsLayout() {
   );
 }
 
-type AndroidTabName = "discover" | "feed" | "create" | "matches" | "profile";
+type AndroidTabName = "discover" | "feed" | "matches" | "profile";
 
 const androidTabs: {
   name: AndroidTabName;
@@ -315,7 +283,6 @@ const androidTabs: {
 }[] = [
   { name: "discover", title: "Išči", icon: "flame" },
   { name: "feed", title: "Boni", icon: "restaurant" },
-  { name: "create", title: "", icon: "add" },
   { name: "matches", title: "Buddies", icon: "chatbubbles" },
   { name: "profile", title: "Profil", icon: "person-circle" },
 ];
@@ -334,11 +301,10 @@ function AndroidTabBar({
   onBlockedNavigate: (route: string) => void;
 }) {
   const pathname = usePathname();
-  const activeRoute = (pathname.split("/").filter(Boolean)[0] ??
-    "discover") as AndroidTabName;
+  const activeRoute = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "discover";
 
   function goToTab(name: AndroidTabName) {
-    if (name !== "create" && createGuard.dirty) {
+    if (createGuard.dirty && name !== activeRoute) {
       onBlockedNavigate(name);
       return;
     }
@@ -369,14 +335,13 @@ function AndroidTabBar({
       {androidTabs.map((tab) => {
         const focused = activeRoute === tab.name;
         const color = focused ? "#00A6F6" : isDark ? "#666" : "#999";
-        const isCreate = tab.name === "create";
 
         return (
           <Pressable
             key={tab.name}
             accessibilityRole="button"
             accessibilityState={focused ? { selected: true } : undefined}
-            accessibilityLabel={tab.title || "Ustvari"}
+            accessibilityLabel={tab.title}
             android_ripple={{ color: isDark ? "#1f1f1f" : "#f3f4f6" }}
             onPress={() => goToTab(tab.name)}
             style={{
@@ -386,60 +351,30 @@ function AndroidTabBar({
               justifyContent: "center",
             }}
           >
-            {isCreate ? (
-              <View
+            {tab.name === "profile" && photoUrl ? (
+              <Image
+                source={{ uri: photoUrl }}
                 style={{
-                  width: 58,
-                  height: 58,
-                  borderRadius: 29,
-                  backgroundColor: isDark ? "#171717" : "#f2f2f7",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 12,
+                  width: 24,
+                  height: 24,
+                  borderRadius: 12,
+                  borderWidth: 2,
+                  borderColor: color,
                 }}
-              >
-                <View
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 24,
-                    backgroundColor: "#00A6F6",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    elevation: 6,
-                  }}
-                >
-                  <Ionicons name="add" size={28} color="#fff" />
-                </View>
-              </View>
+              />
             ) : (
-              <>
-                {tab.name === "profile" && photoUrl ? (
-                  <Image
-                    source={{ uri: photoUrl }}
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      borderWidth: 2,
-                      borderColor: color,
-                    }}
-                  />
-                ) : (
-                  <Ionicons name={tab.icon} size={24} color={color} />
-                )}
-                <Text
-                  style={{
-                    marginTop: 2,
-                    color,
-                    fontSize: 11,
-                    fontWeight: "600",
-                  }}
-                >
-                  {tab.title}
-                </Text>
-              </>
+              <Ionicons name={tab.icon} size={24} color={color} />
             )}
+            <Text
+              style={{
+                marginTop: 2,
+                color,
+                fontSize: 11,
+                fontWeight: "600",
+              }}
+            >
+              {tab.title}
+            </Text>
           </Pressable>
         );
       })}

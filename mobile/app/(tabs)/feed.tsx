@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,10 +10,12 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Bone, type Profile } from "../../lib/supabase";
 import { formatScheduledDate } from "../../lib/formatDate";
+import { BoneComposerCard } from "../../components/BoneComposerCard";
+import { createGuard } from "../../lib/createGuard";
 
 type FeedItem = Bone & {
   author?: Pick<Profile, "id" | "name" | "photos" | "faculty">;
@@ -34,6 +36,8 @@ export default function Feed() {
   const [me, setMe] = useState<Profile | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedBone, setSelectedBone] = useState<FeedItem | null>(null);
+  const [openComposerSignal, setOpenComposerSignal] = useState(0);
+  const { compose } = useLocalSearchParams<{ compose?: string | string[] }>();
 
   const load = useCallback(async () => {
     setRefreshing(true);
@@ -189,6 +193,33 @@ export default function Feed() {
     }, [load])
   );
 
+  useEffect(() => {
+    const composeParam = Array.isArray(compose) ? compose[0] : compose;
+    if (composeParam !== "1") return;
+
+    setOpenComposerSignal((prev) => prev + 1);
+    router.setParams({ compose: undefined } as any);
+  }, [compose]);
+
+  function runAfterDiscard(action: () => void) {
+    if (!createGuard.dirty) {
+      action();
+      return;
+    }
+
+    Alert.alert("Zapuščaš ustvarjanje bona", "Vsi podatki se bodo ponastavili.", [
+      { text: "Ostani", style: "cancel" },
+      {
+        text: "Zapusti",
+        style: "destructive",
+        onPress: () => {
+          createGuard.reset?.();
+          action();
+        },
+      },
+    ]);
+  }
+
   function openPrivateInvite(item: FeedItem) {
     if (!item.match_id) {
       return Alert.alert("Napaka", "Povabilo nima pogovora.");
@@ -282,23 +313,22 @@ export default function Feed() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={load} />
         }
+        ListHeaderComponent={
+          <BoneComposerCard openSignal={openComposerSignal} onSuccess={load} />
+        }
         ListEmptyComponent={
-          <View className="items-center mt-16 bg-white dark:bg-neutral-900 rounded-3xl px-6 py-8 shadow-sm">
-            <View className="w-16 h-16 rounded-full bg-brand/10 items-center justify-center">
-              <Ionicons name="restaurant-outline" size={30} color="#00A6F6" />
-            </View>
+          <View className="items-center mt-16 px-6 py-8">
+            <Image
+              source={require("../../assets/logo.png")}
+              style={{ width: 64, height: 64, borderRadius: 32 }}
+              resizeMode="cover"
+            />
             <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
               Ni aktivnih bonov
             </Text>
             <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
               Bodi prvi in objavi nov bon za kosilo.
             </Text>
-            <Pressable
-              onPress={() => router.navigate("/(tabs)/create")}
-              className="mt-6 bg-brand rounded-2xl px-6 py-3 min-w-[160px] items-center"
-            >
-              <Text className="text-white font-bold text-base">Nov bon</Text>
-            </Pressable>
           </View>
         }
         renderItem={({ item }) => {
@@ -309,7 +339,9 @@ export default function Feed() {
             <Pressable
               onPress={() => {
                 if (!isMine) {
-                  respond(item);
+                  runAfterDiscard(() => {
+                    void respond(item);
+                  });
                   return;
                 }
                 setSelectedBone(item);
@@ -333,7 +365,9 @@ export default function Feed() {
               {item.author && (
                 <Pressable
                   onPress={() =>
-                    router.push(`/profile-detail?id=${item.author!.id}`)
+                    runAfterDiscard(() =>
+                      router.push(`/profile-detail?id=${item.author!.id}`)
+                    )
                   }
                   className="flex-row items-center mb-3"
                 >
@@ -460,7 +494,9 @@ export default function Feed() {
                 <Pressable
                   onPress={(event) => {
                     event.stopPropagation();
-                    respond(item);
+                    runAfterDiscard(() => {
+                      void respond(item);
+                    });
                   }}
                   className="bg-brand rounded-2xl py-3 items-center"
                 >
@@ -631,10 +667,12 @@ export default function Feed() {
 
                       {!isMine && (
                         <Pressable
-                          onPress={() => {
-                            setSelectedBone(null);
-                            respond(b);
-                          }}
+                          onPress={() =>
+                            runAfterDiscard(() => {
+                              setSelectedBone(null);
+                              void respond(b);
+                            })
+                          }
                           className="bg-brand rounded-2xl py-4 items-center"
                         >
                           <Text className="text-white font-bold text-base">
