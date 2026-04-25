@@ -70,8 +70,7 @@ export default function ProfileScreen() {
       className="flex-1 bg-gray-50 dark:bg-neutral-950"
       contentContainerStyle={{ paddingBottom: 32 }}
     >
-      <View className="pt-16 px-6 flex-row items-center justify-between mb-4">
-        <Text className="text-3xl font-bold text-gray-900 dark:text-white">Profil</Text>
+      <View className="pt-16 px-6 flex-row justify-end mb-4">
         <Pressable
           onPress={() => router.push("/edit-profile")}
           className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900 shadow-sm items-center justify-center"

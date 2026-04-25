@@ -303,21 +303,27 @@ export default function Feed() {
 
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
-      <Text className="text-3xl font-bold text-gray-900 dark:text-white px-6 mb-4">
-        Aktivni boni
-      </Text>
-      <FlatList
-        data={items}
-        keyExtractor={(b) => b.id}
-        contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 32 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={load} />
-        }
-        ListHeaderComponent={
-          <BoneComposerCard openSignal={openComposerSignal} onSuccess={load} />
-        }
-        ListEmptyComponent={
-          <View className="items-center mt-16 px-6 py-8">
+      {items.length === 0 ? (
+        <View className="flex-1">
+          <ScrollView
+            className="flex-1"
+            contentInsetAdjustmentBehavior="never"
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingBottom: 32,
+            }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={load} />
+            }
+            keyboardShouldPersistTaps="handled"
+          >
+            <BoneComposerCard openSignal={openComposerSignal} onSuccess={load} />
+          </ScrollView>
+          <View
+            pointerEvents="none"
+            className="items-center justify-center px-6"
+            style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+          >
             <Image
               source={require("../../assets/logo.png")}
               style={{ width: 64, height: 64, borderRadius: 32 }}
@@ -330,37 +336,50 @@ export default function Feed() {
               Bodi prvi in objavi nov bon za kosilo.
             </Text>
           </View>
-        }
-        renderItem={({ item }) => {
-          const isMine = me && item.user_id === me.id;
-          const isPrivate = item.visibility === "private";
-          const ri = item.restaurant_info;
-          return (
-            <Pressable
-              onPress={() => {
-                if (!isMine) {
-                  runAfterDiscard(() => {
-                    void respond(item);
-                  });
-                  return;
-                }
-                setSelectedBone(item);
-              }}
-              className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm"
-            >
-              {isMine && (
-                <Pressable
-                  onPress={(event) => {
-                    event.stopPropagation();
-                    confirmCancelBone(item);
-                  }}
-                  className="absolute top-4 right-4 z-10 rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
-                >
-                  <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
-                    Umakni bon
-                  </Text>
-                </Pressable>
-              )}
+        </View>
+      ) : (
+        <FlatList
+          data={items}
+          keyExtractor={(b) => b.id}
+          contentInsetAdjustmentBehavior="never"
+          contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 32 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={load} />
+          }
+          ListHeaderComponent={
+            <BoneComposerCard openSignal={openComposerSignal} onSuccess={load} />
+          }
+          keyboardShouldPersistTaps="handled"
+          renderItem={({ item }) => {
+            const isMine = me && item.user_id === me.id;
+            const isPrivate = item.visibility === "private";
+            const ri = item.restaurant_info;
+            return (
+              <Pressable
+                onPress={() => {
+                  if (!isMine) {
+                    runAfterDiscard(() => {
+                      void respond(item);
+                    });
+                    return;
+                  }
+                  setSelectedBone(item);
+                }}
+                className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm"
+              >
+                {isMine && (
+                  <Pressable
+                    onPress={(event) => {
+                      event.stopPropagation();
+                      confirmCancelBone(item);
+                    }}
+                    className="absolute top-4 right-4 z-10 rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
+                  >
+                    <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
+                      Umakni bon
+                    </Text>
+                  </Pressable>
+                )}
 
               {item.author && (
                 <Pressable
@@ -506,7 +525,8 @@ export default function Feed() {
             </Pressable>
           );
         }}
-      />
+        />
+      )}
 
       <Modal
         visible={!!selectedBone}

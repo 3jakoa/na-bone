@@ -169,13 +169,10 @@ export default function Matches() {
   }
 
   const header = (
-    <View className="px-6 mb-4 flex-row items-start justify-between">
+    <View className="px-6 mb-4 flex-row items-center justify-between">
       <View>
-        <Text className="text-3xl font-bold text-gray-900 dark:text-white">
-          Buddies
-        </Text>
         {loaded && items.length > 0 ? (
-          <Text className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
+          <Text className="text-sm text-gray-400 dark:text-gray-500">
             {items.length} {items.length === 1 ? "pogovor" : "pogovorov"}
           </Text>
         ) : null}
@@ -196,23 +193,29 @@ export default function Matches() {
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
       {header}
+      {loaded && items.length === 0 ? (
+        <View
+          pointerEvents="none"
+          className="items-center justify-center px-6"
+          style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+        >
+          <Image
+            source={require("../../assets/logo.png")}
+            style={{ width: 64, height: 64, borderRadius: 32 }}
+            resizeMode="cover"
+          />
+          <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
+            Še ni matchev
+          </Text>
+          <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
+            Swipaj ali dodaj buddyja z linkom
+          </Text>
+        </View>
+      ) : null}
       <FlatList
         data={items}
         keyExtractor={(item) => item.matchId}
         contentContainerStyle={{ padding: 16, gap: 8, paddingBottom: 32 }}
-        ListEmptyComponent={
-          loaded ? (
-            <View className="items-center mt-16">
-              <Ionicons name="chatbubbles-outline" size={48} color="#888" />
-              <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
-                Še ni matchev
-              </Text>
-              <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
-                Swipaj ali dodaj buddyja z linkom
-              </Text>
-            </View>
-          ) : null
-        }
         renderItem={({ item }) => {
           return (
             <Pressable

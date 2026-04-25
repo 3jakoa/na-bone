@@ -331,14 +331,22 @@ export default function Discover() {
 
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
-      <Text className="text-3xl font-bold text-gray-900 dark:text-white px-6 mb-4">Išči</Text>
-
       <View className="flex-1 items-center justify-center px-4">
         {!card ? (
-          <View className="items-center">
-            <Ionicons name="search" size={48} color="#888" />
-            <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">Ni več profilov</Text>
-            <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
+          <View
+            pointerEvents="none"
+            className="items-center justify-center px-6"
+            style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+          >
+            <Image
+              source={require("../../assets/logo.png")}
+              style={{ width: 64, height: 64, borderRadius: 32 }}
+              resizeMode="cover"
+            />
+            <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
+              Ni več profilov
+            </Text>
+            <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
               Preveri znova pozneje
             </Text>
           </View>
