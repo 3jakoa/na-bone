@@ -121,34 +121,7 @@ export default function Feed() {
       : { data: [] as any[] };
     const authorMap = new Map((authors ?? []).map((a: any) => [a.id, a]));
 
-    const needLookup = (bones ?? []).filter((b: any) => !b.restaurant_info);
-    const lookupNames = Array.from(
-      new Set(needLookup.map((b: any) => b.restaurant as string))
-    );
-    let restLookup = new Map<string, any>();
-    if (lookupNames.length > 0) {
-      const { data: rests } = await supabase
-        .from("restaurants")
-        .select("name, address, city, supplement_price, meal_price, rating");
-      if (rests) {
-        restLookup = new Map(rests.map((r: any) => [r.name, r]));
-      }
-    }
-
     const mapped = ((bones ?? []) as Bone[]).map((b) => {
-      if (!b.restaurant_info && restLookup.has(b.restaurant)) {
-        const r = restLookup.get(b.restaurant);
-        b = {
-          ...b,
-          restaurant_info: {
-            address: r.address,
-            city: r.city,
-            rating: r.rating,
-            supplement_price: r.supplement_price,
-            meal_price: r.meal_price,
-          },
-        };
-      }
       return {
         ...b,
         author: authorMap.get(b.user_id),
@@ -353,7 +326,6 @@ export default function Feed() {
           renderItem={({ item }) => {
             const isMine = me && item.user_id === me.id;
             const isPrivate = item.visibility === "private";
-            const ri = item.restaurant_info;
             return (
               <Pressable
                 onPress={() => {
@@ -365,166 +337,152 @@ export default function Feed() {
                   }
                   setSelectedBone(item);
                 }}
-                className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm"
+                className="bg-white dark:bg-neutral-900 rounded-2xl p-4 shadow-sm"
               >
-                {isMine && (
-                  <Pressable
-                    onPress={(event) => {
-                      event.stopPropagation();
-                      confirmCancelBone(item);
-                    }}
-                    className="absolute top-4 right-4 z-10 rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
-                  >
-                    <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
-                      Umakni bon
-                    </Text>
-                  </Pressable>
-                )}
-
-              {item.author && (
-                <Pressable
-                  onPress={() =>
-                    runAfterDiscard(() =>
-                      router.push(`/profile-detail?id=${item.author!.id}`)
-                    )
-                  }
-                  className="flex-row items-center mb-3"
-                >
-                  {item.author.photos?.[0] ? (
-                    <Image
-                      source={{ uri: item.author.photos[0] }}
-                      style={{ width: 40, height: 40, borderRadius: 20 }}
-                    />
-                  ) : (
-                    <View className="w-10 h-10 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
-                      <Text className="font-bold text-brand-dark dark:text-brand">
-                        {item.author.name[0]}
-                      </Text>
-                    </View>
+                <View className="flex-row items-start justify-between gap-3 mb-3">
+                  {item.author && (
+                    <Pressable
+                      onPress={(event) => {
+                        event.stopPropagation();
+                        runAfterDiscard(() =>
+                          router.push(`/profile-detail?id=${item.author!.id}`)
+                        );
+                      }}
+                      className="flex-row items-center flex-1 min-w-0"
+                    >
+                      {item.author.photos?.[0] ? (
+                        <Image
+                          source={{ uri: item.author.photos[0] }}
+                          style={{ width: 36, height: 36, borderRadius: 18 }}
+                        />
+                      ) : (
+                        <View className="w-9 h-9 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
+                          <Text className="font-bold text-brand-dark dark:text-brand">
+                            {item.author.name[0]}
+                          </Text>
+                        </View>
+                      )}
+                      <View className="ml-2.5 flex-1 min-w-0">
+                        <Text
+                          className="font-semibold text-gray-900 dark:text-white"
+                          numberOfLines={1}
+                        >
+                          {item.author.name}
+                        </Text>
+                        <Text
+                          className="text-xs text-gray-400 dark:text-gray-500"
+                          numberOfLines={1}
+                        >
+                          {item.author.faculty}
+                        </Text>
+                      </View>
+                    </Pressable>
                   )}
-                  <View className="ml-3 flex-1">
-                    <Text
-                      className="font-semibold text-gray-900 dark:text-white"
-                      numberOfLines={1}
-                    >
-                      {item.author.name}
-                    </Text>
-                    <Text
-                      className="text-xs text-gray-400 dark:text-gray-500"
-                      numberOfLines={1}
-                    >
-                      {item.author.faculty}
-                    </Text>
-                  </View>
-                </Pressable>
-              )}
 
-              <View className="flex-row flex-wrap gap-2 mb-3">
-                {isMine && (
-                  <View className="rounded-full bg-brand/10 px-3 py-1">
-                    <Text className="text-xs font-semibold text-brand">
-                      Tvoj bon
-                    </Text>
-                  </View>
-                )}
-                <View
-                  className={`rounded-full px-3 py-1 ${
-                    isPrivate
-                      ? "bg-gray-100 dark:bg-neutral-800"
-                      : "bg-blue-50 dark:bg-brand/20"
-                  }`}
-                >
-                  <Text
-                    className={`text-xs font-semibold ${
-                      isPrivate
-                        ? "text-gray-500 dark:text-gray-300"
-                        : "text-brand"
-                    }`}
-                  >
-                    {isPrivate ? "Zasebno" : "Javno"}
-                  </Text>
-                </View>
-              </View>
-
-              <View className="mb-2">
-                <View className="flex-row items-start">
-                  <Ionicons
-                    name="restaurant"
-                    size={16}
-                    color="#00A6F6"
-                    style={{ marginTop: 3 }}
-                  />
-                  <Text
-                    className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-1.5"
-                    numberOfLines={2}
-                  >
-                    {item.restaurant}
-                  </Text>
-                  {ri?.rating != null && ri.rating > 0 && (
-                    <View
-                      className="flex-row items-center ml-2 shrink-0"
-                      style={{ marginTop: 3 }}
-                    >
-                      <Ionicons name="star" size={12} color="#F59E0B" />
-                      <Text className="text-xs font-semibold text-amber-500 ml-0.5">
-                        {ri.rating}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-                {ri && (ri.address || ri.city) && (
-                  <Text
-                    className="text-xs text-gray-400 dark:text-gray-500 ml-6"
-                    numberOfLines={1}
-                  >
-                    {[ri.address, ri.city].filter(Boolean).join(", ")}
-                  </Text>
-                )}
-                {ri?.supplement_price != null && (
-                  <View className="flex-row items-center ml-6 gap-2">
-                    <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
-                      {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
-                    </Text>
-                    {ri.meal_price != null && (
-                      <Text className="text-xs text-gray-400 dark:text-gray-500">
-                        (cena obroka {Number(ri.meal_price).toFixed(2)})
-                      </Text>
+                  <View className="flex-row flex-wrap justify-end gap-1.5 shrink-0 max-w-[42%] ml-auto">
+                    {isMine && (
+                      <View className="rounded-full bg-brand/10 px-2.5 py-1">
+                        <Text className="text-[11px] font-semibold text-brand">
+                          Tvoj
+                        </Text>
+                      </View>
                     )}
+                    <View
+                      className={`rounded-full px-2.5 py-1 ${
+                        isPrivate
+                          ? "bg-gray-100 dark:bg-neutral-800"
+                          : "bg-blue-50 dark:bg-brand/20"
+                      }`}
+                    >
+                      <Text
+                        className={`text-[11px] font-semibold ${
+                          isPrivate
+                            ? "text-gray-500 dark:text-gray-300"
+                            : "text-brand"
+                        }`}
+                      >
+                        {isPrivate ? "Zasebno" : "Javno"}
+                      </Text>
+                    </View>
                   </View>
-                )}
-              </View>
+                </View>
 
-              <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mb-2 self-start">
-                <Ionicons name="calendar" size={16} color="#00A6F6" />
-                <Text className="text-sm font-semibold text-brand ml-1.5">
-                  {formatScheduledDate(item.scheduled_at)}
-                </Text>
-              </View>
-              {item.note ? (
-                <Text
-                  className="text-sm text-gray-600 dark:text-gray-300 mb-3"
-                  numberOfLines={2}
-                >
-                  {item.note}
-                </Text>
-              ) : null}
+                <View className="flex-row items-start justify-between gap-3 mb-3">
+                  <View className="flex-1 min-w-0">
+                    <View className="flex-row items-start">
+                      <Ionicons
+                        name="location"
+                        size={17}
+                        color="#00A6F6"
+                        style={{ marginTop: 3 }}
+                      />
+                      <Text
+                        className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-1.5"
+                        numberOfLines={2}
+                      >
+                        {item.restaurant}
+                      </Text>
+                    </View>
+                    <View className="flex-row items-start mt-2">
+                      <Ionicons
+                        name="calendar"
+                        size={17}
+                        color="#00A6F6"
+                        style={{ marginTop: 3 }}
+                      />
+                      <Text
+                        className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-1.5"
+                        numberOfLines={1}
+                      >
+                        {formatScheduledDate(item.scheduled_at)}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
 
-              {!isMine && (
-                <Pressable
-                  onPress={(event) => {
-                    event.stopPropagation();
-                    runAfterDiscard(() => {
-                      void respond(item);
-                    });
-                  }}
-                  className="bg-brand rounded-2xl py-3 items-center"
-                >
-                  <Text className="text-white font-bold">Odpri chat</Text>
-                </Pressable>
-              )}
-            </Pressable>
-          );
-        }}
+                <View className="flex-row items-center justify-between gap-3">
+                  {item.note ? (
+                    <Text
+                      className="flex-1 text-sm text-gray-600 dark:text-gray-300"
+                      numberOfLines={2}
+                    >
+                      {item.note}
+                    </Text>
+                  ) : (
+                    <View className="flex-1" />
+                  )}
+
+                  {isMine ? (
+                    <Pressable
+                      onPress={(event) => {
+                        event.stopPropagation();
+                        confirmCancelBone(item);
+                      }}
+                      className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-2 shrink-0"
+                    >
+                      <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
+                        Umakni
+                      </Text>
+                    </Pressable>
+                  ) : (
+                    <Pressable
+                      onPress={(event) => {
+                        event.stopPropagation();
+                        runAfterDiscard(() => {
+                          void respond(item);
+                        });
+                      }}
+                      className="bg-brand rounded-full px-4 py-2.5 items-center shrink-0"
+                    >
+                      <Text className="text-white text-sm font-bold">
+                        Odpri chat
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+              </Pressable>
+            );
+          }}
         />
       )}
 
@@ -546,7 +504,6 @@ export default function Feed() {
             {selectedBone &&
               (() => {
                 const b = selectedBone;
-                const ri = b.restaurant_info;
                 const isMine = me && b.user_id === me.id;
                 const isPrivate = b.visibility === "private";
                 return (
@@ -630,9 +587,9 @@ export default function Feed() {
                         </View>
                       </View>
 
-                      <View className="flex-row items-start mb-2">
+                      <View className="flex-row items-start mb-3">
                         <Ionicons
-                          name="restaurant"
+                          name="location"
                           size={18}
                           color="#00A6F6"
                           style={{ marginTop: 3 }}
@@ -640,37 +597,9 @@ export default function Feed() {
                         <Text className="flex-1 font-bold text-lg text-gray-900 dark:text-white ml-2">
                           {b.restaurant}
                         </Text>
-                        {ri?.rating != null && ri.rating > 0 && (
-                          <View
-                            className="flex-row items-center ml-2 shrink-0"
-                            style={{ marginTop: 5 }}
-                          >
-                            <Ionicons name="star" size={13} color="#F59E0B" />
-                            <Text className="text-xs font-semibold text-amber-500 ml-0.5">
-                              {ri.rating}
-                            </Text>
-                          </View>
-                        )}
                       </View>
-                      {ri && (ri.address || ri.city) && (
-                        <Text className="text-xs text-gray-500 dark:text-gray-400 ml-7 mb-1">
-                          {[ri.address, ri.city].filter(Boolean).join(", ")}
-                        </Text>
-                      )}
-                      {ri?.supplement_price != null && (
-                        <View className="flex-row items-center ml-7 gap-2 mb-3">
-                          <Text className="text-xs font-semibold text-green-600 dark:text-green-400">
-                            {Number(ri.supplement_price).toFixed(2)} EUR doplačilo
-                          </Text>
-                          {ri.meal_price != null && (
-                            <Text className="text-xs text-gray-400 dark:text-gray-500">
-                              (cena obroka {Number(ri.meal_price).toFixed(2)})
-                            </Text>
-                          )}
-                        </View>
-                      )}
 
-                      <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mt-2 mb-3 self-start">
+                      <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mb-3 self-start">
                         <Ionicons name="calendar" size={16} color="#00A6F6" />
                         <Text className="text-sm font-semibold text-brand ml-1.5">
                           {formatScheduledDate(b.scheduled_at)}
