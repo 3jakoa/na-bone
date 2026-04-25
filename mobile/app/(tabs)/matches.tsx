@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { getChatMessagePreview } from "../../lib/chatContent";
 import { supabase, type Profile } from "../../lib/supabase";
 
-const INVITE_BASE_URL = "https://na-bone-vggw.vercel.app/invite";
+const INVITE_BASE_URL = "https://bonibuddy.app/invite";
 const DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
 
 type LastMessage = {
@@ -157,7 +157,6 @@ export default function Matches() {
     const inviteUrl = `${INVITE_BASE_URL}/${data as string}`;
     await Share.share({
       message: `Dodaj me kot buddyja na Boni Buddy: ${inviteUrl}`,
-      url: inviteUrl,
     });
   }
 
@@ -188,7 +187,7 @@ export default function Matches() {
       >
         <Ionicons name="person-add-outline" size={16} color="#00A6F6" />
         <Text className="text-brand font-bold text-sm ml-1.5">
-          {inviteLoading ? "..." : "Povabi"}
+          {inviteLoading ? "..." : "Dodaj buddyja"}
         </Text>
       </Pressable>
     </View>
@@ -209,7 +208,7 @@ export default function Matches() {
                 Še ni matchev
               </Text>
               <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
-                Swipaj ali povabi frenda z linkom
+                Swipaj ali dodaj buddyja z linkom
               </Text>
             </View>
           ) : null
