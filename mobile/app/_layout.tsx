@@ -1,12 +1,34 @@
-import { Stack } from "expo-router";
+import { useEffect } from "react";
+import { Stack, usePathname } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as Notifications from "expo-notifications";
 import Toast from "react-native-toast-message";
 import { ProductVariantProvider } from "../lib/productVariant";
 import { ThemeProvider } from "../lib/theme";
+import {
+  handleNotificationTap,
+  showInAppNotification,
+} from "../lib/notifications";
 import "../global.css";
 
 export default function RootLayout() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener(
+      (response) => handleNotificationTap(response, { pathname })
+    );
+    return () => sub.remove();
+  }, [pathname]);
+
+  useEffect(() => {
+    const sub = Notifications.addNotificationReceivedListener(
+      showInAppNotification
+    );
+    return () => sub.remove();
+  }, []);
+
   return (
     <ThemeProvider>
       <ProductVariantProvider>
