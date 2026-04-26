@@ -10,13 +10,9 @@ import {
   Pressable,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as Notifications from "expo-notifications";
 import { supabase } from "../../lib/supabase";
 import { createGuard } from "../../lib/createGuard";
-import {
-  registerForPushNotifications,
-  handleNotificationTap,
-} from "../../lib/notifications";
+import { registerForPushNotifications } from "../../lib/notifications";
 import { useTheme } from "../../lib/theme";
 
 export default function TabsLayout() {
@@ -50,13 +46,6 @@ export default function TabsLayout() {
       registerForPushNotifications();
     })();
   }, []);
-
-  useEffect(() => {
-    const sub = Notifications.addNotificationResponseReceivedListener(
-      (response) => handleNotificationTap(response, { pathname })
-    );
-    return () => sub.remove();
-  }, [pathname]);
 
   return (
     <View style={{ flex: 1 }}>
