@@ -74,6 +74,7 @@ export default function Matches() {
   const [inviteLoading, setInviteLoading] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentProfileIdRef = useRef<string | null>(null);
+  const itemsRef = useRef<Item[]>([]);
 
   const loadMatches = useCallback(async () => {
     const {
@@ -164,7 +165,9 @@ export default function Matches() {
       })
     );
 
-    setItems(sortItems(out.filter((item): item is Item => item !== null)));
+    const nextItems = sortItems(out.filter((item): item is Item => item !== null));
+    itemsRef.current = nextItems;
+    setItems(nextItems);
     setLoaded(true);
   }, []);
 
@@ -172,14 +175,15 @@ export default function Matches() {
     const currentProfileId = currentProfileIdRef.current;
     if (!currentProfileId) return false;
 
-    let found = false;
+    const found = itemsRef.current.some((item) => item.matchId === message.match_id);
+    if (!found) return false;
+
     const { preview } = getChatMessagePreview(message.content ?? "");
 
     setItems((prev) => {
       const next = prev.map((item) => {
         if (item.matchId !== message.match_id) return item;
 
-        found = true;
         return {
           ...item,
           last: {
@@ -194,10 +198,12 @@ export default function Matches() {
         };
       });
 
-      return found ? sortItems(next) : prev;
+      const sorted = sortItems(next);
+      itemsRef.current = sorted;
+      return sorted;
     });
 
-    return found;
+    return true;
   }, []);
 
   const scheduleRefresh = useCallback(
@@ -229,7 +235,9 @@ export default function Matches() {
           },
           (payload) => {
             const updated = applyRealtimeMessage(payload.new as Message);
-            scheduleRefresh(updated ? 1000 : 0);
+            if (!updated) {
+              scheduleRefresh(0);
+            }
           }
         )
         .on(
@@ -245,19 +253,14 @@ export default function Matches() {
         )
         .subscribe();
 
-      const pollInterval = setInterval(() => {
-        scheduleRefresh(0);
-      }, 2000);
-
       return () => {
         if (refreshTimeoutRef.current) {
           clearTimeout(refreshTimeoutRef.current);
           refreshTimeoutRef.current = null;
         }
-        clearInterval(pollInterval);
         supabase.removeChannel(channel);
       };
-    }, [loadMatches, scheduleRefresh])
+    }, [applyRealtimeMessage, loadMatches, scheduleRefresh])
   );
 
   async function inviteBuddy() {
