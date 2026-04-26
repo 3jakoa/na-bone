@@ -23,11 +23,11 @@ export default function RootLayout() {
   }, [pathname]);
 
   useEffect(() => {
-    const sub = Notifications.addNotificationReceivedListener(
-      showInAppNotification
+    const sub = Notifications.addNotificationReceivedListener((notification) =>
+      showInAppNotification(notification, { pathname })
     );
     return () => sub.remove();
-  }, []);
+  }, [pathname]);
 
   return (
     <ThemeProvider>

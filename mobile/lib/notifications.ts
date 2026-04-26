@@ -96,6 +96,10 @@ type NotificationTapContext = {
   pathname?: string | null;
 };
 
+type InAppNotificationContext = {
+  pathname?: string | null;
+};
+
 function isNotificationType(value: unknown): value is NotificationType {
   return (
     value === "chat" ||
@@ -154,12 +158,21 @@ function getActiveMatchId(pathname?: string | null) {
   return asNonEmptyString(parts[1]);
 }
 
-export function showInAppNotification(notification: Notifications.Notification) {
+export function showInAppNotification(
+  notification: Notifications.Notification,
+  context: InAppNotificationContext = {}
+) {
   const title =
     asNonEmptyString(notification.request.content.title) ?? "Boni Buddy";
   const body = asNonEmptyString(notification.request.content.body);
   const target = parseNotificationData(notification.request.content.data);
   if (!target && !body) return;
+  if (
+    target?.kind === "match" &&
+    getActiveMatchId(context.pathname) === target.matchId
+  ) {
+    return;
+  }
 
   Toast.hide();
   Toast.show({
