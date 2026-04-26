@@ -32,7 +32,13 @@ function sortMessages(a: Message, b: Message) {
 }
 
 function upsertMessage(prev: Message[], incoming: Message) {
-  if (prev.some((message) => message.id === incoming.id)) return prev;
+  const existingIdx = prev.findIndex((message) => message.id === incoming.id);
+  if (existingIdx >= 0) {
+    const next = [...prev];
+    next[existingIdx] = { ...next[existingIdx], ...incoming };
+    next.sort(sortMessages);
+    return next;
+  }
 
   const tempIdx = prev.findIndex(
     (message) =>
@@ -62,7 +68,54 @@ function publishPreviewUpdate(message: Message, me: Profile | null) {
     senderId: message.sender_id,
     mine: me ? message.sender_id === me.id : false,
     createdAt: message.created_at,
+    readAt: message.read_at,
   });
+}
+
+function getLastOwnMessageId(messages: Message[], me: Profile | null) {
+  if (!me) return null;
+
+  for (let idx = messages.length - 1; idx >= 0; idx -= 1) {
+    if (messages[idx].sender_id === me.id) return messages[idx].id;
+  }
+
+  return null;
+}
+
+function MessageStatus({
+  message,
+  mine,
+  isLastOwnMessage,
+}: {
+  message: Message;
+  mine: boolean | null;
+  isLastOwnMessage: boolean;
+}) {
+  if (!mine || !isLastOwnMessage) return null;
+
+  const isSending = message.id.startsWith("temp-");
+  const label = isSending ? "Pošiljanje..." : message.read_at ? "Videno" : "Poslano";
+  const icon = message.read_at ? "checkmark-done" : "checkmark";
+
+  return (
+    <View className="self-end flex-row items-center mt-1 mr-1">
+      {!isSending ? (
+        <Ionicons
+          name={icon}
+          size={13}
+          color={message.read_at ? "#00A6F6" : "#9CA3AF"}
+          style={{ marginRight: 3 }}
+        />
+      ) : null}
+      <Text
+        className={`text-[11px] ${
+          message.read_at ? "text-brand" : "text-gray-400 dark:text-gray-500"
+        }`}
+      >
+        {label}
+      </Text>
+    </View>
+  );
 }
 
 export default function Chat() {
@@ -85,6 +138,7 @@ export default function Chat() {
   const channelReadyRef = useRef(false);
   const latestMessageRef = useRef<Message | null>(null);
   const meRef = useRef<Profile | null>(null);
+  const markReadInFlightRef = useRef(false);
 
   useEffect(() => {
     if (!matchId) return;
@@ -112,6 +166,21 @@ export default function Chat() {
         onPress: () => router.replace("/matches"),
       },
     ]);
+  }
+
+  async function markThreadRead() {
+    if (!matchId || markReadInFlightRef.current) return;
+    markReadInFlightRef.current = true;
+
+    const { error } = await supabase.rpc("mark_buddy_chat_read", {
+      p_match_id: matchId,
+    });
+
+    if (error && __DEV__) {
+      console.warn("[Chat] failed to mark messages read", error.message);
+    }
+
+    markReadInFlightRef.current = false;
   }
 
   async function handleMatchActionError(message: string) {
@@ -229,6 +298,7 @@ export default function Chat() {
 
       if (!cancelled) {
         setMessages(((msgs ?? []) as Message[]).sort(sortMessages));
+        void markThreadRead();
       }
 
       const otherId =
@@ -255,6 +325,9 @@ export default function Chat() {
         if (!message || message.match_id !== matchId) return;
         publishPreviewUpdate(message, meRef.current);
         setMessages((prev) => upsertMessage(prev, message));
+        if (message.sender_id !== meRef.current?.id) {
+          void markThreadRead();
+        }
       })
       .on(
         "postgres_changes",
@@ -268,6 +341,21 @@ export default function Chat() {
           const newMsg = payload.new as Message;
           publishPreviewUpdate(newMsg, meRef.current);
           setMessages((prev) => upsertMessage(prev, newMsg));
+          if (newMsg.sender_id !== meRef.current?.id) {
+            void markThreadRead();
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "chat_messages",
+          filter: `match_id=eq.${matchId}`,
+        },
+        (payload) => {
+          setMessages((prev) => upsertMessage(prev, payload.new as Message));
         }
       )
       .on(
@@ -338,6 +426,7 @@ export default function Chat() {
       sender_id: me.id,
       content,
       created_at: new Date().toISOString(),
+      read_at: null,
     };
     setMessages((prev) => [...prev, tempMsg]);
 
@@ -368,6 +457,8 @@ export default function Chat() {
       }
     }
   }
+
+  const lastOwnMessageId = getLastOwnMessageId(messages, me);
 
   return (
     <KeyboardAvoidingView
@@ -462,6 +553,11 @@ export default function Chat() {
                       </View>
                     </View>
                   </View>
+                  <MessageStatus
+                    message={item}
+                    mine={mine}
+                    isLastOwnMessage={item.id === lastOwnMessageId}
+                  />
                 </View>
               );
             }
@@ -515,18 +611,29 @@ export default function Chat() {
                       </Text>
                     )}
                   </View>
+                  <MessageStatus
+                    message={item}
+                    mine={mine}
+                    isLastOwnMessage={item.id === lastOwnMessageId}
+                  />
                 </View>
               );
             }
 
             return (
-              <View
-                key={item.id}
-                className={`max-w-[78%] px-4 py-3 rounded-3xl ${mine ? "self-end bg-brand" : "self-start bg-white dark:bg-neutral-900 shadow-sm"}`}
-              >
-                <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
-                  {item.content}
-                </Text>
+              <View key={item.id} className={mine ? "self-end max-w-[78%]" : "self-start max-w-[78%]"}>
+                <View
+                  className={`px-4 py-3 rounded-3xl ${mine ? "bg-brand" : "bg-white dark:bg-neutral-900 shadow-sm"}`}
+                >
+                  <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
+                    {item.content}
+                  </Text>
+                </View>
+                <MessageStatus
+                  message={item}
+                  mine={mine}
+                  isLastOwnMessage={item.id === lastOwnMessageId}
+                />
               </View>
             );
           })}

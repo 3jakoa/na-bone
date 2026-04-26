@@ -31,6 +31,7 @@ export type BuddyChatPreviewMessageUpdate = {
   senderId: string;
   mine: boolean;
   createdAt: string;
+  readAt?: string | null;
 };
 
 let cache: CacheState | null = null;

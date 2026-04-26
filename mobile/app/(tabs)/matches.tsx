@@ -41,6 +41,7 @@ type Item = {
   last?: LastMessage;
   lastActivityAt: string;
   streak: number;
+  unreadCount: number;
 };
 
 const subtleCardShadow = {
@@ -94,6 +95,7 @@ function mapPreviewToItem(row: BuddyChatPreview): Item {
     last,
     lastActivityAt: row.last_activity_at,
     streak: row.streak ?? 0,
+    unreadCount: row.unread_count ?? 0,
   };
 }
 
@@ -123,6 +125,7 @@ function applyMessageUpdateToItems(
         mine: update.mine,
       },
       lastActivityAt: update.createdAt,
+      unreadCount: update.mine ? item.unreadCount : item.unreadCount + 1,
     };
   });
 
@@ -213,6 +216,11 @@ export default function Matches() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "chat_messages" },
         () => refreshFromRealtime("realtime-message")
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "chat_messages" },
+        () => refreshFromRealtime("realtime-message-read")
       )
       .on(
         "postgres_changes",
@@ -387,6 +395,13 @@ export default function Matches() {
                       ? `${item.last.mine ? "Ti: " : ""}${item.last.preview}`
                       : "Pozdravita se 👋"}
                   </Text>
+                  {item.unreadCount > 0 ? (
+                    <View className="ml-2 min-w-5 h-5 px-1.5 rounded-full bg-brand items-center justify-center">
+                      <Text className="text-[11px] font-bold text-white">
+                        {item.unreadCount > 9 ? "9+" : item.unreadCount}
+                      </Text>
+                    </View>
+                  ) : null}
                 </View>
               </View>
             </Pressable>

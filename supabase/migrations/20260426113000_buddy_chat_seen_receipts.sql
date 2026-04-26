@@ -1,24 +1,9 @@
--- Load the Buddies tab in one backend round trip instead of doing per-match
--- profile, latest-message, and streak calls from the mobile client.
-
 alter table public.chat_messages
   add column if not exists read_at timestamptz;
-
-create index if not exists chat_messages_match_created_at_desc_idx
-  on public.chat_messages using btree (match_id, created_at desc);
 
 create index if not exists chat_messages_match_sender_unread_idx
   on public.chat_messages using btree (match_id, sender_id, read_at)
   where read_at is null;
-
-create index if not exists buddy_matches_user1_id_idx
-  on public.buddy_matches using btree (user1_id);
-
-create index if not exists buddy_matches_user2_id_created_at_idx
-  on public.buddy_matches using btree (user2_id, created_at desc);
-
-create index if not exists meal_invites_match_status_scheduled_idx
-  on public.meal_invites using btree (match_id, status, scheduled_at desc);
 
 create or replace function public.get_buddy_chat_previews()
 returns table (
@@ -95,3 +80,51 @@ $$;
 
 revoke all on function public.get_buddy_chat_previews() from public;
 grant execute on function public.get_buddy_chat_previews() to authenticated;
+
+create or replace function public.mark_buddy_chat_read(p_match_id uuid)
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_me uuid := public.current_profile_id();
+  v_updated integer := 0;
+begin
+  if v_me is null then
+    return 0;
+  end if;
+
+  if not exists (
+    select 1
+    from public.buddy_matches bm
+    where bm.id = p_match_id
+      and (bm.user1_id = v_me or bm.user2_id = v_me)
+      and not exists (
+        select 1
+        from public.blocked_users bu
+        where (
+          bu.blocker_id = v_me
+          and bu.blocked_id = case when bm.user1_id = v_me then bm.user2_id else bm.user1_id end
+        ) or (
+          bu.blocked_id = v_me
+          and bu.blocker_id = case when bm.user1_id = v_me then bm.user2_id else bm.user1_id end
+        )
+      )
+  ) then
+    return 0;
+  end if;
+
+  update public.chat_messages cm
+  set read_at = now()
+  where cm.match_id = p_match_id
+    and cm.sender_id <> v_me
+    and cm.read_at is null;
+
+  get diagnostics v_updated = row_count;
+  return v_updated;
+end;
+$$;
+
+revoke all on function public.mark_buddy_chat_read(uuid) from public;
+grant execute on function public.mark_buddy_chat_read(uuid) to authenticated;
