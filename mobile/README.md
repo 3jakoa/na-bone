@@ -14,6 +14,12 @@ Required environment variables in `.env`:
 - `EXPO_PUBLIC_SUPABASE_URL`
 - `EXPO_PUBLIC_SUPABASE_ANON_KEY`
 
+For local worktrees, you can point every checkout at one shared env file instead
+of copying `.env` into each worktree:
+```
+export BONI_BUDDY_MOBILE_ENV_FILE=/absolute/path/to/mobile/.env
+```
+
 If you add or change `.env`, restart Expo so the values are picked up.
 
 ## Notes & known gaps
