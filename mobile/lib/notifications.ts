@@ -3,14 +3,15 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 import { supabase } from "./supabase";
 
-// Foreground handler: show banner + sound for notifications received while app is open.
+// Foreground push notifications use our in-app toast path instead of OS UI.
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
+    shouldShowBanner: false,
+    shouldShowList: false,
+    shouldPlaySound: false,
     shouldSetBadge: false,
   }),
 });
@@ -95,6 +96,10 @@ type NotificationTapContext = {
   pathname?: string | null;
 };
 
+type InAppNotificationContext = {
+  pathname?: string | null;
+};
+
 function isNotificationType(value: unknown): value is NotificationType {
   return (
     value === "chat" ||
@@ -110,10 +115,7 @@ function asNonEmptyString(value: unknown) {
   return trimmed.length > 0 ? trimmed : null;
 }
 
-function parseNotificationTarget(
-  response: Notifications.NotificationResponse
-): NotificationTarget | null {
-  const rawData = response.notification.request.content.data;
+function parseNotificationData(rawData: unknown): NotificationTarget | null {
   if (!rawData || typeof rawData !== "object") {
     console.warn("[notifications] Ignoring tap with missing payload");
     return null;
@@ -140,6 +142,12 @@ function parseNotificationTarget(
   return { kind: "match", matchId };
 }
 
+function parseNotificationTarget(
+  response: Notifications.NotificationResponse
+): NotificationTarget | null {
+  return parseNotificationData(response.notification.request.content.data);
+}
+
 function getActiveMatchId(pathname?: string | null) {
   if (!pathname) return null;
 
@@ -148,6 +156,31 @@ function getActiveMatchId(pathname?: string | null) {
   if (parts[0] !== "matches" || parts.length < 2) return null;
 
   return asNonEmptyString(parts[1]);
+}
+
+export function showInAppNotification(
+  notification: Notifications.Notification,
+  context: InAppNotificationContext = {}
+) {
+  const title =
+    asNonEmptyString(notification.request.content.title) ?? "Boni Buddy";
+  const body = asNonEmptyString(notification.request.content.body);
+  const target = parseNotificationData(notification.request.content.data);
+  if (!target && !body) return;
+  if (
+    target?.kind === "match" &&
+    getActiveMatchId(context.pathname) === target.matchId
+  ) {
+    return;
+  }
+
+  Toast.hide();
+  Toast.show({
+    type: "info",
+    text1: title,
+    text2: body ?? undefined,
+    autoHide: true,
+  });
 }
 
 export function handleNotificationTap(
