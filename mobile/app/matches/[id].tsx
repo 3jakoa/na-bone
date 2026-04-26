@@ -20,6 +20,10 @@ import { logProductEvent } from "../../lib/productEvents";
 import { formatScheduledDate } from "../../lib/formatDate";
 import { parseStructuredChatContent } from "../../lib/chatContent";
 import { supabase, type Message, type Profile } from "../../lib/supabase";
+import {
+  invalidateBuddyChatPreviews,
+  publishBuddyChatPreviewMessage,
+} from "../../lib/buddyChatPreviews";
 
 function sortMessages(a: Message, b: Message) {
   const timeDelta = Date.parse(a.created_at) - Date.parse(b.created_at);
@@ -51,6 +55,16 @@ function mergeMessages(prev: Message[], incoming: Message[]) {
   return incoming.reduce((next, message) => upsertMessage(next, message), prev);
 }
 
+function publishPreviewUpdate(message: Message, me: Profile | null) {
+  publishBuddyChatPreviewMessage({
+    matchId: message.match_id,
+    content: message.content,
+    senderId: message.sender_id,
+    mine: me ? message.sender_id === me.id : false,
+    createdAt: message.created_at,
+  });
+}
+
 export default function Chat() {
   const { id: matchId, prefill } = useLocalSearchParams<{
     id: string;
@@ -70,6 +84,7 @@ export default function Chat() {
   const channelRef = useRef<RealtimeChannel | null>(null);
   const channelReadyRef = useRef(false);
   const latestMessageRef = useRef<Message | null>(null);
+  const meRef = useRef<Profile | null>(null);
 
   useEffect(() => {
     if (!matchId) return;
@@ -80,12 +95,17 @@ export default function Chat() {
     latestMessageRef.current = messages.length > 0 ? messages[messages.length - 1] : null;
   }, [messages]);
 
+  useEffect(() => {
+    meRef.current = me;
+  }, [me]);
+
   function leaveRemovedBuddy(message = "Ta buddy ni več na voljo.") {
     if (matchClosedRef.current) return;
     matchClosedRef.current = true;
     setShowMenu(false);
     setOther(null);
     setMessages([]);
+    invalidateBuddyChatPreviews();
     Alert.alert("Buddy odstranjen", message, [
       {
         text: "V redu",
@@ -233,6 +253,7 @@ export default function Chat() {
       .on("broadcast", { event: "chat-message" }, ({ payload }) => {
         const message = (payload as { message?: Message }).message;
         if (!message || message.match_id !== matchId) return;
+        publishPreviewUpdate(message, meRef.current);
         setMessages((prev) => upsertMessage(prev, message));
       })
       .on(
@@ -245,6 +266,7 @@ export default function Chat() {
         },
         (payload) => {
           const newMsg = payload.new as Message;
+          publishPreviewUpdate(newMsg, meRef.current);
           setMessages((prev) => upsertMessage(prev, newMsg));
         }
       )
@@ -283,6 +305,9 @@ export default function Chat() {
 
       const { data } = await query;
       if (!cancelled && data && data.length > 0) {
+        data.forEach((message) =>
+          publishPreviewUpdate(message as Message, meRef.current)
+        );
         setMessages((prev) => mergeMessages(prev, data as Message[]));
       }
 
@@ -331,6 +356,7 @@ export default function Chat() {
       await handleMatchActionError(error.message);
     } else if (data) {
       const savedMessage = data as Message;
+      publishPreviewUpdate(savedMessage, me);
       setMessages((prev) => upsertMessage(prev, savedMessage));
 
       if (channelRef.current && channelReadyRef.current) {

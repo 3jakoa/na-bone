@@ -18,6 +18,7 @@ import {
   handleNotificationTap,
 } from "../../lib/notifications";
 import { useTheme } from "../../lib/theme";
+import { prefetchBuddyChatPreviews } from "../../lib/buddyChatPreviews";
 
 export default function TabsLayout() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -48,6 +49,7 @@ export default function TabsLayout() {
       if (me.photos?.[0]) setPhotoUrl(me.photos[0]);
 
       registerForPushNotifications();
+      prefetchBuddyChatPreviews("tabs-home-prefetch");
     })();
   }, []);
 
