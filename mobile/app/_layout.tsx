@@ -1,27 +1,12 @@
-import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
-import { invalidateBuddyChatPreviews } from "../lib/buddyChatPreviews";
 import { ProductVariantProvider } from "../lib/productVariant";
-import { supabase } from "../lib/supabase";
 import { ThemeProvider } from "../lib/theme";
 import "../global.css";
 
 export default function RootLayout() {
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      invalidateBuddyChatPreviews();
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
   return (
     <ThemeProvider>
       <ProductVariantProvider>
