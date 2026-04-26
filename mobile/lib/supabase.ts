@@ -63,6 +63,15 @@ export type Message = {
   created_at: string;
 };
 
+export type BuddyMatch = {
+  id: string;
+  user1_id: string;
+  user2_id: string;
+  created_at: string;
+  user1_last_read_at: string | null;
+  user2_last_read_at: string | null;
+};
+
 export function capitalizeName(name: string): string {
   return name
     .split(" ")

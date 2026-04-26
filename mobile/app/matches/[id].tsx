@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -19,7 +19,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { logProductEvent } from "../../lib/productEvents";
 import { formatScheduledDate } from "../../lib/formatDate";
 import { parseStructuredChatContent } from "../../lib/chatContent";
-import { supabase, type Message, type Profile } from "../../lib/supabase";
+import {
+  supabase,
+  type BuddyMatch,
+  type Message,
+  type Profile,
+} from "../../lib/supabase";
 
 function sortMessages(a: Message, b: Message) {
   const timeDelta = Date.parse(a.created_at) - Date.parse(b.created_at);
@@ -51,6 +56,11 @@ function mergeMessages(prev: Message[], incoming: Message[]) {
   return incoming.reduce((next, message) => upsertMessage(next, message), prev);
 }
 
+type LastOwnMessageStatus = {
+  messageId: string;
+  label: "Pošiljanje..." | "Poslano" | "Videno";
+};
+
 export default function Chat() {
   const { id: matchId, prefill } = useLocalSearchParams<{
     id: string;
@@ -59,6 +69,7 @@ export default function Chat() {
   const [me, setMe] = useState<Profile | null>(null);
   const [other, setOther] = useState<Profile | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [matchReadState, setMatchReadState] = useState<BuddyMatch | null>(null);
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [androidKeyboardInset, setAndroidKeyboardInset] = useState(0);
@@ -70,6 +81,7 @@ export default function Chat() {
   const channelRef = useRef<RealtimeChannel | null>(null);
   const channelReadyRef = useRef(false);
   const latestMessageRef = useRef<Message | null>(null);
+  const meRef = useRef<Profile | null>(null);
 
   useEffect(() => {
     if (!matchId) return;
@@ -80,12 +92,58 @@ export default function Chat() {
     latestMessageRef.current = messages.length > 0 ? messages[messages.length - 1] : null;
   }, [messages]);
 
+  useEffect(() => {
+    meRef.current = me;
+  }, [me]);
+
+  const lastOwnMessageStatus = useMemo<LastOwnMessageStatus | null>(() => {
+    if (!me) return null;
+
+    const lastMine = [...messages]
+      .reverse()
+      .find((message) => message.sender_id === me.id);
+    if (!lastMine) return null;
+
+    if (lastMine.id.startsWith("temp-")) {
+      return {
+        messageId: lastMine.id,
+        label: "Pošiljanje...",
+      };
+    }
+
+    if (!matchReadState) {
+      return {
+        messageId: lastMine.id,
+        label: "Poslano",
+      };
+    }
+
+    const otherLastReadAt =
+      matchReadState.user1_id === me.id
+        ? matchReadState.user2_last_read_at
+        : matchReadState.user1_last_read_at;
+
+    return {
+      messageId: lastMine.id,
+      label:
+        otherLastReadAt && Date.parse(otherLastReadAt) >= Date.parse(lastMine.created_at)
+          ? "Videno"
+          : "Poslano",
+    };
+  }, [matchReadState, me, messages]);
+
+  const markChatSeen = useCallback(async () => {
+    if (!matchId || matchClosedRef.current) return;
+    await supabase.rpc("mark_chat_seen", { p_match_id: matchId });
+  }, [matchId]);
+
   function leaveRemovedBuddy(message = "Ta buddy ni več na voljo.") {
     if (matchClosedRef.current) return;
     matchClosedRef.current = true;
     setShowMenu(false);
     setOther(null);
     setMessages([]);
+    setMatchReadState(null);
     Alert.alert("Buddy odstranjen", message, [
       {
         text: "V redu",
@@ -208,6 +266,7 @@ export default function Chat() {
       }
 
       if (!cancelled) {
+        setMatchReadState(m as BuddyMatch);
         setMessages(((msgs ?? []) as Message[]).sort(sortMessages));
       }
 
@@ -220,6 +279,7 @@ export default function Chat() {
         .single();
       if (cancelled) return;
       setOther(o as Profile);
+      void markChatSeen();
     })();
 
     const channel = supabase
@@ -246,6 +306,21 @@ export default function Chat() {
         (payload) => {
           const newMsg = payload.new as Message;
           setMessages((prev) => upsertMessage(prev, newMsg));
+          if (meRef.current && newMsg.sender_id !== meRef.current.id) {
+            void markChatSeen();
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "buddy_matches",
+          filter: `id=eq.${matchId}`,
+        },
+        (payload) => {
+          setMatchReadState(payload.new as BuddyMatch);
         }
       )
       .on(
@@ -283,7 +358,14 @@ export default function Chat() {
 
       const { data } = await query;
       if (!cancelled && data && data.length > 0) {
-        setMessages((prev) => mergeMessages(prev, data as Message[]));
+        const nextMessages = data as Message[];
+        setMessages((prev) => mergeMessages(prev, nextMessages));
+        if (
+          meRef.current &&
+          nextMessages.some((message) => message.sender_id !== meRef.current?.id)
+        ) {
+          void markChatSeen();
+        }
       }
 
       polling = false;
@@ -300,7 +382,7 @@ export default function Chat() {
       clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
-  }, [matchId]);
+  }, [markChatSeen, matchId]);
 
   async function send() {
     if (!text.trim() || !me) return;
@@ -404,6 +486,10 @@ export default function Chat() {
           {messages.map((item) => {
             const mine = me && item.sender_id === me.id;
             const structured = parseStructuredChatContent(item.content);
+            const statusLabel =
+              mine && item.id === lastOwnMessageStatus?.messageId
+                ? lastOwnMessageStatus.label
+                : null;
 
             if (structured?.type === "poke") {
               const poke = structured;
@@ -436,6 +522,11 @@ export default function Chat() {
                       </View>
                     </View>
                   </View>
+                  {statusLabel ? (
+                    <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
+                      {statusLabel}
+                    </Text>
+                  ) : null}
                 </View>
               );
             }
@@ -489,18 +580,31 @@ export default function Chat() {
                       </Text>
                     )}
                   </View>
+                  {statusLabel ? (
+                    <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
+                      {statusLabel}
+                    </Text>
+                  ) : null}
                 </View>
               );
             }
 
             return (
-              <View
-                key={item.id}
-                className={`max-w-[78%] px-4 py-3 rounded-3xl ${mine ? "self-end bg-brand" : "self-start bg-white dark:bg-neutral-900 shadow-sm"}`}
-              >
-                <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
-                  {item.content}
-                </Text>
+              <View key={item.id} className={`max-w-[78%] ${mine ? "self-end" : "self-start"}`}>
+                <View
+                  className={`px-4 py-3 rounded-3xl ${
+                    mine ? "bg-brand" : "bg-white dark:bg-neutral-900 shadow-sm"
+                  }`}
+                >
+                  <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
+                    {item.content}
+                  </Text>
+                </View>
+                {statusLabel ? (
+                  <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
+                    {statusLabel}
+                  </Text>
+                ) : null}
               </View>
             );
           })}
