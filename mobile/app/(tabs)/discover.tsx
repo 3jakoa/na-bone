@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,15 @@ import { supabase, type Profile } from "../../lib/supabase";
 
 const RIGHT_SWIPE_LIMIT_MESSAGE =
   "Porabil si vse današnje buddyje. Jutri lahko spet iščeš buddyja.";
+
+const cardShadow = {
+  shadowColor: "#0F172A",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.08,
+  shadowRadius: 10,
+  elevation: 2,
+} as const;
+
 function hasUploadedPhoto(profile: Profile | null) {
   return profile?.photos.some((photo) => photo.trim().length > 0) ?? false;
 }
@@ -32,6 +41,8 @@ export default function Discover() {
   const [deck, setDeck] = useState<Profile[]>([]);
   const [idx, setIdx] = useState(0);
   const [cardVisible, setCardVisible] = useState(true);
+  const [transitionBehindCard, setTransitionBehindCard] =
+    useState<Profile | null>(null);
   const [remainingRightSwipes, setRemainingRightSwipes] = useState(10);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -46,6 +57,7 @@ export default function Discover() {
       setDeck([]);
       setIdx(0);
       setCardVisible(true);
+      setTransitionBehindCard(null);
       setRemainingRightSwipes(10);
       swiping.current = false;
       translateX.value = 0;
@@ -62,6 +74,7 @@ export default function Discover() {
       setMe(null);
       setDeck([]);
       setIdx(0);
+      setTransitionBehindCard(null);
       setRemainingRightSwipes(10);
       return;
     }
@@ -95,6 +108,7 @@ export default function Discover() {
 
     setIdx(0);
     setCardVisible(true);
+    setTransitionBehindCard(null);
     swiping.current = false;
     translateX.value = 0;
     translateY.value = 0;
@@ -105,6 +119,15 @@ export default function Discover() {
       void loadDeck();
     }, [loadDeck])
   );
+
+  useEffect(() => {
+    deck.slice(idx, idx + 4).forEach((profile) => {
+      const photo = profile.photos[0];
+      if (photo) {
+        void Image.prefetch(photo);
+      }
+    });
+  }, [deck, idx]);
 
   function resetCardPosition() {
     translateX.value = 0;
@@ -179,11 +202,13 @@ export default function Discover() {
 
     // Hide during the index/value swap so the previous card cannot flash back
     // at the center for a frame on slower simulator renders.
+    setTransitionBehindCard(deck[idx + 1] ?? null);
     setCardVisible(false);
     setIdx((i) => i + 1);
     setTimeout(() => {
       resetCardPosition();
       setCardVisible(true);
+      setTransitionBehindCard(null);
     }, 0);
 
     const swipedAt = new Date().toISOString();
@@ -314,6 +339,7 @@ export default function Discover() {
 
   const card = deck[idx];
   const nextCard = deck[idx + 1];
+  const behindCard = transitionBehindCard ?? nextCard;
 
   function openProfile(profileId: string) {
     router.push(`/profile-detail?id=${profileId}`);
@@ -353,12 +379,12 @@ export default function Discover() {
         ) : (
           <View className="w-full flex-1 max-h-[520px]">
             {/* Next card (behind) */}
-            {nextCard && (
+            {behindCard && (
               <View
-                className="absolute w-full h-full bg-white dark:bg-neutral-900 rounded-3xl shadow-sm overflow-hidden"
-                style={{ transform: [{ scale: 0.95 }], top: 10 }}
+                className="absolute w-full h-full bg-white dark:bg-neutral-900 rounded-3xl overflow-hidden"
+                style={[cardShadow, { transform: [{ scale: 0.95 }], top: 10 }]}
               >
-                <CardContent profile={nextCard} />
+                <CardContent profile={behindCard} />
               </View>
             )}
 
@@ -372,8 +398,9 @@ export default function Discover() {
                     opacity: cardVisible ? 1 : 0,
                   },
                   cardAnimatedStyle,
+                  cardShadow,
                 ]}
-                className="bg-white dark:bg-neutral-900 rounded-3xl shadow-lg overflow-hidden"
+                className="bg-white dark:bg-neutral-900 rounded-3xl overflow-hidden"
               >
                 <Animated.View
                   pointerEvents="none"
@@ -415,7 +442,7 @@ export default function Discover() {
   );
 }
 
-function CardContent({ profile }: { profile: Profile }) {
+const CardContent = memo(function CardContent({ profile }: { profile: Profile }) {
   return (
     <>
       {profile.photos[0] ? (
@@ -447,4 +474,4 @@ function CardContent({ profile }: { profile: Profile }) {
       </View>
     </>
   );
-}
+});
