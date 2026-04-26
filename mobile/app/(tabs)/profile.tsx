@@ -18,7 +18,6 @@ const EDU_LABELS: Record<string, string> = {
 
 export default function ProfileScreen() {
   const [me, setMe] = useState<Profile | null>(null);
-  const [boneCount, setBoneCount] = useState(0);
   const [matchCount, setMatchCount] = useState(0);
 
   useFocusEffect(
@@ -37,17 +36,6 @@ export default function ProfileScreen() {
         setMe(p);
 
         if (p) {
-          const { data: boneData } = await supabase
-            .from("meal_invites")
-            .select("restaurant, scheduled_at")
-            .eq("user_id", p.id);
-          const uniqueBones = new Set(
-            (boneData ?? []).map(
-              (b: any) => `${b.restaurant}|${b.scheduled_at}`
-            )
-          );
-          setBoneCount(uniqueBones.size);
-
           const { count: mc } = await supabase
             .from("buddy_matches")
             .select("*", { count: "exact", head: true })
@@ -122,23 +110,19 @@ export default function ProfileScreen() {
       </View>
 
       {/* Stats */}
-      <View className="flex-row mx-4 gap-3 mb-4">
-        <View className="flex-1 bg-white dark:bg-neutral-900 rounded-3xl py-4 items-center shadow-sm">
-          <Ionicons name="restaurant" size={20} color="#00A6F6" />
-          <Text className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-            {boneCount}
-          </Text>
-          <Text className="text-xs text-gray-400 dark:text-gray-500">Boni</Text>
-        </View>
+      <View className="mx-4 mb-4">
         <Pressable
           onPress={() => router.push("/settings/buddies")}
-          className="flex-1 bg-white dark:bg-neutral-900 rounded-3xl py-4 items-center shadow-sm"
+          className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-4 flex-row items-center shadow-sm"
         >
           <Ionicons name="people" size={20} color="#00A6F6" />
-          <Text className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+          <Text className="flex-1 ml-3 text-base font-semibold text-gray-900 dark:text-white">
+            Buddies
+          </Text>
+          <Text className="text-base font-bold text-gray-900 dark:text-white mr-2">
             {matchCount}
           </Text>
-          <Text className="text-xs text-gray-400 dark:text-gray-500">Buddies</Text>
+          <Ionicons name="chevron-forward" size={18} color="#888" />
         </Pressable>
       </View>
 
