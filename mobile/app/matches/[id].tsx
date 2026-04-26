@@ -56,6 +56,11 @@ function mergeMessages(prev: Message[], incoming: Message[]) {
   return incoming.reduce((next, message) => upsertMessage(next, message), prev);
 }
 
+type LastOwnMessageStatus = {
+  messageId: string;
+  label: "Pošiljanje..." | "Poslano" | "Videno";
+};
+
 export default function Chat() {
   const { id: matchId, prefill } = useLocalSearchParams<{
     id: string;
@@ -91,23 +96,40 @@ export default function Chat() {
     meRef.current = me;
   }, [me]);
 
-  const lastSeenMessageId = useMemo(() => {
-    if (!me || !matchReadState) return null;
+  const lastOwnMessageStatus = useMemo<LastOwnMessageStatus | null>(() => {
+    if (!me) return null;
+
+    const lastMine = [...messages]
+      .reverse()
+      .find((message) => message.sender_id === me.id);
+    if (!lastMine) return null;
+
+    if (lastMine.id.startsWith("temp-")) {
+      return {
+        messageId: lastMine.id,
+        label: "Pošiljanje...",
+      };
+    }
+
+    if (!matchReadState) {
+      return {
+        messageId: lastMine.id,
+        label: "Poslano",
+      };
+    }
 
     const otherLastReadAt =
       matchReadState.user1_id === me.id
         ? matchReadState.user2_last_read_at
         : matchReadState.user1_last_read_at;
-    if (!otherLastReadAt) return null;
 
-    const lastMine = [...messages]
-      .reverse()
-      .find((message) => message.sender_id === me.id && !message.id.startsWith("temp-"));
-    if (!lastMine) return null;
-
-    return Date.parse(otherLastReadAt) >= Date.parse(lastMine.created_at)
-      ? lastMine.id
-      : null;
+    return {
+      messageId: lastMine.id,
+      label:
+        otherLastReadAt && Date.parse(otherLastReadAt) >= Date.parse(lastMine.created_at)
+          ? "Videno"
+          : "Poslano",
+    };
   }, [matchReadState, me, messages]);
 
   const markChatSeen = useCallback(async () => {
@@ -464,7 +486,10 @@ export default function Chat() {
           {messages.map((item) => {
             const mine = me && item.sender_id === me.id;
             const structured = parseStructuredChatContent(item.content);
-            const seen = mine && item.id === lastSeenMessageId;
+            const statusLabel =
+              mine && item.id === lastOwnMessageStatus?.messageId
+                ? lastOwnMessageStatus.label
+                : null;
 
             if (structured?.type === "poke") {
               const poke = structured;
@@ -497,9 +522,9 @@ export default function Chat() {
                       </View>
                     </View>
                   </View>
-                  {seen ? (
+                  {statusLabel ? (
                     <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
-                      Videno
+                      {statusLabel}
                     </Text>
                   ) : null}
                 </View>
@@ -555,9 +580,9 @@ export default function Chat() {
                       </Text>
                     )}
                   </View>
-                  {seen ? (
+                  {statusLabel ? (
                     <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
-                      Videno
+                      {statusLabel}
                     </Text>
                   ) : null}
                 </View>
@@ -575,9 +600,9 @@ export default function Chat() {
                     {item.content}
                   </Text>
                 </View>
-                {seen ? (
+                {statusLabel ? (
                   <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
-                    Videno
+                    {statusLabel}
                   </Text>
                 ) : null}
               </View>
