@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -7,26 +7,14 @@ import {
   Image,
   Alert,
   Share,
-  ActivityIndicator,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getChatMessagePreview } from "../../lib/chatContent";
 import { supabase, type Profile } from "../../lib/supabase";
-import {
-  fetchBuddyChatPreviews,
-  getCachedBuddyChatPreviews,
-  invalidateBuddyChatPreviews,
-  isBuddyChatPreviewCacheFresh,
-  subscribeBuddyChatPreviewUpdates,
-  type BuddyChatPreviewMessageUpdate,
-  type BuddyChatPreview,
-} from "../../lib/buddyChatPreviews";
 
 const INVITE_BASE_URL = "https://bonibuddy.app/invite";
 const DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
-const DEBUG_BUDDY_TIMING = __DEV__;
 
 type LastMessage = {
   preview: string;
@@ -37,7 +25,7 @@ type LastMessage = {
 
 type Item = {
   matchId: string;
-  other: Pick<Profile, "id" | "user_id" | "name" | "faculty" | "photos">;
+  other: Profile;
   last?: LastMessage;
   lastActivityAt: string;
   streak: number;
@@ -70,179 +58,89 @@ function formatListTime(iso: string) {
   return `${date.getDate()}.${date.getMonth() + 1}.`;
 }
 
-function mapPreviewToItem(row: BuddyChatPreview): Item {
-  let last: LastMessage | undefined;
-  if (row.latest_message_content && row.latest_message_created_at) {
-    const { preview } = getChatMessagePreview(row.latest_message_content);
-    last = {
-      preview,
-      time: formatListTime(row.latest_message_created_at),
-      createdAt: row.latest_message_created_at,
-      mine: row.latest_message_mine === true,
-    };
-  }
-
-  return {
-    matchId: row.match_id,
-    other: {
-      id: row.other_profile_id,
-      user_id: row.other_user_id,
-      name: row.other_name,
-      faculty: row.other_faculty,
-      photos: row.other_photos ?? [],
-    },
-    last,
-    lastActivityAt: row.last_activity_at,
-    streak: row.streak ?? 0,
-  };
-}
-
-function logBuddiesTiming(label: string, startedAt: number) {
-  if (!DEBUG_BUDDY_TIMING) return;
-  console.log(`[Buddies] ${label} ${Date.now() - startedAt}ms`);
-}
-
-function applyMessageUpdateToItems(
-  items: Item[],
-  update: BuddyChatPreviewMessageUpdate
-) {
-  let changed = false;
-  const next = items.map((item) => {
-    if (item.matchId !== update.matchId) return item;
-    if (Date.parse(update.createdAt) < Date.parse(item.lastActivityAt)) {
-      return item;
-    }
-
-    changed = true;
-    return {
-      ...item,
-      last: {
-        preview: getChatMessagePreview(update.content).preview,
-        time: formatListTime(update.createdAt),
-        createdAt: update.createdAt,
-        mine: update.mine,
-      },
-      lastActivityAt: update.createdAt,
-    };
-  });
-
-  if (!changed) return items;
-
-  next.sort((a, b) => {
-    const byActivity =
-      Date.parse(b.lastActivityAt) - Date.parse(a.lastActivityAt);
-    if (byActivity !== 0) return byActivity;
-    return a.matchId.localeCompare(b.matchId);
-  });
-
-  return next;
-}
-
 export default function Matches() {
   const [items, setItems] = useState<Item[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [inviteLoading, setInviteLoading] = useState(false);
-  const refreshSeq = useRef(0);
-  const channelRef = useRef<RealtimeChannel | null>(null);
 
-  const applyCachedRows = useCallback(() => {
-    const startedAt = Date.now();
-    const cached = getCachedBuddyChatPreviews();
-    if (!cached) return false;
+  const loadMatches = useCallback(async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data: me } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+    if (!me) return;
 
-    setItems(cached.rows.map(mapPreviewToItem));
-    setLoaded(true);
-    logBuddiesTiming(
-      `rendered ${cached.rows.length} cached previews after avatars were left async`,
-      startedAt
-    );
-    return true;
-  }, []);
+    const { data: matches } = await supabase
+      .from("buddy_matches")
+      .select("id, user1_id, user2_id, created_at")
+      .or(`user1_id.eq.${me.id},user2_id.eq.${me.id}`)
+      .order("created_at", { ascending: false });
 
-  const refreshMatches = useCallback(
-    async ({ force = false, reason = "focus" } = {}) => {
-      const seq = ++refreshSeq.current;
-      const startedAt = Date.now();
+    const out: Item[] = [];
+    for (const match of matches ?? []) {
+      const otherId =
+        match.user1_id === me.id ? match.user2_id : match.user1_id;
+      const { data: other } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", otherId)
+        .single();
+      const { data: msg } = await supabase
+        .from("chat_messages")
+        .select("content, sender_id, created_at")
+        .eq("match_id", match.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-      try {
-        const rows = await fetchBuddyChatPreviews({ force, reason });
-        if (seq !== refreshSeq.current) return;
+      if (!other) continue;
 
-        logBuddiesTiming(
-          `mapped matches/profiles/latest messages/unread counts/streaks for ${rows.length} rows`,
-          startedAt
-        );
-        setItems(rows.map(mapPreviewToItem));
-        setLoaded(true);
-      } catch (error: any) {
-        if (seq !== refreshSeq.current) return;
-        if (DEBUG_BUDDY_TIMING) {
-          console.warn(
-            "[Buddies] failed to load chat previews",
-            error?.message ?? error
-          );
-        }
-        setLoaded(true);
+      let last: LastMessage | undefined;
+      if (msg) {
+        const { preview } = getChatMessagePreview(msg.content ?? "");
+        last = {
+          preview,
+          time: formatListTime(msg.created_at),
+          createdAt: msg.created_at,
+          mine: msg.sender_id === me.id,
+        };
       }
-    },
-    []
-  );
+
+      const { data: streakData } = await supabase.rpc("buddy_streak", {
+        p_match_id: match.id,
+      });
+      const streak = typeof streakData === "number" ? streakData : 0;
+
+      out.push({
+        matchId: match.id,
+        other: other as Profile,
+        last,
+        lastActivityAt: last?.createdAt ?? match.created_at,
+        streak,
+      });
+    }
+
+    out.sort((a, b) => {
+      const byActivity =
+        Date.parse(b.lastActivityAt) - Date.parse(a.lastActivityAt);
+      if (byActivity !== 0) return byActivity;
+      return a.matchId.localeCompare(b.matchId);
+    });
+
+    setItems(out);
+    setLoaded(true);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      const hadCache = applyCachedRows();
-      if (!hadCache || !isBuddyChatPreviewCacheFresh()) {
-        void refreshMatches({
-          force: false,
-          reason: hadCache ? "stale-focus-refresh" : "first-focus",
-        });
-      }
-    }, [applyCachedRows, refreshMatches])
+      void loadMatches();
+    }, [loadMatches])
   );
-
-  useEffect(() => {
-    const startedAt = Date.now();
-    const refreshFromRealtime = (reason: string) => {
-      invalidateBuddyChatPreviews();
-      void refreshMatches({ force: true, reason });
-    };
-
-    const channel = supabase
-      .channel("buddy-chat-previews")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "chat_messages" },
-        () => refreshFromRealtime("realtime-message")
-      )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "buddy_matches" },
-        () => refreshFromRealtime("realtime-match-insert")
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "buddy_matches" },
-        () => refreshFromRealtime("realtime-match-delete")
-      )
-      .subscribe((status) => {
-        if (status === "SUBSCRIBED") {
-          logBuddiesTiming("realtime subscriptions ready", startedAt);
-        }
-      });
-
-    channelRef.current = channel;
-
-    return () => {
-      channelRef.current = null;
-      supabase.removeChannel(channel);
-    };
-  }, [refreshMatches]);
-
-  useEffect(() => {
-    return subscribeBuddyChatPreviewUpdates((update) => {
-      setItems((prev) => applyMessageUpdateToItems(prev, update));
-    });
-  }, []);
 
   async function inviteBuddy() {
     setInviteLoading(true);
@@ -314,11 +212,6 @@ export default function Matches() {
           </Text>
         </View>
       ) : null}
-      {!loaded && items.length === 0 ? (
-        <View className="px-6 pt-10 items-center">
-          <ActivityIndicator size="small" color="#00A6F6" />
-        </View>
-      ) : null}
       <FlatList
         data={items}
         keyExtractor={(item) => item.matchId}
@@ -335,13 +228,6 @@ export default function Matches() {
                   <Image
                     source={{ uri: item.other.photos[0] }}
                     style={{ width: 56, height: 56, borderRadius: 28 }}
-                    onLoadEnd={() => {
-                      if (DEBUG_BUDDY_TIMING) {
-                        console.log(
-                          `[Buddies] avatar loaded for ${item.matchId}; list rendering was not blocked`
-                        );
-                      }
-                    }}
                   />
                 ) : (
                   <View className="w-14 h-14 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
