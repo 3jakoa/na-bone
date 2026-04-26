@@ -38,7 +38,7 @@ const sharedEnv = process.env.BONI_BUDDY_MOBILE_ENV_FILE
 const localEnv = readEnvFile(path.join(__dirname, ".env"));
 
 function getEnv(name) {
-  return process.env[name] ?? localEnv[name] ?? sharedEnv[name];
+  return sharedEnv[name] ?? process.env[name] ?? localEnv[name];
 }
 
 module.exports = {
