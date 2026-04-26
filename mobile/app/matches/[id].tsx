@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Platform,
+  AppState,
   Alert,
   Image,
   Modal,
@@ -134,7 +135,25 @@ export default function Chat() {
 
   const markChatSeen = useCallback(async () => {
     if (!matchId || matchClosedRef.current) return;
-    await supabase.rpc("mark_chat_seen", { p_match_id: matchId });
+    const seenAt = new Date().toISOString();
+    const { error } = await supabase.rpc("mark_chat_seen", {
+      p_match_id: matchId,
+    });
+    if (error) return;
+
+    const currentUser = meRef.current;
+    if (!currentUser) return;
+
+    setMatchReadState((prev) => {
+      if (!prev) return prev;
+      if (prev.user1_id === currentUser.id) {
+        return { ...prev, user1_last_read_at: seenAt };
+      }
+      if (prev.user2_id === currentUser.id) {
+        return { ...prev, user2_last_read_at: seenAt };
+      }
+      return prev;
+    });
   }, [matchId]);
 
   function leaveRemovedBuddy(message = "Ta buddy ni več na voljo.") {
@@ -244,6 +263,7 @@ export default function Chat() {
         .eq("user_id", user.id)
         .single();
       if (!myP || cancelled) return;
+      meRef.current = myP as Profile;
       setMe(myP as Profile);
 
       const [
@@ -281,6 +301,12 @@ export default function Chat() {
       setOther(o as Profile);
       void markChatSeen();
     })();
+
+    const appStateSubscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") {
+        void markChatSeen();
+      }
+    });
 
     const channel = supabase
       .channel(`chat-${matchId}`, {
@@ -380,6 +406,7 @@ export default function Chat() {
       channelReadyRef.current = false;
       channelRef.current = null;
       clearInterval(pollInterval);
+      appStateSubscription.remove();
       supabase.removeChannel(channel);
     };
   }, [markChatSeen, matchId]);

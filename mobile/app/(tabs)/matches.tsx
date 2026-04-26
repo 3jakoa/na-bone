@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { getChatMessagePreview } from "../../lib/chatContent";
-import { supabase, type Profile } from "../../lib/supabase";
+import { supabase, type Message, type Profile } from "../../lib/supabase";
 
 const INVITE_BASE_URL = "https://bonibuddy.app/invite";
 const DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
@@ -28,16 +28,26 @@ type Item = {
   other: Profile;
   last?: LastMessage;
   lastActivityAt: string;
+  hasUnread: boolean;
   streak: number;
 };
 
 const subtleCardShadow = {
   shadowColor: "#0F172A",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.05,
-  shadowRadius: 8,
-  elevation: 1,
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.03,
+  shadowRadius: 4,
+  elevation: 0,
 } as const;
+
+function sortItems(items: Item[]) {
+  return [...items].sort((a, b) => {
+    const byActivity =
+      Date.parse(b.lastActivityAt) - Date.parse(a.lastActivityAt);
+    if (byActivity !== 0) return byActivity;
+    return a.matchId.localeCompare(b.matchId);
+  });
+}
 
 function formatListTime(iso: string) {
   const date = new Date(iso);
@@ -62,6 +72,8 @@ export default function Matches() {
   const [items, setItems] = useState<Item[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [inviteLoading, setInviteLoading] = useState(false);
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currentProfileIdRef = useRef<string | null>(null);
 
   const loadMatches = useCallback(async () => {
     const {
@@ -74,72 +86,178 @@ export default function Matches() {
       .eq("user_id", user.id)
       .single();
     if (!me) return;
+    currentProfileIdRef.current = me.id;
 
     const { data: matches } = await supabase
       .from("buddy_matches")
-      .select("id, user1_id, user2_id, created_at")
+      .select(
+        "id, user1_id, user2_id, created_at, user1_last_read_at, user2_last_read_at"
+      )
       .or(`user1_id.eq.${me.id},user2_id.eq.${me.id}`)
       .order("created_at", { ascending: false });
 
-    const out: Item[] = [];
-    for (const match of matches ?? []) {
-      const otherId =
-        match.user1_id === me.id ? match.user2_id : match.user1_id;
-      const { data: other } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", otherId)
-        .single();
-      const { data: msg } = await supabase
-        .from("chat_messages")
-        .select("content, sender_id, created_at")
-        .eq("match_id", match.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+    const out: Array<Item | null> = await Promise.all(
+      (matches ?? []).map(async (match) => {
+        const otherId =
+          match.user1_id === me.id ? match.user2_id : match.user1_id;
+        const lastReadAt =
+          match.user1_id === me.id
+            ? match.user1_last_read_at
+            : match.user2_last_read_at;
 
-      if (!other) continue;
+        let unreadQuery = supabase
+          .from("chat_messages")
+          .select("id")
+          .eq("match_id", match.id)
+          .neq("sender_id", me.id)
+          .order("created_at", { ascending: false })
+          .limit(1);
+        if (lastReadAt) {
+          unreadQuery = unreadQuery.gt("created_at", lastReadAt);
+        }
 
-      let last: LastMessage | undefined;
-      if (msg) {
-        const { preview } = getChatMessagePreview(msg.content ?? "");
-        last = {
-          preview,
-          time: formatListTime(msg.created_at),
-          createdAt: msg.created_at,
-          mine: msg.sender_id === me.id,
-        };
-      }
+        const [
+          { data: other },
+          { data: msg },
+          { data: unreadMessages },
+          { data: streakData },
+        ] = await Promise.all([
+          supabase.from("profiles").select("*").eq("id", otherId).single(),
+          supabase
+            .from("chat_messages")
+            .select("content, sender_id, created_at")
+            .eq("match_id", match.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+          unreadQuery,
+          supabase.rpc("buddy_streak", {
+            p_match_id: match.id,
+          }),
+        ]);
 
-      const { data: streakData } = await supabase.rpc("buddy_streak", {
-        p_match_id: match.id,
-      });
-      const streak = typeof streakData === "number" ? streakData : 0;
+        const hasUnread = (unreadMessages ?? []).length > 0;
 
-      out.push({
-        matchId: match.id,
-        other: other as Profile,
-        last,
-        lastActivityAt: last?.createdAt ?? match.created_at,
-        streak,
-      });
-    }
+        if (!other) return null;
 
-    out.sort((a, b) => {
-      const byActivity =
-        Date.parse(b.lastActivityAt) - Date.parse(a.lastActivityAt);
-      if (byActivity !== 0) return byActivity;
-      return a.matchId.localeCompare(b.matchId);
-    });
+        let last: LastMessage | undefined;
+        if (msg) {
+          const { preview } = getChatMessagePreview(msg.content ?? "");
+          last = {
+            preview,
+            time: formatListTime(msg.created_at),
+            createdAt: msg.created_at,
+            mine: msg.sender_id === me.id,
+          };
+        }
 
-    setItems(out);
+        const streak = typeof streakData === "number" ? streakData : 0;
+
+        return {
+          matchId: match.id,
+          other: other as Profile,
+          last,
+          lastActivityAt: last?.createdAt ?? match.created_at,
+          hasUnread,
+          streak,
+        } satisfies Item;
+      })
+    );
+
+    setItems(sortItems(out.filter((item): item is Item => item !== null)));
     setLoaded(true);
   }, []);
+
+  const applyRealtimeMessage = useCallback((message: Message) => {
+    const currentProfileId = currentProfileIdRef.current;
+    if (!currentProfileId) return false;
+
+    let found = false;
+    const { preview } = getChatMessagePreview(message.content ?? "");
+
+    setItems((prev) => {
+      const next = prev.map((item) => {
+        if (item.matchId !== message.match_id) return item;
+
+        found = true;
+        return {
+          ...item,
+          last: {
+            preview,
+            time: formatListTime(message.created_at),
+            createdAt: message.created_at,
+            mine: message.sender_id === currentProfileId,
+          },
+          lastActivityAt: message.created_at,
+          hasUnread:
+            message.sender_id === currentProfileId ? item.hasUnread : true,
+        };
+      });
+
+      return found ? sortItems(next) : prev;
+    });
+
+    return found;
+  }, []);
+
+  const scheduleRefresh = useCallback(
+    (delay = 200) => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+
+      refreshTimeoutRef.current = setTimeout(() => {
+        refreshTimeoutRef.current = null;
+        void loadMatches();
+      }, delay);
+    },
+    [loadMatches]
+  );
 
   useFocusEffect(
     useCallback(() => {
       void loadMatches();
-    }, [loadMatches])
+
+      const channel = supabase
+        .channel("matches-list")
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "chat_messages",
+          },
+          (payload) => {
+            const updated = applyRealtimeMessage(payload.new as Message);
+            scheduleRefresh(updated ? 1000 : 0);
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "buddy_matches",
+          },
+          () => {
+            scheduleRefresh();
+          }
+        )
+        .subscribe();
+
+      const pollInterval = setInterval(() => {
+        scheduleRefresh(0);
+      }, 2000);
+
+      return () => {
+        if (refreshTimeoutRef.current) {
+          clearTimeout(refreshTimeoutRef.current);
+          refreshTimeoutRef.current = null;
+        }
+        clearInterval(pollInterval);
+        supabase.removeChannel(channel);
+      };
+    }, [loadMatches, scheduleRefresh])
   );
 
   async function inviteBuddy() {
@@ -217,11 +335,15 @@ export default function Matches() {
         keyExtractor={(item) => item.matchId}
         contentContainerStyle={{ padding: 16, gap: 8, paddingBottom: 32 }}
         renderItem={({ item }) => {
+          const cardClassName = item.hasUnread
+            ? "rounded-3xl px-4 py-3.5 flex-row items-center bg-white border border-blue-200 dark:bg-neutral-900 dark:border-blue-500/40 active:bg-blue-50 dark:active:bg-blue-500/10"
+            : "rounded-3xl px-4 py-3.5 flex-row items-center bg-white dark:bg-neutral-900 active:bg-gray-50 dark:active:bg-neutral-800";
+
           return (
             <Pressable
               onPress={() => handleRowPress(item)}
               style={subtleCardShadow}
-              className="rounded-3xl px-4 py-3.5 flex-row items-center bg-white dark:bg-neutral-900 active:bg-gray-50 dark:active:bg-neutral-800"
+              className={cardClassName}
             >
               <Pressable onPress={() => handleAvatarPress(item)}>
                 {item.other.photos[0] ? (
@@ -241,7 +363,9 @@ export default function Matches() {
               <View className="flex-1 ml-3 min-w-0">
                 <View className="flex-row items-center">
                   <Text
-                    className="flex-1 font-bold text-base text-gray-900 dark:text-white"
+                    className={`flex-1 text-base text-gray-900 dark:text-white ${
+                      item.hasUnread ? "font-extrabold" : "font-bold"
+                    }`}
                     numberOfLines={1}
                   >
                     {item.other.name}
@@ -266,13 +390,20 @@ export default function Matches() {
 
                 <View className="flex-row items-center mt-0.5">
                   <Text
-                    className="flex-1 text-sm text-gray-500 dark:text-gray-400"
+                    className={`flex-1 text-sm ${
+                      item.hasUnread
+                        ? "text-gray-800 dark:text-gray-200 font-semibold"
+                        : "text-gray-500 dark:text-gray-400"
+                    }`}
                     numberOfLines={1}
                   >
                     {item.last
                       ? `${item.last.mine ? "Ti: " : ""}${item.last.preview}`
                       : "Pozdravita se 👋"}
                   </Text>
+                  {item.hasUnread ? (
+                    <View className="w-2.5 h-2.5 rounded-full bg-brand ml-3 shrink-0" />
+                  ) : null}
                 </View>
               </View>
             </Pressable>
