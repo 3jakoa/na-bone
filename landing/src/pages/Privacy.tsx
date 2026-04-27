@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const SUPPORT_EMAIL = "bonibuddyapp@gmail.com";
+const SUPPORT_EMAIL = "jaka@bonibuddy.app";
 
 const sections = [
   {
@@ -81,6 +81,44 @@ const sections = [
   },
 ];
 
+const childSafetyStandards = [
+  {
+    title: "Ničelna toleranca do CSAE in CSAM",
+    body: [
+      "Boni Buddy izrecno prepoveduje spolno zlorabo in izkoriščanje otrok (CSAE) ter gradivo s spolno zlorabo otrok (CSAM). Prepovedani so tudi poskusi navezovanja stika z otrokom z namenom spolnega izkoriščanja, nagovarjanje, izsiljevanje, trgovina z otroki, deljenje ali iskanje spolnih vsebin z mladoletnimi osebami in vsakršno ravnanje, ki ogroža otroka.",
+      "Ta standard velja za profile, fotografije, objave za bone, povabila, sporočila v klepetu, uporabniška imena, opise profilov in vse druge vsebine ali interakcije v aplikaciji.",
+    ],
+  },
+  {
+    title: "Prijava pomislekov in zlorab",
+    body: [
+      `Uporabniki lahko neprimerno vsebino, vedenje, varnostne pomisleke ali sum CSAE/CSAM prijavijo v aplikaciji prek Pomoč > Kontakt oziroma Pomoč > Prijavi napako ali neposredno na ${SUPPORT_EMAIL}.`,
+      "Pri prijavi naj uporabnik, če je varno, navede opis situacije, uporabniško ime ali profil, čas dogodka, povezano sporočilo ali objavo in morebitne posnetke zaslona. Prijave obravnavamo zaupno in prednostno.",
+    ],
+  },
+  {
+    title: "Ukrepanje ob prijavi ali dejanski seznanitvi",
+    body: [
+      "Ko smo seznanjeni z domnevno kršitvijo teh standardov, lahko pregledamo prijavljeno vsebino, omejimo dostop, odstranimo vsebino, začasno ali trajno blokiramo račun, ohranimo potrebne dokaze in sprejmemo druge ukrepe za zaščito uporabnikov.",
+      "Če pridobimo dejansko vednost o CSAM ali resni nevarnosti za otroka, bomo ukrepali v skladu z veljavno zakonodajo in po potrebi prijavili zadevo pristojnim organom ali ustreznim regionalnim organom za varnost otrok.",
+    ],
+  },
+  {
+    title: "Skladnost z zakoni o varnosti otrok",
+    body: [
+      "Boni Buddy si prizadeva ravnati skladno z veljavnimi zakoni in pravili glede varnosti otrok, spletnih storitev, poročanja nezakonitih vsebin in zaščite osebnih podatkov.",
+      "Zloraba aplikacije za ustvarjanje, nalaganje, deljenje, pridobivanje ali spodbujanje CSAM/CSAE je strogo prepovedana in lahko vodi do odstranitve vsebine, prepovedi uporabe in prijave pristojnim organom.",
+    ],
+  },
+  {
+    title: "Kontaktna točka za varnost otrok",
+    body: [
+      `Za obvestila Google Play, uporabniške prijave in druga vprašanja glede CSAE/CSAM je kontaktna točka Boni Buddy dosegljiva na ${SUPPORT_EMAIL}.`,
+      "Kontaktna oseba je pripravljena obravnavati varnostne prijave, pojasniti postopke pregleda in ukrepanja ter koordinirati potrebne nadaljnje korake.",
+    ],
+  },
+];
+
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-[#f5fcff] font-sans text-black">
@@ -129,6 +167,38 @@ export default function Privacy() {
               </div>
             </section>
           ))}
+
+          <section
+            id="varnost-otrok"
+            className="scroll-mt-6 rounded-[24px] border border-[rgba(71,189,239,0.2)] bg-white p-6 shadow-[0_0_20px_rgba(71,189,239,0.14)] sm:p-8"
+          >
+            <p className="text-[17px] font-semibold text-[#0191d7]">
+              Standardi za varnost otrok
+            </p>
+            <h2 className="mt-2 font-['Poppins'] text-[30px] font-semibold leading-tight sm:text-[38px]">
+              Preprečevanje CSAE in CSAM
+            </h2>
+            <p className="mt-4 max-w-[780px] text-[17px] leading-8 text-black/70">
+              Ta razdelek objavlja standarde Boni Buddy za preprečevanje spolne
+              zlorabe in izkoriščanja otrok (CSAE) ter ravnanje ob prijavah
+              gradiva s spolno zlorabo otrok (CSAM).
+            </p>
+
+            <div className="mt-6 space-y-6">
+              {childSafetyStandards.map((standard) => (
+                <div key={standard.title}>
+                  <h3 className="font-['Poppins'] text-[22px] font-semibold leading-tight">
+                    {standard.title}
+                  </h3>
+                  <div className="mt-3 space-y-3 text-[17px] leading-8 text-black/70">
+                    {standard.body.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
 
         <div className="mt-10 flex flex-col gap-4 rounded-[20px] bg-white p-6 shadow-[0_0_20px_rgba(71,189,239,0.14)] sm:flex-row sm:items-center sm:justify-between">
