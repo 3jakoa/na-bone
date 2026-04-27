@@ -280,6 +280,7 @@ export default function Feed() {
         <View className="flex-1">
           <ScrollView
             className="flex-1"
+            style={{ zIndex: 1, elevation: 1 }}
             contentInsetAdjustmentBehavior="never"
             contentContainerStyle={{
               paddingHorizontal: 16,
@@ -295,7 +296,15 @@ export default function Feed() {
           <View
             pointerEvents="none"
             className="items-center justify-center px-6"
-            style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              zIndex: 0,
+              elevation: 0,
+            }}
           >
             <Image
               source={require("../../assets/logo.png")}
