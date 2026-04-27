@@ -408,18 +408,15 @@ function Footer() {
 
         <div className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:shrink-0 lg:gap-10">
           <FooterColumn
-            title="Company"
+            title="Podjetje"
             links={[
               { label: "kako deluje?", href: "#kako" },
-              {
-                label: "Vprašanja",
-                href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Vprašanje za BoniBuddy")}`,
-              },
-              { label: "Zasebnostna politika" },
+              { label: "Vprašanja", href: "/vprasanja" },
+              { label: "Zasebnostna politika", href: "/privacy" },
             ]}
           />
           <FooterColumn
-            title="Social"
+            title="Družbena omrežja"
             links={[
               { label: "Instagram", href: INSTAGRAM_URL },
               { label: "Tiktok", href: TIKTOK_URL },
