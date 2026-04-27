@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Invite from "./pages/Invite";
 import Questions from "./pages/Questions";
 import Privacy from "./pages/Privacy";
+import ChildSafety from "./pages/ChildSafety";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -17,6 +18,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/vprasanja" element={<Questions />} />
         <Route path="/faq" element={<Questions />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/varnost-otrok" element={<ChildSafety />} />
+        <Route path="/child-safety" element={<ChildSafety />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

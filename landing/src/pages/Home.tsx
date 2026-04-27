@@ -413,6 +413,7 @@ function Footer() {
               { label: "kako deluje?", href: "#kako" },
               { label: "Vprašanja", href: "/vprasanja" },
               { label: "Zasebnostna politika", href: "/privacy" },
+              { label: "Varnost otrok", href: "/varnost-otrok" },
             ]}
           />
           <FooterColumn
