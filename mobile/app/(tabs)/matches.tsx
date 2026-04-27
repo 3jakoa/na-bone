@@ -32,6 +32,15 @@ type Item = {
   streak: number;
 };
 
+type BuddyMatchRow = {
+  id: string;
+  user1_id: string;
+  user2_id: string;
+  created_at: string;
+  user1_last_read_at: string | null;
+  user2_last_read_at: string | null;
+};
+
 const subtleCardShadow = {
   shadowColor: "#0F172A",
   shadowOffset: { width: 0, height: 1 },
@@ -68,118 +77,177 @@ function formatListTime(iso: string) {
   return `${date.getDate()}.${date.getMonth() + 1}.`;
 }
 
+function isReadReceiptColumnError(error: { code?: string; message?: string; details?: string }) {
+  const text = `${error.message ?? ""} ${error.details ?? ""}`.toLowerCase();
+  return (
+    error.code === "42703" ||
+    (error.code === "PGRST204" && text.includes("last_read_at")) ||
+    text.includes("user1_last_read_at") ||
+    text.includes("user2_last_read_at")
+  );
+}
+
 export default function Matches() {
   const [items, setItems] = useState<Item[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [inviteLoading, setInviteLoading] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentProfileIdRef = useRef<string | null>(null);
+  const itemsRef = useRef<Item[]>([]);
 
   const loadMatches = useCallback(async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data: me } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-    if (!me) return;
-    currentProfileIdRef.current = me.id;
+    setLoadError(null);
 
-    const { data: matches } = await supabase
-      .from("buddy_matches")
-      .select(
-        "id, user1_id, user2_id, created_at, user1_last_read_at, user2_last_read_at"
-      )
-      .or(`user1_id.eq.${me.id},user2_id.eq.${me.id}`)
-      .order("created_at", { ascending: false });
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const out: Array<Item | null> = await Promise.all(
-      (matches ?? []).map(async (match) => {
-        const otherId =
-          match.user1_id === me.id ? match.user2_id : match.user1_id;
-        const lastReadAt =
-          match.user1_id === me.id
-            ? match.user1_last_read_at
-            : match.user2_last_read_at;
+      const { data: me, error: profileError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+      if (profileError) throw profileError;
+      if (!me) return;
+      currentProfileIdRef.current = me.id;
 
-        let unreadQuery = supabase
-          .from("chat_messages")
-          .select("id")
-          .eq("match_id", match.id)
-          .neq("sender_id", me.id)
-          .order("created_at", { ascending: false })
-          .limit(1);
-        if (lastReadAt) {
-          unreadQuery = unreadQuery.gt("created_at", lastReadAt);
-        }
+      const matchQuery = supabase
+        .from("buddy_matches")
+        .select(
+          "id, user1_id, user2_id, created_at, user1_last_read_at, user2_last_read_at"
+        )
+        .or(`user1_id.eq.${me.id},user2_id.eq.${me.id}`)
+        .order("created_at", { ascending: false });
+      let { data: matches, error: matchesError } = await matchQuery;
 
-        const [
-          { data: other },
-          { data: msg },
-          { data: unreadMessages },
-          { data: streakData },
-        ] = await Promise.all([
-          supabase.from("profiles").select("*").eq("id", otherId).single(),
-          supabase
+      if (matchesError && isReadReceiptColumnError(matchesError)) {
+        console.warn("Read receipt columns are unavailable; loading buddies without unread state.");
+        const fallback = await supabase
+          .from("buddy_matches")
+          .select("id, user1_id, user2_id, created_at")
+          .or(`user1_id.eq.${me.id},user2_id.eq.${me.id}`)
+          .order("created_at", { ascending: false });
+        matches = (fallback.data ?? []).map((match) => ({
+          ...match,
+          user1_last_read_at: null,
+          user2_last_read_at: null,
+        }));
+        matchesError = fallback.error;
+      }
+
+      if (matchesError) throw matchesError;
+
+      const out: Array<Item | null> = await Promise.all(
+        ((matches ?? []) as BuddyMatchRow[]).map(async (match) => {
+          const otherId =
+            match.user1_id === me.id ? match.user2_id : match.user1_id;
+          const lastReadAt =
+            match.user1_id === me.id
+              ? match.user1_last_read_at
+              : match.user2_last_read_at;
+
+          let unreadQuery = supabase
             .from("chat_messages")
-            .select("content, sender_id, created_at")
+            .select("id")
             .eq("match_id", match.id)
+            .neq("sender_id", me.id)
             .order("created_at", { ascending: false })
-            .limit(1)
-            .maybeSingle(),
-          unreadQuery,
-          supabase.rpc("buddy_streak", {
-            p_match_id: match.id,
-          }),
-        ]);
+            .limit(1);
+          if (lastReadAt) {
+            unreadQuery = unreadQuery.gt("created_at", lastReadAt);
+          }
 
-        const hasUnread = (unreadMessages ?? []).length > 0;
+          const [
+            { data: other, error: otherError },
+            { data: msg, error: msgError },
+            { data: unreadMessages, error: unreadError },
+            { data: streakData, error: streakError },
+          ] = await Promise.all([
+            supabase.from("profiles").select("*").eq("id", otherId).single(),
+            supabase
+              .from("chat_messages")
+              .select("content, sender_id, created_at")
+              .eq("match_id", match.id)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle(),
+            unreadQuery,
+            supabase.rpc("buddy_streak", {
+              p_match_id: match.id,
+            }),
+          ]);
 
-        if (!other) return null;
+          if (otherError) {
+            console.warn("Failed to load buddy profile", otherError.message);
+            return null;
+          }
+          if (msgError) {
+            console.warn("Failed to load last chat message", msgError.message);
+          }
+          if (unreadError) {
+            console.warn("Failed to load unread chat state", unreadError.message);
+          }
+          if (streakError) {
+            console.warn("Failed to load buddy streak", streakError.message);
+          }
 
-        let last: LastMessage | undefined;
-        if (msg) {
-          const { preview } = getChatMessagePreview(msg.content ?? "");
-          last = {
-            preview,
-            time: formatListTime(msg.created_at),
-            createdAt: msg.created_at,
-            mine: msg.sender_id === me.id,
-          };
-        }
+          const hasUnread = unreadError ? false : (unreadMessages ?? []).length > 0;
 
-        const streak = typeof streakData === "number" ? streakData : 0;
+          if (!other) return null;
 
-        return {
-          matchId: match.id,
-          other: other as Profile,
-          last,
-          lastActivityAt: last?.createdAt ?? match.created_at,
-          hasUnread,
-          streak,
-        } satisfies Item;
-      })
-    );
+          let last: LastMessage | undefined;
+          if (msg && !msgError) {
+            const { preview } = getChatMessagePreview(msg.content ?? "");
+            last = {
+              preview,
+              time: formatListTime(msg.created_at),
+              createdAt: msg.created_at,
+              mine: msg.sender_id === me.id,
+            };
+          }
 
-    setItems(sortItems(out.filter((item): item is Item => item !== null)));
-    setLoaded(true);
+          const streak = typeof streakData === "number" && !streakError ? streakData : 0;
+
+          return {
+            matchId: match.id,
+            other: other as Profile,
+            last,
+            lastActivityAt: last?.createdAt ?? match.created_at,
+            hasUnread,
+            streak,
+          } satisfies Item;
+        })
+      );
+
+      const nextItems = sortItems(out.filter((item): item is Item => item !== null));
+      itemsRef.current = nextItems;
+      setItems(nextItems);
+    } catch (error) {
+      console.warn("Failed to load buddies", error);
+      itemsRef.current = [];
+      setItems([]);
+      setLoadError("Pogovorov trenutno ni mogoče naložiti.");
+    } finally {
+      setLoaded(true);
+    }
   }, []);
 
   const applyRealtimeMessage = useCallback((message: Message) => {
     const currentProfileId = currentProfileIdRef.current;
     if (!currentProfileId) return false;
 
-    let found = false;
+    const found = itemsRef.current.some((item) => item.matchId === message.match_id);
+    if (!found) return false;
+
     const { preview } = getChatMessagePreview(message.content ?? "");
 
     setItems((prev) => {
       const next = prev.map((item) => {
         if (item.matchId !== message.match_id) return item;
 
-        found = true;
         return {
           ...item,
           last: {
@@ -194,10 +262,12 @@ export default function Matches() {
         };
       });
 
-      return found ? sortItems(next) : prev;
+      const sorted = sortItems(next);
+      itemsRef.current = sorted;
+      return sorted;
     });
 
-    return found;
+    return true;
   }, []);
 
   const scheduleRefresh = useCallback(
@@ -229,7 +299,9 @@ export default function Matches() {
           },
           (payload) => {
             const updated = applyRealtimeMessage(payload.new as Message);
-            scheduleRefresh(updated ? 1000 : 0);
+            if (!updated) {
+              scheduleRefresh(0);
+            }
           }
         )
         .on(
@@ -245,19 +317,14 @@ export default function Matches() {
         )
         .subscribe();
 
-      const pollInterval = setInterval(() => {
-        scheduleRefresh(0);
-      }, 2000);
-
       return () => {
         if (refreshTimeoutRef.current) {
           clearTimeout(refreshTimeoutRef.current);
           refreshTimeoutRef.current = null;
         }
-        clearInterval(pollInterval);
         supabase.removeChannel(channel);
       };
-    }, [loadMatches, scheduleRefresh])
+    }, [applyRealtimeMessage, loadMatches, scheduleRefresh])
   );
 
   async function inviteBuddy() {
@@ -311,7 +378,21 @@ export default function Matches() {
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
       {header}
-      {loaded && items.length === 0 ? (
+      {loaded && loadError ? (
+        <View
+          className="items-center justify-center px-6"
+          style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+        >
+          <Ionicons name="warning-outline" size={52} color="#9CA3AF" />
+          <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5 text-center">
+            {loadError}
+          </Text>
+          <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
+            Poskusi znova čez trenutek.
+          </Text>
+        </View>
+      ) : null}
+      {loaded && !loadError && items.length === 0 ? (
         <View
           pointerEvents="none"
           className="items-center justify-center px-6"
