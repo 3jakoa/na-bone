@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const SUPPORT_EMAIL = "bonibuddyapp@gmail.com";
+const SUPPORT_EMAIL = "jaka@bonibuddy.app";
 
 const sections = [
   {

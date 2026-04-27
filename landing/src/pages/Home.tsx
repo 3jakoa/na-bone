@@ -11,7 +11,7 @@ import {
   type PublicBone,
 } from "../supabase";
 
-const SUPPORT_EMAIL = "bonibuddyapp@gmail.com";
+const SUPPORT_EMAIL = "jaka@bonibuddy.app";
 const INSTAGRAM_URL = "https://instagram.com/boni_buddy";
 const TIKTOK_URL = "https://www.tiktok.com/@boni.buddy";
 
