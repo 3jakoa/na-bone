@@ -9,7 +9,6 @@ import {
   supabase,
   type PublicAuthor,
   type PublicBone,
-  type RestaurantInfo,
 } from "../supabase";
 
 const SUPPORT_EMAIL = "bonibuddyapp@gmail.com";
@@ -162,9 +161,7 @@ function LiveFeedSection() {
     (async () => {
       const { data: bones, error: bonesErr } = await client
         .from("meal_invites")
-        .select(
-          "id, user_id, restaurant, restaurant_info, scheduled_at, note, created_at"
-        )
+        .select("id, user_id, restaurant, scheduled_at, note, created_at")
         .eq("visibility", "public")
         .eq("status", "open")
         .gte("scheduled_at", new Date().toISOString())
@@ -189,32 +186,9 @@ function LiveFeedSection() {
         (authors ?? []).map((author) => [author.id, author as PublicAuthor])
       );
 
-      const needLookup = list.filter((bone) => !bone.restaurant_info);
-      const lookupNames = Array.from(
-        new Set(needLookup.map((bone) => bone.restaurant))
-      );
-      const restLookup = new Map<string, RestaurantInfo>();
-      if (lookupNames.length > 0) {
-        const { data: rests } = await client
-          .from("restaurants")
-          .select("name, address, city, supplement_price, meal_price, rating")
-          .in("name", lookupNames);
-        for (const rest of rests ?? []) {
-          restLookup.set(rest.name, {
-            address: rest.address,
-            city: rest.city,
-            rating: rest.rating,
-            supplement_price: rest.supplement_price,
-            meal_price: rest.meal_price,
-          });
-        }
-      }
-
       setItems(
         list.map((bone) => ({
           ...bone,
-          restaurant_info:
-            bone.restaurant_info ?? restLookup.get(bone.restaurant) ?? null,
           author: authorMap.get(bone.user_id),
         }))
       );
@@ -271,12 +245,6 @@ function LiveFeedCard({
   const authorName = item.author?.name?.trim() || "Študent";
   const initial = authorName[0]?.toUpperCase() ?? "B";
   const faculty = item.author?.faculty || "Boni Buddy";
-  const info = item.restaurant_info;
-  const supplement =
-    typeof info?.supplement_price === "number"
-      ? `${info.supplement_price.toFixed(2)} EUR doplačilo`
-      : null;
-  const placeMeta = [info?.address, info?.city].filter(Boolean).join(", ");
 
   return (
     <article className="rounded-[20px] border border-[rgba(71,189,239,0.2)] bg-white p-5 shadow-[0_0_24px_rgba(71,189,239,0.25)]">
@@ -305,15 +273,7 @@ function LiveFeedCard({
         <span className="rounded-full bg-[#f5fcff] px-3 py-1">
           {formatScheduledDate(item.scheduled_at)}
         </span>
-        {supplement && (
-          <span className="rounded-full bg-[#f5fcff] px-3 py-1">
-            {supplement}
-          </span>
-        )}
       </div>
-      {placeMeta && (
-        <p className="mt-3 text-[14px] leading-5 text-black/45">{placeMeta}</p>
-      )}
       {item.note && (
         <p className="mt-4 text-[18px] leading-[1.35]">{item.note}</p>
       )}
