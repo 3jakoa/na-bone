@@ -73,7 +73,7 @@ export default function Chat() {
   const [matchReadState, setMatchReadState] = useState<BuddyMatch | null>(null);
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
-  const [androidKeyboardInset, setAndroidKeyboardInset] = useState(0);
+  const [androidKeyboardHeight, setAndroidKeyboardHeight] = useState(0);
   const [composerHeight, setComposerHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
@@ -231,21 +231,20 @@ export default function Chat() {
     if (Platform.OS !== "android") return;
 
     const showSubscription = Keyboard.addListener("keyboardDidShow", (event) => {
-      const nextInset = Math.max(0, event.endCoordinates.height - insets.bottom);
-      setAndroidKeyboardInset(nextInset);
+      setAndroidKeyboardHeight(Math.max(0, event.endCoordinates.height));
       requestAnimationFrame(() => {
         scrollRef.current?.scrollToEnd({ animated: true });
       });
     });
     const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      setAndroidKeyboardInset(0);
+      setAndroidKeyboardHeight(0);
     });
 
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
     };
-  }, [insets.bottom]);
+  }, []);
 
   useEffect(() => {
     if (!matchId) return;
@@ -452,6 +451,51 @@ export default function Chat() {
     }
   }
 
+  const isAndroid = Platform.OS === "android";
+  const composerBottom = isAndroid ? androidKeyboardHeight : 0;
+  const scrollBottomPadding =
+    composerHeight + 16 + (isAndroid ? androidKeyboardHeight : 0);
+  const composer = (
+    <View
+      className="bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800"
+      style={
+        isAndroid
+          ? {
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: composerBottom,
+            }
+          : undefined
+      }
+    >
+      <View
+        className="flex-row items-center gap-2 px-4 pt-3"
+        style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+        onLayout={(event) => setComposerHeight(event.nativeEvent.layout.height)}
+      >
+        <TextInput
+          value={text}
+          onChangeText={setText}
+          onFocus={() => {
+            requestAnimationFrame(() => {
+              scrollRef.current?.scrollToEnd({ animated: true });
+            });
+          }}
+          placeholder="Sporočilo..."
+          placeholderTextColor="#888"
+          className="flex-1 bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3 text-base text-gray-900 dark:text-white"
+        />
+        <Pressable
+          onPress={send}
+          className="w-11 h-11 bg-brand rounded-full items-center justify-center"
+        >
+          <Ionicons name="send" size={18} color="#fff" />
+        </Pressable>
+      </View>
+    </View>
+  );
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -495,15 +539,16 @@ export default function Chat() {
         </Pressable>
       </View>
 
-      <View
-        className="flex-1"
-        style={Platform.OS === "android" ? { paddingBottom: androidKeyboardInset } : undefined}
-      >
+      <View className="flex-1">
         {/* Messages */}
         <ScrollView
           ref={scrollRef}
           className="flex-1"
-          contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: composerHeight + 16 }}
+          contentContainerStyle={{
+            padding: 16,
+            gap: 10,
+            paddingBottom: scrollBottomPadding,
+          }}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
           onContentSizeChange={() =>
@@ -638,32 +683,7 @@ export default function Chat() {
         </ScrollView>
 
         {/* Input */}
-        <View className="bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800">
-          <View
-            className="flex-row items-center gap-2 px-4 pt-3"
-            style={{ paddingBottom: Math.max(insets.bottom, 12) }}
-            onLayout={(event) => setComposerHeight(event.nativeEvent.layout.height)}
-          >
-            <TextInput
-              value={text}
-              onChangeText={setText}
-              onFocus={() => {
-                requestAnimationFrame(() => {
-                  scrollRef.current?.scrollToEnd({ animated: true });
-                });
-              }}
-              placeholder="Sporočilo..."
-              placeholderTextColor="#888"
-              className="flex-1 bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3 text-base text-gray-900 dark:text-white"
-            />
-            <Pressable
-              onPress={send}
-              className="w-11 h-11 bg-brand rounded-full items-center justify-center"
-            >
-              <Ionicons name="send" size={18} color="#fff" />
-            </Pressable>
-          </View>
-        </View>
+        {composer}
       </View>
 
       {/* Action menu modal */}
