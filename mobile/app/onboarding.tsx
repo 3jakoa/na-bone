@@ -18,6 +18,8 @@ import { supabase, capitalizeName } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
 import { UNIVERSITIES, UNIVERSITY_NAMES } from "../lib/universities";
 import { getPendingBuddyInviteToken } from "../lib/buddyInvites";
+import { useLanguage } from "../lib/i18n";
+import { LanguageSwitch } from "../components/LanguageSwitch";
 
 const { width } = Dimensions.get("window");
 const STEPS = 5;
@@ -37,14 +39,15 @@ export default function Onboarding() {
   const [bio, setBio] = useState("");
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { language, t } = useLanguage();
 
   function goNext() {
     Keyboard.dismiss();
     if (step === 0 && (!name.trim() || !age || !gender)) {
-      return Alert.alert("", "Izpolni ime, starost in spol.");
+      return Alert.alert("", t("onboarding.requiredBasics"));
     }
     if (step === 1 && (!university || !faculty)) {
-      return Alert.alert("", "Izberi univerzo in fakulteto.");
+      return Alert.alert("", t("onboarding.requiredSchool"));
     }
     const next = Math.min(step + 1, STEPS - 1);
     setStep(next);
@@ -94,6 +97,7 @@ export default function Onboarding() {
         bio: bio.trim() || null,
         photos: photoUrl ? [photoUrl] : [],
         is_onboarded: true,
+        preferred_language: language,
       } as any);
       if (error) throw error;
       const pendingInviteToken = await getPendingBuddyInviteToken();
@@ -102,7 +106,7 @@ export default function Onboarding() {
       }
       router.replace("/(tabs)/discover");
     } catch (e: any) {
-      Alert.alert("Napaka", e.message ?? String(e));
+      Alert.alert(t("common.error"), e.message ?? String(e));
     } finally {
       setLoading(false);
     }
@@ -115,6 +119,9 @@ export default function Onboarding() {
       <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
         {/* Progress bar */}
         <View className="pt-16 px-6 pb-4 bg-gray-50 dark:bg-neutral-950">
+          <View className="flex-row justify-end mb-4">
+            <LanguageSwitch />
+          </View>
           <View className="flex-row items-center mb-2">
             {step > 0 && (
               <Pressable onPress={goBack} className="mr-3">
@@ -132,12 +139,12 @@ export default function Onboarding() {
             <Pressable
               onPress={() => {
                 Alert.alert(
-                  "Odjava",
-                  "Se želiš odjaviti in uporabiti drug račun?",
+                  t("common.logout"),
+                  t("onboarding.logoutPrompt"),
                   [
-                    { text: "Prekliči", style: "cancel" },
+                    { text: t("common.cancel"), style: "cancel" },
                     {
-                      text: "Odjava",
+                      text: t("common.logout"),
                       style: "destructive",
                       onPress: async () => {
                         await supabase.auth.signOut();
@@ -151,7 +158,7 @@ export default function Onboarding() {
               hitSlop={10}
             >
               <Text className="text-xs font-semibold text-gray-400 dark:text-gray-500">
-                Odjava
+                {t("common.logout")}
               </Text>
             </Pressable>
           </View>
@@ -173,17 +180,17 @@ export default function Onboarding() {
             keyboardShouldPersistTaps="handled"
           >
             <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-              Kdo si?
+              {t("onboarding.stepWhoTitle")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 mb-8">Povej nam nekaj o sebi</Text>
+            <Text className="text-gray-500 dark:text-gray-400 mb-8">{t("onboarding.stepWhoSubtitle")}</Text>
 
             <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
-              Ime
+              {t("onboarding.name")}
             </Text>
             <TextInput
               value={name}
               onChangeText={setName}
-              placeholder="Tvoje ime"
+              placeholder={t("onboarding.namePlaceholder")}
               placeholderTextColor="#888"
               autoCapitalize="words"
               returnKeyType="next"
@@ -191,7 +198,7 @@ export default function Onboarding() {
             />
 
             <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
-              Starost
+              {t("onboarding.age")}
             </Text>
             <ScrollView
               horizontal
@@ -219,7 +226,7 @@ export default function Onboarding() {
             </ScrollView>
 
             <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
-              Spol
+              {t("onboarding.gender")}
             </Text>
             <View className="flex-row gap-3 mb-8">
               {(["moški", "ženska", "drugo"] as const).map((g) => (
@@ -231,7 +238,11 @@ export default function Onboarding() {
                   <Text
                     className={`font-semibold ${gender === g ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
                   >
-                    {g}
+                    {g === "moški"
+                      ? t("onboarding.genderMale")
+                      : g === "ženska"
+                        ? t("onboarding.genderFemale")
+                        : t("onboarding.genderOther")}
                   </Text>
                 </Pressable>
               ))}
@@ -241,7 +252,7 @@ export default function Onboarding() {
               onPress={goNext}
               className="bg-brand rounded-2xl py-4 items-center"
             >
-              <Text className="text-white font-bold text-base">Naprej</Text>
+              <Text className="text-white font-bold text-base">{t("common.next")}</Text>
             </Pressable>
           </ScrollView>
 
@@ -252,14 +263,14 @@ export default function Onboarding() {
             keyboardShouldPersistTaps="handled"
           >
             <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-              Kje študiraš?
+              {t("onboarding.schoolTitle")}
             </Text>
             <Text className="text-gray-500 dark:text-gray-400 mb-6">
-              Izberi univerzo in fakulteto
+              {t("onboarding.schoolSubtitle")}
             </Text>
 
             <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
-              Univerza
+              {t("onboarding.university")}
             </Text>
             {UNIVERSITY_NAMES.map((u) => (
               <Pressable
@@ -281,7 +292,7 @@ export default function Onboarding() {
             {faculties.length > 0 && (
               <>
                 <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 mt-4">
-                  Fakulteta
+                  {t("onboarding.faculty")}
                 </Text>
                 {faculties.map((f) => (
                   <Pressable
@@ -303,22 +314,22 @@ export default function Onboarding() {
               onPress={goNext}
               className="bg-brand rounded-2xl py-4 items-center mt-4"
             >
-              <Text className="text-white font-bold text-base">Naprej</Text>
+              <Text className="text-white font-bold text-base">{t("common.next")}</Text>
             </Pressable>
           </ScrollView>
 
           {/* Step 3: Education Level */}
           <View style={{ width }} className="px-6">
             <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-              Stopnja študija
+              {t("onboarding.educationTitle")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 mb-8">Na kateri stopnji si?</Text>
+            <Text className="text-gray-500 dark:text-gray-400 mb-8">{t("onboarding.educationSubtitle")}</Text>
 
             {(
               [
-                { key: "dodiplomski", label: "Dodiplomski", icon: "school-outline" },
-                { key: "magistrski", label: "Magistrski", icon: "ribbon-outline" },
-                { key: "doktorski", label: "Doktorski", icon: "trophy-outline" },
+                { key: "dodiplomski", label: t("onboarding.eduUndergrad"), icon: "school-outline" },
+                { key: "magistrski", label: t("onboarding.eduMasters"), icon: "ribbon-outline" },
+                { key: "doktorski", label: t("onboarding.eduDoctoral"), icon: "trophy-outline" },
               ] as const
             ).map(({ key, label, icon }) => (
               <Pressable
@@ -343,20 +354,20 @@ export default function Onboarding() {
               onPress={goNext}
               className="bg-brand rounded-2xl py-4 items-center mt-6"
             >
-              <Text className="text-white font-bold text-base">Naprej</Text>
+              <Text className="text-white font-bold text-base">{t("common.next")}</Text>
             </Pressable>
             <Pressable onPress={goNext} className="py-4 items-center mt-1">
-              <Text className="text-gray-400 dark:text-gray-500 font-semibold">Preskoči</Text>
+              <Text className="text-gray-400 dark:text-gray-500 font-semibold">{t("common.skip")}</Text>
             </Pressable>
           </View>
 
           {/* Step 4: Photo */}
           <View style={{ width }} className="px-6">
             <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-              Dodaj sliko
+              {t("onboarding.photoTitle")}
             </Text>
             <Text className="text-gray-500 dark:text-gray-400 mb-8">
-              Pokaži se — ni pa obvezno
+              {t("onboarding.photoSubtitle")}
             </Text>
 
             <Pressable
@@ -372,7 +383,7 @@ export default function Onboarding() {
                 <View className="items-center">
                   <Ionicons name="camera" size={40} color="#888" />
                   <Text className="text-gray-400 dark:text-gray-500 text-sm mt-2">
-                    Dodaj sliko
+                    {t("onboarding.addPhoto")}
                   </Text>
                 </View>
               )}
@@ -382,10 +393,10 @@ export default function Onboarding() {
               onPress={goNext}
               className="bg-brand rounded-2xl py-4 items-center"
             >
-              <Text className="text-white font-bold text-base">Naprej</Text>
+              <Text className="text-white font-bold text-base">{t("common.next")}</Text>
             </Pressable>
             <Pressable onPress={goNext} className="py-4 items-center mt-1">
-              <Text className="text-gray-400 dark:text-gray-500 font-semibold">Preskoči</Text>
+              <Text className="text-gray-400 dark:text-gray-500 font-semibold">{t("common.skip")}</Text>
             </Pressable>
           </View>
 
@@ -397,14 +408,14 @@ export default function Onboarding() {
             keyboardShouldPersistTaps="handled"
           >
             <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-              Še kaj o tebi?
+              {t("onboarding.aboutTitle")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 mb-8">Kratka bio — opcijsko</Text>
+            <Text className="text-gray-500 dark:text-gray-400 mb-8">{t("onboarding.aboutSubtitle")}</Text>
 
             <TextInput
               value={bio}
               onChangeText={setBio}
-              placeholder="FRI študent, rad jem burek..."
+              placeholder={t("onboarding.bioPlaceholder")}
               placeholderTextColor="#888"
               multiline
               numberOfLines={4}
@@ -422,7 +433,7 @@ export default function Onboarding() {
               className="bg-brand rounded-2xl py-4 items-center"
             >
               <Text className="text-white font-bold text-base">
-                {loading ? "Shranjujem..." : "Začni!"}
+                {loading ? t("common.saving") : t("onboarding.start")}
               </Text>
             </Pressable>
             <Pressable
@@ -431,7 +442,7 @@ export default function Onboarding() {
               className="py-4 items-center mt-1"
             >
               <Text className="text-gray-400 dark:text-gray-500 font-semibold">
-                Preskoči bio
+                {t("onboarding.skipBio")}
               </Text>
             </Pressable>
           </ScrollView>

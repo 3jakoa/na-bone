@@ -4,6 +4,7 @@ import * as Linking from "expo-linking";
 import { router, useLocalSearchParams } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { completeAuthCallbackFromUrl } from "../../lib/auth";
+import { useLanguage } from "../../lib/i18n";
 
 type RouteParams = Record<string, string | string[] | undefined>;
 
@@ -41,6 +42,7 @@ export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (handledCallback.current || ready) return;
@@ -55,7 +57,7 @@ export default function ResetPassword() {
         const result = await completeAuthCallbackFromUrl(url);
         if (!result.ok) {
           handledCallback.current = true;
-          setError(result.error ?? "Povezava za ponastavitev ni veljavna.");
+          setError(result.error ?? t("auth.resetInvalid"));
           return;
         }
 
@@ -76,7 +78,7 @@ export default function ResetPassword() {
         const result = await completeAuthCallbackFromUrl(delayedUrl);
         if (!result.ok) {
           handledCallback.current = true;
-          setError(result.error ?? "Povezava za ponastavitev ni veljavna.");
+          setError(result.error ?? t("auth.resetInvalid"));
           return;
         }
 
@@ -88,34 +90,34 @@ export default function ResetPassword() {
       const { data } = await supabase.auth.getSession();
       if (!data.session) {
         handledCallback.current = true;
-        setError("Odpri povezavo iz e-maila za ponastavitev gesla.");
+        setError(t("auth.openEmailLink"));
         return;
       } else {
         handledCallback.current = true;
         setReady(true);
       }
     })();
-  }, [incomingUrl, ready, routeParams]);
+  }, [incomingUrl, ready, routeParams, t]);
 
   async function handleUpdatePassword() {
     if (password.length < 8) {
-      return Alert.alert("Napaka", "Geslo mora imeti vsaj 8 znakov.");
+      return Alert.alert(t("common.error"), t("auth.passwordTooShort"));
     }
     if (password !== confirm) {
-      return Alert.alert("Napaka", "Gesli se ne ujemata.");
+      return Alert.alert(t("common.error"), t("auth.passwordMismatch"));
     }
 
     setLoading(true);
     const { error: updateError } = await supabase.auth.updateUser({ password });
     if (updateError) {
       setLoading(false);
-      return Alert.alert("Napaka", updateError.message);
+      return Alert.alert(t("common.error"), updateError.message);
     }
 
     await supabase.auth.signOut();
     setLoading(false);
-    Alert.alert("Geslo spremenjeno", "Zdaj se lahko prijaviš z novim geslom.", [
-      { text: "OK", onPress: () => router.replace("/auth/login") },
+    Alert.alert(t("auth.passwordChangedTitle"), t("auth.passwordChangedBody"), [
+      { text: t("common.ok"), onPress: () => router.replace("/auth/login") },
     ]);
   }
 
@@ -126,7 +128,7 @@ export default function ResetPassword() {
           {error ? (
             <>
               <Text className="text-lg font-bold text-gray-900 dark:text-white text-center mb-2">
-                Povezava ne deluje
+                {t("auth.linkNotWorking")}
               </Text>
               <Text className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
                 {error}
@@ -135,14 +137,14 @@ export default function ResetPassword() {
                 onPress={() => router.replace("./forgot-password")}
                 className="bg-brand rounded-2xl py-4 px-6 items-center"
               >
-                <Text className="text-white font-bold">Pošlji novo povezavo</Text>
+                <Text className="text-white font-bold">{t("auth.sendNewLink")}</Text>
               </Pressable>
             </>
           ) : (
             <>
               <ActivityIndicator size="large" color="#00A6F6" />
               <Text className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-                Preverjam povezavo...
+                {t("auth.checkingLink")}
               </Text>
             </>
           )}
@@ -159,33 +161,33 @@ export default function ResetPassword() {
           style={{ width: 96, height: 96, borderRadius: 48 }}
         />
         <Text className="text-3xl font-bold text-gray-900 dark:text-white mt-4">
-          Novo geslo
+          {t("auth.newPassword")}
         </Text>
         <Text className="text-gray-500 dark:text-gray-400 mt-1 text-center">
-          Izberi novo geslo za svoj Boni Buddy račun.
+          {t("auth.newPasswordSubtitle")}
         </Text>
       </View>
 
       <View className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-6 shadow-sm">
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
-          Novo geslo
+          {t("auth.newPassword")}
         </Text>
         <TextInput
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="Vsaj 8 znakov"
+          placeholder={t("auth.minEightChars")}
           placeholderTextColor="#888"
           className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-4"
         />
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
-          Ponovi geslo
+          {t("auth.confirmPassword")}
         </Text>
         <TextInput
           value={confirm}
           onChangeText={setConfirm}
           secureTextEntry
-          placeholder="Ponovi novo geslo"
+          placeholder={t("auth.repeatNewPassword")}
           placeholderTextColor="#888"
           className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-6"
         />
@@ -196,7 +198,7 @@ export default function ResetPassword() {
           className="bg-brand rounded-2xl py-4 items-center"
         >
           <Text className="text-white font-bold text-base">
-            {loading ? "Shranjujem..." : "Shrani novo geslo"}
+            {loading ? t("common.saving") : t("auth.saveNewPassword")}
           </Text>
         </Pressable>
       </View>

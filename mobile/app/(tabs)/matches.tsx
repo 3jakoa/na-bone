@@ -12,9 +12,9 @@ import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { getChatMessagePreview } from "../../lib/chatContent";
 import { supabase, type Message, type Profile } from "../../lib/supabase";
+import { useLanguage, WEEKDAYS, type Language } from "../../lib/i18n";
 
 const INVITE_BASE_URL = "https://bonibuddy.app/invite";
-const DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
 
 type LastMessage = {
   preview: string;
@@ -58,7 +58,7 @@ function sortItems(items: Item[]) {
   });
 }
 
-function formatListTime(iso: string) {
+function formatListTime(iso: string, language: Language) {
   const date = new Date(iso);
   const now = new Date();
   const dateDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -72,8 +72,8 @@ function formatListTime(iso: string) {
       date.getMinutes()
     ).padStart(2, "0")}`;
   }
-  if (diffDays === 1) return "Včeraj";
-  if (diffDays < 7) return DAYS[date.getDay()];
+  if (diffDays === 1) return language === "en" ? "Yesterday" : "Včeraj";
+  if (diffDays < 7) return WEEKDAYS[language][date.getDay()];
   return `${date.getDate()}.${date.getMonth() + 1}.`;
 }
 
@@ -92,6 +92,7 @@ export default function Matches() {
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [inviteLoading, setInviteLoading] = useState(false);
+  const { language, t } = useLanguage();
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentProfileIdRef = useRef<string | null>(null);
   const itemsRef = useRef<Item[]>([]);
@@ -200,10 +201,10 @@ export default function Matches() {
 
           let last: LastMessage | undefined;
           if (msg && !msgError) {
-            const { preview } = getChatMessagePreview(msg.content ?? "");
+            const { preview } = getChatMessagePreview(msg.content ?? "", language);
             last = {
               preview,
-              time: formatListTime(msg.created_at),
+              time: formatListTime(msg.created_at, language),
               createdAt: msg.created_at,
               mine: msg.sender_id === me.id,
             };
@@ -229,11 +230,11 @@ export default function Matches() {
       console.warn("Failed to load buddies", error);
       itemsRef.current = [];
       setItems([]);
-      setLoadError("Pogovorov trenutno ni mogoče naložiti.");
+      setLoadError(t("matches.loadError"));
     } finally {
       setLoaded(true);
     }
-  }, []);
+  }, [language, t]);
 
   const applyRealtimeMessage = useCallback((message: Message) => {
     const currentProfileId = currentProfileIdRef.current;
@@ -242,7 +243,7 @@ export default function Matches() {
     const found = itemsRef.current.some((item) => item.matchId === message.match_id);
     if (!found) return false;
 
-    const { preview } = getChatMessagePreview(message.content ?? "");
+    const { preview } = getChatMessagePreview(message.content ?? "", language);
 
     setItems((prev) => {
       const next = prev.map((item) => {
@@ -252,7 +253,7 @@ export default function Matches() {
           ...item,
           last: {
             preview,
-            time: formatListTime(message.created_at),
+            time: formatListTime(message.created_at, language),
             createdAt: message.created_at,
             mine: message.sender_id === currentProfileId,
           },
@@ -268,7 +269,7 @@ export default function Matches() {
     });
 
     return true;
-  }, []);
+  }, [language]);
 
   const scheduleRefresh = useCallback(
     (delay = 200) => {
@@ -334,14 +335,14 @@ export default function Matches() {
 
     if (error || !data) {
       return Alert.alert(
-        "Napaka",
-        error?.message ?? "Povabila trenutno ni mogoče ustvariti."
+        t("common.error"),
+        error?.message ?? t("matches.inviteFailed")
       );
     }
 
     const inviteUrl = `${INVITE_BASE_URL}/${data as string}`;
     await Share.share({
-      message: `Dodaj me kot buddyja na Boni Buddy: ${inviteUrl}`,
+      message: t("matches.shareText", { url: inviteUrl }),
     });
   }
 
@@ -358,7 +359,7 @@ export default function Matches() {
       <View>
         {loaded && items.length > 0 ? (
           <Text className="text-sm text-gray-400 dark:text-gray-500">
-            {items.length} {items.length === 1 ? "pogovor" : "pogovorov"}
+            {items.length} {items.length === 1 ? t("matches.conversationOne") : t("matches.conversationMany")}
           </Text>
         ) : null}
       </View>
@@ -369,7 +370,7 @@ export default function Matches() {
       >
         <Ionicons name="person-add-outline" size={16} color="#00A6F6" />
         <Text className="text-brand font-bold text-sm ml-1.5">
-          {inviteLoading ? "..." : "Dodaj buddyja"}
+          {inviteLoading ? t("common.loadingDots") : t("matches.addBuddy")}
         </Text>
       </Pressable>
     </View>
@@ -388,7 +389,7 @@ export default function Matches() {
             {loadError}
           </Text>
           <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
-            Poskusi znova čez trenutek.
+            {t("matches.tryAgainLater")}
           </Text>
         </View>
       ) : null}
@@ -404,10 +405,10 @@ export default function Matches() {
             resizeMode="cover"
           />
           <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
-            Še ni matchev
+            {t("matches.noMatches")}
           </Text>
           <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
-            Swipaj ali dodaj buddyja z linkom
+            {t("matches.noMatchesBody")}
           </Text>
         </View>
       ) : null}
@@ -479,8 +480,8 @@ export default function Matches() {
                     numberOfLines={1}
                   >
                     {item.last
-                      ? `${item.last.mine ? "Ti: " : ""}${item.last.preview}`
-                      : "Pozdravita se 👋"}
+                      ? `${item.last.mine ? t("common.youPrefix") : ""}${item.last.preview}`
+                      : t("matches.sayHi")}
                   </Text>
                   {item.hasUnread ? (
                     <View className="w-2.5 h-2.5 rounded-full bg-brand ml-3 shrink-0" />

@@ -3,15 +3,17 @@ import { View, Text, TextInput, Pressable, Alert, Image } from "react-native";
 import { Link } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { getPasswordResetRedirectTo } from "../../lib/auth";
+import { useLanguage } from "../../lib/i18n";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   async function handleReset() {
     const normalizedEmail = email.trim().toLowerCase();
     if (!normalizedEmail.includes("@")) {
-      return Alert.alert("Napaka", "Vnesi e-mail naslov za svoj račun.");
+      return Alert.alert(t("common.error"), t("auth.enterAccountEmail"));
     }
 
     setLoading(true);
@@ -20,11 +22,11 @@ export default function ForgotPassword() {
     });
     setLoading(false);
 
-    if (error) return Alert.alert("Napaka", error.message);
+    if (error) return Alert.alert(t("common.error"), error.message);
 
     Alert.alert(
-      "Preveri e-mail",
-      "Če račun obstaja, smo ti poslali povezavo za nastavitev novega gesla."
+      t("auth.checkEmailTitle"),
+      t("auth.checkEmailBody")
     );
   }
 
@@ -36,16 +38,16 @@ export default function ForgotPassword() {
           style={{ width: 96, height: 96, borderRadius: 48 }}
         />
         <Text className="text-3xl font-bold text-gray-900 dark:text-white mt-4">
-          Pozabljeno geslo
+          {t("auth.forgotTitle")}
         </Text>
         <Text className="text-gray-500 dark:text-gray-400 mt-1 text-center">
-          Vnesi e-mail in poslali ti bomo povezavo za novo geslo.
+          {t("auth.forgotSubtitle")}
         </Text>
       </View>
 
       <View className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-6 shadow-sm">
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
-          E-mail
+          {t("common.email")}
         </Text>
         <TextInput
           value={email}
@@ -64,13 +66,13 @@ export default function ForgotPassword() {
           className="bg-brand rounded-2xl py-4 items-center"
         >
           <Text className="text-white font-bold text-base">
-            {loading ? "Pošiljam..." : "Pošlji povezavo"}
+            {loading ? t("auth.sending") : t("auth.sendLink")}
           </Text>
         </Pressable>
       </View>
 
       <Link href="/auth/login" className="text-center text-brand font-semibold mt-6">
-        Nazaj na prijavo
+        {t("auth.backToLogin")}
       </Link>
     </View>
   );

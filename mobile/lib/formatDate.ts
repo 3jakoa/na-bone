@@ -1,6 +1,7 @@
-const DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
+import type { Language } from "./i18n";
+import { WEEKDAYS } from "./i18n";
 
-export function formatScheduledDate(iso: string): string {
+export function formatScheduledDate(iso: string, language: Language = "sl"): string {
   const date = new Date(iso);
   const now = new Date();
 
@@ -12,11 +13,13 @@ export function formatScheduledDate(iso: string): string {
 
   const time = `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 
-  if (diff === 0) return `Danes ob ${time}`;
-  if (diff === 1) return `Jutri ob ${time}`;
+  if (diff === 0) return language === "en" ? `Today at ${time}` : `Danes ob ${time}`;
+  if (diff === 1) return language === "en" ? `Tomorrow at ${time}` : `Jutri ob ${time}`;
 
-  const dayName = DAYS[date.getDay()];
+  const dayName = WEEKDAYS[language][date.getDay()];
   const d = date.getDate();
   const m = date.getMonth() + 1;
-  return `${dayName}, ${d}.${m}. ob ${time}`;
+  return language === "en"
+    ? `${dayName}, ${d}.${m}. at ${time}`
+    : `${dayName}, ${d}.${m}. ob ${time}`;
 }

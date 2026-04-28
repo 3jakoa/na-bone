@@ -5,6 +5,7 @@ import * as Network from "expo-network";
 import { useProductVariant } from "../lib/productVariant";
 import { supabase } from "../lib/supabase";
 import { getPendingBuddyInviteToken } from "../lib/buddyInvites";
+import { useLanguage } from "../lib/i18n";
 
 function isOfflineNetworkState(state: Network.NetworkState) {
   const reachable = state.isInternetReachable ?? state.isConnected;
@@ -16,6 +17,7 @@ export default function Index() {
   const [offline, setOffline] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const { setProductVariant } = useProductVariant();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!offline) return;
@@ -136,33 +138,33 @@ export default function Index() {
         router.replace("/(tabs)/discover");
       } catch (bootstrapError: any) {
         if (cancelled) return;
-        setError(bootstrapError?.message ?? "Pri zagonu aplikacije je prišlo do napake.");
+        setError(bootstrapError?.message ?? t("bootstrap.startError"));
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [attempt]);
+  }, [attempt, setProductVariant, t]);
 
   if (offline) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-neutral-950 px-8">
         <View className="w-full max-w-sm bg-white dark:bg-neutral-900 rounded-3xl px-6 py-8 shadow-sm">
           <Text className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3">
-            Ni internetne povezave
+            {t("bootstrap.offlineTitle")}
           </Text>
           <Text className="text-base text-gray-600 dark:text-gray-300 text-center leading-6 mb-4">
-            Za uporabo aplikacije vklopi internetno povezavo.
+            {t("bootstrap.offlineBody")}
           </Text>
           <Text className="text-sm text-gray-500 dark:text-gray-400 text-center leading-5 mb-6">
-            Ko bo povezava znova na voljo, lahko nadaljuješ brez ponovnega prijavljanja.
+            {t("bootstrap.offlineHint")}
           </Text>
           <Pressable
             onPress={() => setAttempt((value) => value + 1)}
             className="bg-brand rounded-2xl px-6 py-4 items-center"
           >
-            <Text className="text-white font-bold text-base">Poskusi znova</Text>
+            <Text className="text-white font-bold text-base">{t("common.retry")}</Text>
           </Pressable>
         </View>
       </View>
@@ -173,7 +175,7 @@ export default function Index() {
     return (
       <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-neutral-950 px-8">
         <Text className="text-base font-semibold text-gray-900 dark:text-white text-center mb-2">
-          Ne morem naložiti profila
+          {t("bootstrap.profileLoadFailed")}
         </Text>
         <Text className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
           {error}
@@ -182,7 +184,7 @@ export default function Index() {
           onPress={() => setAttempt((a) => a + 1)}
           className="bg-brand rounded-2xl px-6 py-3"
         >
-          <Text className="text-white font-bold">Poskusi znova</Text>
+          <Text className="text-white font-bold">{t("common.retry")}</Text>
         </Pressable>
         <Pressable
           onPress={async () => {
@@ -192,7 +194,7 @@ export default function Index() {
           className="mt-3 px-6 py-3"
         >
           <Text className="text-gray-500 dark:text-gray-400 font-semibold">
-            Odjava
+            {t("common.logout")}
           </Text>
         </Pressable>
       </View>

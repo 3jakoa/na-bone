@@ -32,6 +32,7 @@ export type Profile = {
   photos: string[];
   is_onboarded: boolean;
   product_variant: ProductVariant;
+  preferred_language: "sl" | "en";
 };
 
 export type Bone = {

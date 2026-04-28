@@ -2,10 +2,14 @@ import { useState } from "react";
 import { View, Text, Pressable, ScrollView, Linking, Alert } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useLanguage, type TranslationKey } from "../../lib/i18n";
 
 const SUPPORT_EMAIL = "bonibuddyapp@gmail.com";
 
-async function openEmail(subject?: string) {
+async function openEmail(
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string,
+  subject?: string
+) {
   const url = subject
     ? `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}`
     : `mailto:${SUPPORT_EMAIL}`;
@@ -13,8 +17,8 @@ async function openEmail(subject?: string) {
   const supported = await Linking.canOpenURL(url);
   if (!supported) {
     Alert.alert(
-      "Mail ni na voljo",
-      `V simulatorju pogosto ni nastavljene Mail aplikacije. Piši na ${SUPPORT_EMAIL}.`
+      t("settings.mailUnavailable"),
+      t("settings.mailUnavailableBody", { email: SUPPORT_EMAIL })
     );
     return;
   }
@@ -22,39 +26,18 @@ async function openEmail(subject?: string) {
   await Linking.openURL(url);
 }
 
-const FAQ = [
-  {
-    q: "Kaj je Boni Buddy?",
-    a: "Boni Buddy je aplikacija, ki študentom pomaga najti družbo za kosilo na študentske bone. Swipaj profile, se poveži in skupaj pojejta kosilo!",
-  },
-  {
-    q: "Kako delujejo boni?",
-    a: "Objavi bon z lokacijo ali delom mesta in časom — drugi študentje se lahko pridružijo. Lahko objaviš javno (vsi vidijo) ali zasebno (samo tvoji buddyji).",
-  },
-  {
-    q: "Kako dobim buddyja?",
-    a: "Na zavihku Išči swipaj desno na profile, ki ti ustrezajo. Če oba swipata desno, postaneta buddyja in si lahko pišeta.",
-  },
-  {
-    q: "Ali potrebujem študentski e-mail?",
-    a: "Za zdaj ne, ampak v prihodnosti bomo zahtevali študentski e-mail za verifikacijo.",
-  },
-  {
-    q: "Kako izbrišem svoj račun?",
-    a: "Pojdi na Profil > Zasebnost > Izbriši račun. Tvoji podatki bodo trajno odstranjeni.",
-  },
-  {
-    q: "Kako prijavim neprimerno vsebino?",
-    a: `Piši nam na ${SUPPORT_EMAIL} z opisom situacije. Vsako prijavo obravnavamo resno.`,
-  },
-  {
-    q: "Ali je aplikacija brezplačna?",
-    a: "Da! Boni Buddy je popolnoma brezplačen za vse študente.",
-  },
-];
-
 export default function Help() {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const { t } = useLanguage();
+  const faq = [
+    { q: t("faq.whatTitle"), a: t("faq.whatBody") },
+    { q: t("faq.boniTitle"), a: t("faq.boniBody") },
+    { q: t("faq.buddyTitle"), a: t("faq.buddyBody") },
+    { q: t("faq.emailTitle"), a: t("faq.emailBody") },
+    { q: t("faq.deleteTitle"), a: t("faq.deleteBody") },
+    { q: t("faq.reportTitle"), a: t("faq.reportBody", { email: SUPPORT_EMAIL }) },
+    { q: t("faq.freeTitle"), a: t("faq.freeBody") },
+  ];
 
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
@@ -62,7 +45,7 @@ export default function Help() {
         <Pressable onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">Pomoč</Text>
+        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">{t("settings.helpTitle")}</Text>
       </View>
 
       <ScrollView
@@ -71,10 +54,10 @@ export default function Help() {
       >
         {/* FAQ */}
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 px-6 mb-2">
-          Pogosta vprašanja
+          {t("settings.faq")}
         </Text>
         <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
-          {FAQ.map((item, i) => (
+          {faq.map((item, i) => (
             <View key={i}>
               {i > 0 && <View className="h-px bg-gray-100 dark:bg-neutral-800 ml-5" />}
               <Pressable
@@ -103,7 +86,7 @@ export default function Help() {
 
         {/* Contact */}
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 px-6 mb-2">
-          Kontakt
+          {t("settings.contact")}
         </Text>
         <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
           <HelpRow
@@ -111,7 +94,7 @@ export default function Help() {
             title="E-mail"
             subtitle={SUPPORT_EMAIL}
             onPress={() => {
-              void openEmail();
+              void openEmail(t);
             }}
           />
           <Sep />
@@ -127,24 +110,24 @@ export default function Help() {
 
         {/* Feedback */}
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 px-6 mb-2">
-          Povratne informacije
+          {t("settings.feedback")}
         </Text>
         <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
           <HelpRow
             icon="bug-outline"
-            title="Prijavi napako"
-            subtitle="Pomagaj nam izboljšati aplikacijo"
+            title={t("settings.reportBug")}
+            subtitle={t("settings.reportBugDesc")}
             onPress={() => {
-              void openEmail("Bug Report");
+              void openEmail(t, "Bug Report");
             }}
           />
           <Sep />
           <HelpRow
             icon="bulb-outline"
-            title="Predlagaj funkcijo"
-            subtitle="Povej nam kaj si želiš"
+            title={t("settings.suggestFeature")}
+            subtitle={t("settings.suggestFeatureDesc")}
             onPress={() => {
-              void openEmail("Feature Request");
+              void openEmail(t, "Feature Request");
             }}
           />
         </View>

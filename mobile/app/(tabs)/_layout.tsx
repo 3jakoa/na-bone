@@ -14,11 +14,13 @@ import { supabase } from "../../lib/supabase";
 import { createGuard } from "../../lib/createGuard";
 import { registerForPushNotifications } from "../../lib/notifications";
 import { useTheme } from "../../lib/theme";
+import { useLanguage, type TranslationKey } from "../../lib/i18n";
 
 export default function TabsLayout() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
   const { scheme } = useTheme();
+  const { t } = useLanguage();
   const isDark = scheme === "dark";
   const pathname = usePathname();
   const activeTab = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "discover";
@@ -88,7 +90,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="discover"
           options={{
-            title: "Išči",
+            title: t("tabs.discover"),
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="flame" size={size} color={color} />
             ),
@@ -97,7 +99,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="feed"
           options={{
-            title: "Boni",
+            title: t("tabs.boni"),
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="restaurant" size={size} color={color} />
             ),
@@ -112,7 +114,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="matches"
           options={{
-            title: "Buddies",
+            title: t("tabs.matches"),
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="chatbubbles" size={size} color={color} />
             ),
@@ -121,7 +123,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="profile"
           options={{
-            title: "Profil",
+            title: t("tabs.profile"),
             tabBarIcon: ({ color, size }) =>
               photoUrl ? (
                 <Image
@@ -199,7 +201,7 @@ export default function TabsLayout() {
                   textAlign: "center",
                 }}
               >
-                Zapuščaš ustvarjanje bona
+                {t("feed.leaveCreateTitle")}
               </Text>
               <Text
                 style={{
@@ -209,7 +211,7 @@ export default function TabsLayout() {
                   marginTop: 8,
                 }}
               >
-                Vsi podatki se bodo ponastavili. Želiš nadaljevati?
+                {t("feed.leaveCreateQuestion")}
               </Text>
             </View>
             <Pressable
@@ -233,7 +235,7 @@ export default function TabsLayout() {
               }}
             >
               <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
-                Zapusti
+                {t("common.leave")}
               </Text>
             </Pressable>
             <Pressable
@@ -253,7 +255,7 @@ export default function TabsLayout() {
                   fontSize: 16,
                 }}
               >
-                Ostani
+                {t("common.stay")}
               </Text>
             </Pressable>
           </Pressable>
@@ -267,13 +269,13 @@ type AndroidTabName = "discover" | "feed" | "matches" | "profile";
 
 const androidTabs: {
   name: AndroidTabName;
-  title: string;
+  titleKey: TranslationKey;
   icon: keyof typeof Ionicons.glyphMap;
 }[] = [
-  { name: "discover", title: "Išči", icon: "flame" },
-  { name: "feed", title: "Boni", icon: "restaurant" },
-  { name: "matches", title: "Buddies", icon: "chatbubbles" },
-  { name: "profile", title: "Profil", icon: "person-circle" },
+  { name: "discover", titleKey: "tabs.discover", icon: "flame" },
+  { name: "feed", titleKey: "tabs.boni", icon: "restaurant" },
+  { name: "matches", titleKey: "tabs.matches", icon: "chatbubbles" },
+  { name: "profile", titleKey: "tabs.profile", icon: "person-circle" },
 ];
 
 function AndroidTabBar({
@@ -290,6 +292,7 @@ function AndroidTabBar({
   onBlockedNavigate: (route: string) => void;
 }) {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const activeRoute = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "discover";
 
   function goToTab(name: AndroidTabName) {
@@ -324,13 +327,14 @@ function AndroidTabBar({
       {androidTabs.map((tab) => {
         const focused = activeRoute === tab.name;
         const color = focused ? "#00A6F6" : isDark ? "#666" : "#999";
+        const title = t(tab.titleKey);
 
         return (
           <Pressable
             key={tab.name}
             accessibilityRole="button"
             accessibilityState={focused ? { selected: true } : undefined}
-            accessibilityLabel={tab.title}
+            accessibilityLabel={title}
             android_ripple={{ color: isDark ? "#1f1f1f" : "#f3f4f6" }}
             onPress={() => goToTab(tab.name)}
             style={{
@@ -362,7 +366,7 @@ function AndroidTabBar({
                 fontWeight: "600",
               }}
             >
-              {tab.title}
+              {title}
             </Text>
           </Pressable>
         );

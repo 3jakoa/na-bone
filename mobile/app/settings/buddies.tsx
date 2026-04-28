@@ -11,6 +11,7 @@ import {
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Profile } from "../../lib/supabase";
+import { useLanguage } from "../../lib/i18n";
 
 type Buddy = { matchId: string; profile: Profile };
 
@@ -19,6 +20,7 @@ export default function Buddies() {
   const [meId, setMeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionBuddy, setActionBuddy] = useState<Buddy | null>(null);
+  const { t } = useLanguage();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -66,7 +68,7 @@ export default function Buddies() {
     });
 
     if (error) {
-      Alert.alert("Napaka", error.message);
+      Alert.alert(t("common.error"), error.message);
       return false;
     }
 
@@ -76,12 +78,12 @@ export default function Buddies() {
   function removeBuddy(buddy: Buddy) {
     setActionBuddy(null);
     Alert.alert(
-      "Odstrani buddyja",
-      `Ali res želiš odstraniti ${buddy.profile.name}?`,
+      t("settings.removeBuddyTitle"),
+      t("settings.removeBuddyConfirm", { name: buddy.profile.name }),
       [
-        { text: "Prekliči", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Odstrani",
+          text: t("common.remove"),
           style: "destructive",
           onPress: async () => {
             const removed = await unmatchBuddy(buddy);
@@ -96,12 +98,12 @@ export default function Buddies() {
   function blockUser(buddy: Buddy) {
     setActionBuddy(null);
     Alert.alert(
-      "Blokiraj",
-      `Ali želiš blokirati ${buddy.profile.name}? Ne bo mogel/la videti tvojih objav ali ti pisati.`,
+      t("common.block"),
+      t("chat.blockConfirm", { name: buddy.profile.name }),
       [
-        { text: "Prekliči", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Blokiraj",
+          text: t("common.block"),
           style: "destructive",
           onPress: async () => {
             if (!meId) return;
@@ -110,7 +112,7 @@ export default function Buddies() {
               blocked_id: buddy.profile.id,
             });
             if (blockError) {
-              Alert.alert("Napaka", blockError.message);
+              Alert.alert(t("common.error"), blockError.message);
               return;
             }
 
@@ -134,7 +136,7 @@ export default function Buddies() {
           <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
-          Moji buddyji
+          {t("settings.buddiesTitle")}
         </Text>
         <Text className="text-gray-400 dark:text-gray-500 text-sm ml-2">({buddies.length})</Text>
       </View>
@@ -148,10 +150,10 @@ export default function Buddies() {
             <View className="items-center mt-16">
               <Ionicons name="people-outline" size={48} color="#888" />
               <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
-                Še nimaš buddyjev
+                {t("settings.noBuddies")}
               </Text>
               <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
-                Swipaj da jih najdeš!
+                {t("settings.swipeToFind")}
               </Text>
             </View>
           )
@@ -264,7 +266,7 @@ export default function Buddies() {
                 {/* Actions */}
                 <ActionRow
                   icon="chatbubble-outline"
-                  label="Pošlji sporočilo"
+                  label={t("settings.sendMessage")}
                   color="#00A6F6"
                   onPress={() => {
                     setActionBuddy(null);
@@ -273,7 +275,7 @@ export default function Buddies() {
                 />
                 <ActionRow
                   icon="person-outline"
-                  label="Poglej profil"
+                  label={t("settings.viewProfile")}
                   color="#00A6F6"
                   onPress={() => {
                     setActionBuddy(null);
@@ -284,13 +286,13 @@ export default function Buddies() {
                 />
                 <ActionRow
                   icon="person-remove-outline"
-                  label="Odstrani buddyja"
+                  label={t("settings.removeBuddyTitle")}
                   color="#ef4444"
                   onPress={() => removeBuddy(actionBuddy)}
                 />
                 <ActionRow
                   icon="ban-outline"
-                  label="Blokiraj uporabnika"
+                  label={t("settings.blockUser")}
                   color="#ef4444"
                   onPress={() => blockUser(actionBuddy)}
                 />
