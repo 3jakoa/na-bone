@@ -306,7 +306,7 @@ export default function Feed() {
               Ni aktivnih bonov
             </Text>
             <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
-              Bodi prvi in objavi nov bon za kosilo.
+              Bodi prvi in objavi nov bon.
             </Text>
           </View>
         </View>

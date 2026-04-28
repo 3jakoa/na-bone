@@ -100,7 +100,7 @@ export default function Onboarding() {
       if (pendingInviteToken) {
         return router.replace(`/invite/${pendingInviteToken}` as any);
       }
-      router.replace("/(tabs)/discover");
+      router.replace("/(tabs)/feed");
     } catch (e: any) {
       Alert.alert("Napaka", e.message ?? String(e));
     } finally {

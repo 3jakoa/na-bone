@@ -21,7 +21,7 @@ export default function TabsLayout() {
   const { scheme } = useTheme();
   const isDark = scheme === "dark";
   const pathname = usePathname();
-  const activeTab = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "discover";
+  const activeTab = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "feed";
   const insets = useSafeAreaInsets();
   const androidBottomPadding = Math.max(insets.bottom, 8);
   const androidTabBarHeight = 64 + androidBottomPadding;
@@ -290,7 +290,7 @@ function AndroidTabBar({
   onBlockedNavigate: (route: string) => void;
 }) {
   const pathname = usePathname();
-  const activeRoute = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "discover";
+  const activeRoute = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "feed";
 
   function goToTab(name: AndroidTabName) {
     if (createGuard.dirty && name !== activeRoute) {
