@@ -3,7 +3,6 @@ import { View, Text, TextInput, Pressable, Alert, Image } from "react-native";
 import { Link, router } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { signInWithGoogle } from "../../lib/auth";
-import { EmojiIcon } from "../../components/EmojiIcon";
 import { LanguageSwitch } from "../../components/LanguageSwitch";
 import { useLanguage } from "../../lib/i18n";
 
@@ -96,7 +95,7 @@ export default function Signup() {
         className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl py-4 items-center shadow-sm"
       >
         <View className="flex-row items-center gap-2">
-          <EmojiIcon emoji="🔐" size={20} />
+          <Image source={require("../../assets/google.png")} style={{ width: 20, height: 20 }} />
           <Text className="font-semibold text-gray-700 dark:text-gray-100">{t("auth.continueGoogle")}</Text>
         </View>
       </Pressable>
