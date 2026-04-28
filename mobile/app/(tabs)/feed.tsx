@@ -19,6 +19,7 @@ import { createGuard } from "../../lib/createGuard";
 
 type FeedItem = Bone & {
   author?: Pick<Profile, "id" | "name" | "photos" | "faculty">;
+  open_count?: number;
 };
 
 function inviteDisplayKey(
@@ -120,13 +121,46 @@ export default function Feed() {
           .in("id", ids)
       : { data: [] as any[] };
     const authorMap = new Map((authors ?? []).map((a: any) => [a.id, a]));
+    const boneIds = ((bones ?? []) as Bone[]).map((b) => b.id);
+    const openCountMap = new Map<string, number>();
+
+    if (boneIds.length > 0) {
+      const { data: openCounts, error: openCountsError } =
+        await supabase.rpc("get_bone_open_counts", {
+          p_bone_ids: boneIds,
+        });
+
+      if (openCountsError) {
+        console.warn(
+          "Failed to load bone open counts",
+          openCountsError.message
+        );
+      } else {
+        for (const row of openCounts ?? []) {
+          openCountMap.set(
+            (row as any).bone_id,
+            Number((row as any).open_count ?? 0)
+          );
+        }
+      }
+    }
 
     const mapped = ((bones ?? []) as Bone[]).map((b) => {
       return {
         ...b,
         author: authorMap.get(b.user_id),
+        open_count: openCountMap.get(b.id) ?? 0,
       };
     });
+    const groupOpenCountMap = new Map<string, number>();
+    for (const item of mapped) {
+      if (!item.invite_group_id) continue;
+      groupOpenCountMap.set(
+        item.invite_group_id,
+        (groupOpenCountMap.get(item.invite_group_id) ?? 0) +
+          (item.open_count ?? 0)
+      );
+    }
 
     const seenOwnPrivateGroups = new Set<string>();
     const publicInviteKeys = new Set(
@@ -152,6 +186,7 @@ export default function Feed() {
       if (shouldGroupOwnPrivate) {
         if (seenOwnPrivateGroups.has(item.invite_group_id!)) continue;
         seenOwnPrivateGroups.add(item.invite_group_id!);
+        item.open_count = groupOpenCountMap.get(item.invite_group_id!) ?? 0;
       }
       visibleItems.push(item);
     }
@@ -193,17 +228,27 @@ export default function Feed() {
     ]);
   }
 
-  function openPrivateInvite(item: FeedItem) {
+  async function openPrivateInvite(item: FeedItem) {
     if (!item.match_id) {
       return Alert.alert("Napaka", "Povabilo nima pogovora.");
     }
+
+    if (item.user_id !== me?.id) {
+      const { error } = await supabase.rpc("record_bone_open", {
+        p_bone_id: item.id,
+      });
+      if (error) {
+        console.warn("Failed to record bone open", error.message);
+      }
+    }
+
     setSelectedBone(null);
     router.push(`/matches/${item.match_id}`);
   }
 
   async function respond(item: FeedItem) {
     if (item.visibility === "private") {
-      openPrivateInvite(item);
+      await openPrivateInvite(item);
       return;
     }
 
@@ -335,6 +380,7 @@ export default function Feed() {
           renderItem={({ item }) => {
             const isMine = me && item.user_id === me.id;
             const isPrivate = item.visibility === "private";
+            const openCount = item.open_count ?? 0;
             return (
               <Pressable
                 onPress={() => {
@@ -413,6 +459,19 @@ export default function Feed() {
                         {isPrivate ? "Zasebno" : "Javno"}
                       </Text>
                     </View>
+                    {openCount > 0 ? (
+                      <View className="rounded-full bg-gray-100 dark:bg-neutral-800 px-2.5 py-1 flex-row items-center">
+                        <Ionicons
+                          name="people-outline"
+                          size={12}
+                          color="#6B7280"
+                          style={{ marginRight: 3 }}
+                        />
+                        <Text className="text-[11px] font-semibold text-gray-500 dark:text-gray-300">
+                          {openCount} odprli
+                        </Text>
+                      </View>
+                    ) : null}
                   </View>
                 </View>
 
