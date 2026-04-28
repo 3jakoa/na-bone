@@ -1,6 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
-import { StyleSheet, View, type ViewStyle } from "react-native";
+import { StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
 import Animated, {
   Easing,
   Extrapolation,
@@ -13,13 +12,12 @@ import Animated, {
 } from "react-native-reanimated";
 
 const BRAND = "#00A6F6";
-const BRAND_DARK = "#0080C0";
 const BRAND_LIGHT = "#E0F4FE";
 const BORDER = "#e5e7eb";
+const DANGER = "#ef4444";
 const GRAY_100 = "#f3f4f6";
 const GRAY_200 = "#e5e7eb";
 const GRAY_400 = "#9ca3af";
-const ORANGE = "#f97316";
 
 function useLoop(duration: number, easing = Easing.inOut(Easing.ease)) {
   const progress = useSharedValue(0);
@@ -41,58 +39,13 @@ function phase(value: number, offset: number) {
   return (value + offset) % 1;
 }
 
-function useCrumbStyle(
-  progress: SharedValue<number>,
-  offset: number,
-  radius: number
-) {
-  return useAnimatedStyle(() => {
-    const p = phase(progress.value, offset);
+function useFoodOrbitStyle(progress: SharedValue<number>, index: number) {
+  return useAnimatedStyle<ViewStyle>(() => {
+    const angle = phase(progress.value, index / 5) * Math.PI * 2;
     return {
-      opacity: interpolate(p, [0, 0.1, 0.9, 1], [0, 0.9, 0.9, 0]),
-      transform: [{ rotate: `${p * 360}deg` }, { translateX: radius }],
-    };
-  });
-}
-
-function useRadarStyle(
-  progress: SharedValue<number>,
-  offset: number,
-  maxOpacity: number
-) {
-  return useAnimatedStyle(() => {
-    const p = phase(progress.value, offset);
-    const size = interpolate(p, [0, 1], [12, 104]);
-    return {
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-      opacity: interpolate(p, [0, 1], [maxOpacity, 0]),
-    };
-  });
-}
-
-function useBubbleStyle(progress: SharedValue<number>, right = false) {
-  return useAnimatedStyle(() => {
-    const input = right ? [0, 0.3, 0.5, 0.85, 1] : [0, 0.2, 0.7, 1];
-    const opacity = right
-      ? interpolate(
-          progress.value,
-          input,
-          [0, 0, 1, 1, 0],
-          Extrapolation.CLAMP
-        )
-      : interpolate(
-          progress.value,
-          input,
-          [0, 1, 1, 0],
-          Extrapolation.CLAMP
-        );
-    return {
-      opacity,
       transform: [
-        { translateY: interpolate(opacity, [0, 1], [5, 0]) },
-        { scale: interpolate(opacity, [0, 1], [0.75, 1]) },
+        { translateX: Math.cos(angle) * 58 },
+        { translateY: Math.sin(angle) * 58 },
       ],
     };
   });
@@ -100,276 +53,294 @@ function useBubbleStyle(progress: SharedValue<number>, right = false) {
 
 function useTypingDotStyle(progress: SharedValue<number>, index: number) {
   return useAnimatedStyle<ViewStyle>(() => {
-    const value = phase(progress.value, index * 0.3);
+    const p = phase(progress.value, index * 0.3);
     return {
-      opacity: interpolate(value, [0, 0.25, 1], [0.2, 1, 0.2]),
+      opacity: interpolate(p, [0, 0.25, 1], [0.15, 1, 0.15]),
+    };
+  });
+}
+
+function useHeartStyle(progress: SharedValue<number>, offset: number, variant: 0 | 1 | 2) {
+  return useAnimatedStyle<ViewStyle>(() => {
+    const p = phase(progress.value, offset);
+    const translateY = interpolate(
+      p,
+      [0, 0.22, 0.55, 0.85, 1],
+      variant === 1 ? [0, -22, -44, -60, -60] : variant === 2 ? [0, -14, -30, -48, -48] : [0, -18, -36, -54, -54],
+      Extrapolation.CLAMP
+    );
+    const scale = interpolate(
+      p,
+      [0, 0.22, 0.55, 0.85, 1],
+      variant === 1 ? [0.3, 1.2, 0.85, 0.5, 0.5] : variant === 2 ? [0.5, 1, 0.9, 0.6, 0.6] : [0.4, 1.1, 0.9, 0.6, 0.6],
+      Extrapolation.CLAMP
+    );
+    const rotate = interpolate(
+      p,
+      [0, 0.22, 0.55, 0.85, 1],
+      variant === 1 ? [10, -8, 4, 0, 0] : variant === 2 ? [-5, 6, -3, 0, 0] : [-10, 8, -5, 0, 0],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      opacity: interpolate(p, [0, 0.2, 0.6, 0.85, 1], [0, 1, 1, 0, 0]),
+      transform: [{ translateY }, { scale }, { rotate: `${rotate}deg` }],
     };
   });
 }
 
 export function FeedEmptyAnimation() {
-  const float = useLoop(3000);
-  const wobble = useLoop(3400);
-  const orbit = useLoop(4200);
-  const plus = useLoop(2400);
+  const bounce = useLoop(2200, Easing.inOut(Easing.ease));
+  const orbit = useLoop(5000, Easing.linear);
+  const sparkle = useLoop(2200);
 
-  const plateStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: interpolate(float.value, [0, 0.5, 1], [0, -9, 0]) }],
-  }));
-
-  const shadowStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(float.value, [0, 0.5, 1], [0.12, 0.06, 0.12]),
-    transform: [{ scaleX: interpolate(float.value, [0, 0.5, 1], [1, 0.82, 1]) }],
-  }));
-
-  const leftToolStyle = useAnimatedStyle(() => ({
+  const plateStyle = useAnimatedStyle<ViewStyle>(() => ({
     transform: [
-      { rotate: `${interpolate(wobble.value, [0, 0.5, 1], [-5, 3, -5])}deg` },
+      { translateY: interpolate(bounce.value, [0, 0.4, 0.6, 1], [0, -14, -10, 0]) },
+      { scale: interpolate(bounce.value, [0, 0.4, 0.6, 1], [1, 1.12, 1.08, 1]) },
     ],
   }));
 
-  const rightToolStyle = useAnimatedStyle(() => ({
+  const firstFoodStyle = useFoodOrbitStyle(orbit, 0);
+  const secondFoodStyle = useFoodOrbitStyle(orbit, 1);
+  const thirdFoodStyle = useFoodOrbitStyle(orbit, 2);
+  const fourthFoodStyle = useFoodOrbitStyle(orbit, 3);
+  const fifthFoodStyle = useFoodOrbitStyle(orbit, 4);
+
+  const sparkleStyle = useAnimatedStyle<ViewStyle>(() => ({
+    opacity: interpolate(sparkle.value, [0, 0.5, 1], [0, 1, 0]),
     transform: [
-      { rotate: `${interpolate(wobble.value, [0, 0.5, 1], [5, -3, 5])}deg` },
+      { translateX: interpolate(sparkle.value, [0, 0.5, 1], [0, -8, 0]) },
+      { translateY: interpolate(sparkle.value, [0, 0.5, 1], [0, -12, 0]) },
+      { scale: interpolate(sparkle.value, [0, 0.5, 1], [0, 1, 0]) },
     ],
   }));
 
-  const plusStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(plus.value, [0, 0.4, 0.6, 1], [0, 0.6, 0.6, 0]),
-    transform: [
-      { scale: interpolate(plus.value, [0, 0.4, 0.6, 1], [0.5, 1, 1, 0.5]) },
-    ],
-  }));
+  const starStyle = useAnimatedStyle<ViewStyle>(() => {
+    const p = phase(sparkle.value, 0.18);
+    return {
+      opacity: interpolate(p, [0, 0.5, 1], [0, 1, 0]),
+      transform: [
+        { translateX: interpolate(p, [0, 0.5, 1], [0, 10, 0]) },
+        { translateY: interpolate(p, [0, 0.5, 1], [0, -10, 0]) },
+        { scale: interpolate(p, [0, 0.5, 1], [0, 1, 0]) },
+      ],
+    };
+  });
 
-  const crumbOneStyle = useCrumbStyle(orbit, 0, 54);
-  const crumbTwoStyle = useCrumbStyle(orbit, 1 / 3, 48);
-  const crumbThreeStyle = useCrumbStyle(orbit, 2 / 3, 42);
+  const foods = [
+    { emoji: "🍜", style: firstFoodStyle },
+    { emoji: "🍕", style: secondFoodStyle },
+    { emoji: "🥗", style: thirdFoodStyle },
+    { emoji: "🍣", style: fourthFoodStyle },
+    { emoji: "🌮", style: fifthFoodStyle },
+  ];
 
   return (
     <View style={styles.canvas}>
-      <Animated.View style={[styles.plateShadow, shadowStyle]} />
-
-      <View style={styles.orbitCenter} pointerEvents="none">
-        <Animated.View style={[styles.crumb, styles.crumbOrange, crumbOneStyle]} />
-        <Animated.View style={[styles.crumbSmall, styles.crumbBrand, crumbTwoStyle]} />
-        <Animated.View style={[styles.crumbTiny, styles.crumbSky, crumbThreeStyle]} />
+      <View style={styles.centerPoint}>
+        {foods.map((food) => (
+          <Animated.View key={food.emoji} style={[styles.foodEmojiWrap, food.style]}>
+            <Text style={styles.foodEmoji}>{food.emoji}</Text>
+          </Animated.View>
+        ))}
       </View>
 
-      <Animated.View style={[styles.plateGroup, plateStyle]}>
-        <View style={styles.plateBase} />
-        <View style={styles.plateBowl}>
-          <View style={styles.plateRim}>
-            <View style={styles.plateCenter}>
-              <Animated.View style={[styles.plusGroup, plusStyle]}>
-                <View style={styles.plusVertical} />
-                <View style={styles.plusHorizontal} />
-              </Animated.View>
-            </View>
-          </View>
-        </View>
-      </Animated.View>
-
-      <Animated.View style={[styles.fork, leftToolStyle]}>
-        <View style={styles.forkCrossbar} />
-        <View style={styles.forkTineOne} />
-        <View style={styles.forkTineTwo} />
-        <View style={styles.forkTineThree} />
-        <View style={styles.forkHandle} />
-      </Animated.View>
-
-      <Animated.View style={[styles.knife, rightToolStyle]}>
-        <View style={styles.knifeBlade} />
-        <View style={styles.knifeHandle} />
+      <Animated.View style={[styles.feedPlateWrap, plateStyle]}>
+        <Text style={styles.feedPlate}>🍽️</Text>
+        <Animated.View style={[styles.feedSparkle, sparkleStyle]}>
+          <Text style={styles.sparkleEmoji}>✨</Text>
+        </Animated.View>
+        <Animated.View style={[styles.feedStar, starStyle]}>
+          <Text style={styles.starEmoji}>⭐</Text>
+        </Animated.View>
       </Animated.View>
     </View>
   );
 }
 
 export function DiscoverEmptyAnimation() {
-  const radar = useLoop(2800, Easing.out(Easing.ease));
-  const cards = useLoop(3800, Easing.in(Easing.ease));
-  const dot = useLoop(2000);
+  const cards = useLoop(3800);
+  const glass = useLoop(2400);
 
-  const firstRadarStyle = useRadarStyle(radar, 0, 0.9);
-  const secondRadarStyle = useRadarStyle(radar, 0.5, 0.7);
-
-  const bottomCardStyle = useAnimatedStyle(() => ({
-    opacity: 0.45,
-    transform: [{ translateY: 8 }, { scale: 0.94 }],
+  const bottomCardStyle = useAnimatedStyle<ViewStyle>(() => ({
+    opacity: 0.5,
+    transform: [{ translateY: 10 }, { scale: 0.91 }],
   }));
 
-  const middleCardStyle = useAnimatedStyle(() => {
+  const middleCardStyle = useAnimatedStyle<ViewStyle>(() => {
     const p = phase(cards.value, 0.24);
     return {
-      opacity: interpolate(p, [0, 0.4, 0.7, 0.71, 1], [0.7, 0.7, 0, 0, 0], Extrapolation.CLAMP),
+      opacity: interpolate(p, [0, 0.35, 0.63, 0.64, 1], [0.8, 0.8, 0, 0, 0], Extrapolation.CLAMP),
       transform: [
-        { translateX: interpolate(p, [0, 0.4, 0.7, 1], [0, 0, -76, 0], Extrapolation.CLAMP) },
-        { translateY: interpolate(p, [0, 0.4, 0.7, 1], [0, 0, -22, 0], Extrapolation.CLAMP) },
-        { rotate: `${interpolate(p, [0, 0.4, 0.7, 1], [-2, -2, -18, -2], Extrapolation.CLAMP)}deg` },
+        { translateX: interpolate(p, [0, 0.35, 0.63, 1], [0, 0, -100, 0], Extrapolation.CLAMP) },
+        { rotate: `${interpolate(p, [0, 0.35, 0.63, 1], [-2, -2, -20, -2], Extrapolation.CLAMP)}deg` },
+        { scale: 0.96 },
       ],
     };
   });
 
-  const topCardStyle = useAnimatedStyle(() => {
-    const p = cards.value;
-    return {
-      opacity: interpolate(p, [0, 0.25, 0.55, 0.56, 1], [1, 1, 0, 0, 0], Extrapolation.CLAMP),
-      transform: [
-        { translateX: interpolate(p, [0, 0.25, 0.55, 1], [0, 0, 88, 0], Extrapolation.CLAMP) },
-        { translateY: interpolate(p, [0, 0.25, 0.55, 1], [0, 0, -28, 0], Extrapolation.CLAMP) },
-        { rotate: `${interpolate(p, [0, 0.25, 0.55, 1], [0, 0, 20, 0], Extrapolation.CLAMP)}deg` },
-      ],
-    };
-  });
+  const topCardStyle = useAnimatedStyle<ViewStyle>(() => ({
+    opacity: interpolate(cards.value, [0, 0.2, 0.48, 0.49, 1], [1, 1, 0, 0, 0], Extrapolation.CLAMP),
+    transform: [
+      { translateX: interpolate(cards.value, [0, 0.2, 0.48, 1], [0, 0, 110, 0], Extrapolation.CLAMP) },
+      { rotate: `${interpolate(cards.value, [0, 0.2, 0.48, 1], [0, 0, 22, 0], Extrapolation.CLAMP)}deg` },
+    ],
+  }));
 
-  const dotStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(dot.value, [0, 0.5, 1], [1, 1.3, 1]) }],
+  const nopeStyle = useAnimatedStyle<ViewStyle>(() => ({
+    opacity: interpolate(cards.value, [0, 0.15, 0.25, 0.38, 0.45, 1], [0, 0, 1, 1, 0, 0], Extrapolation.CLAMP),
+    transform: [
+      { scale: interpolate(cards.value, [0, 0.15, 0.25, 0.38, 0.45, 1], [0.6, 0.6, 1, 1, 0.6, 0.6], Extrapolation.CLAMP) },
+      { rotate: `${interpolate(cards.value, [0, 0.25, 0.38, 1], [8, -8, -8, 8], Extrapolation.CLAMP)}deg` },
+    ],
+  }));
+
+  const yepStyle = useAnimatedStyle<ViewStyle>(() => ({
+    opacity: interpolate(cards.value, [0, 0.5, 0.6, 0.73, 0.8, 1], [0, 0, 1, 1, 0, 0], Extrapolation.CLAMP),
+    transform: [
+      { scale: interpolate(cards.value, [0, 0.5, 0.6, 0.73, 0.8, 1], [0.6, 0.6, 1, 1, 0.6, 0.6], Extrapolation.CLAMP) },
+      { rotate: `${interpolate(cards.value, [0, 0.6, 0.73, 1], [-8, 8, 8, -8], Extrapolation.CLAMP)}deg` },
+    ],
+  }));
+
+  const glassStyle = useAnimatedStyle<ViewStyle>(() => ({
+    transform: [
+      { scale: interpolate(glass.value, [0, 0.5, 1], [1, 1.15, 1]) },
+      { rotate: `${interpolate(glass.value, [0, 0.5, 1], [-10, 10, -10])}deg` },
+    ],
   }));
 
   return (
     <View style={styles.canvas}>
-      <View style={styles.radarCenter}>
-        <Animated.View style={[styles.radarRing, firstRadarStyle]} />
-        <Animated.View style={[styles.radarRing, secondRadarStyle]} />
+      <View style={styles.discoverStack}>
+        <Animated.View style={[styles.discoverCard, bottomCardStyle]}>
+          <EmojiCardContent emoji="😴" />
+        </Animated.View>
+        <Animated.View style={[styles.discoverCard, middleCardStyle]}>
+          <EmojiCardContent emoji="🤩" active />
+        </Animated.View>
+        <Animated.View style={[styles.discoverCard, styles.discoverTopCard, topCardStyle]}>
+          <EmojiCardContent emoji="😊" active />
+          <Animated.View style={[styles.nopeBadge, nopeStyle]}>
+            <Text style={styles.nopeText}>✕ NOPE</Text>
+          </Animated.View>
+          <Animated.View style={[styles.yepBadge, yepStyle]}>
+            <Text style={styles.yepText}>💙 YEP</Text>
+          </Animated.View>
+        </Animated.View>
       </View>
-
-      <Animated.View style={[styles.discoverCard, styles.discoverCardBottom, bottomCardStyle]}>
-        <CardSkeleton size="small" />
-      </Animated.View>
-      <Animated.View style={[styles.discoverCard, styles.discoverCardMiddle, middleCardStyle]}>
-        <CardSkeleton />
-      </Animated.View>
-      <Animated.View style={[styles.discoverCard, styles.discoverCardTop, topCardStyle]}>
-        <View style={styles.passHint} />
-        <View style={styles.buddyHint} />
-        <CardSkeleton active />
-      </Animated.View>
-
-      <Animated.View style={[styles.centerDot, dotStyle]}>
-        <View style={styles.centerDotInner} />
+      <Animated.View style={[styles.magnifier, glassStyle]}>
+        <Text style={styles.magnifierEmoji}>🔍</Text>
       </Animated.View>
     </View>
   );
 }
 
-function CardSkeleton({ active = false, size = "regular" }: { active?: boolean; size?: "regular" | "small" }) {
-  const avatarSize = size === "small" ? 26 : active ? 32 : 28;
+function EmojiCardContent({ emoji, active = false }: { emoji: string; active?: boolean }) {
   return (
-    <View style={styles.cardSkeleton}>
-      <View
-        style={[
-          styles.skeletonAvatar,
-          {
-            width: avatarSize,
-            height: avatarSize,
-            borderRadius: avatarSize / 2,
-            backgroundColor: active ? "rgba(71,189,239,0.25)" : BRAND_LIGHT,
-          },
-        ]}
-      >
-        {active ? <View style={styles.skeletonAvatarInner} /> : null}
-      </View>
-      <View style={[styles.skeletonLineWide, active ? styles.skeletonLineActive : null]} />
-      <View style={[styles.skeletonLineShort, active ? styles.skeletonLineActive : null]} />
-    </View>
+    <>
+      <Text style={styles.cardEmoji}>{emoji}</Text>
+      <View style={[styles.skeletonLineWide, active ? styles.skeletonActive : null]} />
+      <View style={[styles.skeletonLineShort, active ? styles.skeletonActive : null]} />
+    </>
   );
 }
 
 export function MatchesEmptyAnimation() {
-  const drift = useLoop(3200);
-  const typing = useLoop(1000);
-  const rightTyping = useLoop(1000);
+  const drift = useLoop(2800);
+  const hearts = useLoop(2400, Easing.out(Easing.ease));
+  const typing = useLoop(900);
 
-  const leftFigureStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: interpolate(drift.value, [0, 0.5, 1], [0, 7, 0]) }],
-  }));
-
-  const rightFigureStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: interpolate(drift.value, [0, 0.5, 1], [0, -7, 0]) }],
-  }));
-
-  const lineStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(drift.value, [0, 0.5, 1], [0.15, 0.5, 0.15]),
-    transform: [{ translateX: interpolate(drift.value, [0, 0.5, 1], [-8, 0, -8]) }],
-  }));
-
-  const heartStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(drift.value, [0, 0.45, 0.6, 0.82, 1], [0, 0, 1, 1, 0], Extrapolation.CLAMP),
+  const leftFaceStyle = useAnimatedStyle<ViewStyle>(() => ({
     transform: [
-      { translateY: interpolate(drift.value, [0, 0.45, 0.6, 0.82, 1], [2, 2, -10, -10, 2], Extrapolation.CLAMP) },
-      { scale: interpolate(drift.value, [0, 0.45, 0.6, 0.82, 1], [0.3, 0.3, 1, 1, 0.3], Extrapolation.CLAMP) },
+      { translateX: interpolate(drift.value, [0, 0.5, 1], [0, 8, 0]) },
+      { rotate: `${interpolate(drift.value, [0, 0.5, 1], [0, -6, 0])}deg` },
     ],
   }));
 
-  const leftBubbleStyle = useBubbleStyle(drift);
-  const rightBubbleStyle = useBubbleStyle(drift, true);
-  const leftDotOneStyle = useTypingDotStyle(typing, 0);
-  const leftDotTwoStyle = useTypingDotStyle(typing, 1);
-  const leftDotThreeStyle = useTypingDotStyle(typing, 2);
-  const rightDotOneStyle = useTypingDotStyle(rightTyping, 0);
-  const rightDotTwoStyle = useTypingDotStyle(rightTyping, 1);
-  const rightDotThreeStyle = useTypingDotStyle(rightTyping, 2);
+  const rightFaceStyle = useAnimatedStyle<ViewStyle>(() => ({
+    transform: [
+      { translateX: interpolate(drift.value, [0, 0.5, 1], [0, -8, 0]) },
+      { rotate: `${interpolate(drift.value, [0, 0.5, 1], [0, 6, 0])}deg` },
+    ],
+  }));
+
+  const leftGlowStyle = useAnimatedStyle<TextStyle>(() => ({
+    textShadowColor: `rgba(0,166,246,${interpolate(drift.value, [0, 0.5, 1], [0, 0.5, 0])})`,
+    textShadowRadius: interpolate(drift.value, [0, 0.5, 1], [0, 8, 0]),
+  }));
+
+  const rightGlowStyle = useAnimatedStyle<TextStyle>(() => {
+    const p = phase(drift.value, 0.5);
+    return {
+      textShadowColor: `rgba(0,166,246,${interpolate(p, [0, 0.5, 1], [0, 0.5, 0])})`,
+      textShadowRadius: interpolate(p, [0, 0.5, 1], [0, 8, 0]),
+    };
+  });
+
+  const leftBubbleStyle = useAnimatedStyle<ViewStyle>(() => ({
+    opacity: interpolate(drift.value, [0, 0.15, 0.65, 1], [0, 1, 1, 0], Extrapolation.CLAMP),
+    transform: [
+      { translateY: interpolate(drift.value, [0, 0.15, 0.65, 1], [6, 0, 0, 6], Extrapolation.CLAMP) },
+      { scale: interpolate(drift.value, [0, 0.15, 0.65, 1], [0.7, 1, 1, 0.7], Extrapolation.CLAMP) },
+    ],
+  }));
+
+  const rightBubbleStyle = useAnimatedStyle<ViewStyle>(() => ({
+    opacity: interpolate(drift.value, [0, 0.35, 0.5, 0.9, 1], [0, 0, 1, 1, 0], Extrapolation.CLAMP),
+    transform: [
+      { translateY: interpolate(drift.value, [0, 0.35, 0.5, 0.9, 1], [6, 6, 0, 0, 6], Extrapolation.CLAMP) },
+      { scale: interpolate(drift.value, [0, 0.35, 0.5, 0.9, 1], [0.7, 0.7, 1, 1, 0.7], Extrapolation.CLAMP) },
+    ],
+  }));
+
+  const heartOneStyle = useHeartStyle(hearts, 0, 0);
+  const heartTwoStyle = useHeartStyle(hearts, 0.21, 1);
+  const heartThreeStyle = useHeartStyle(hearts, 0.42, 2);
+  const dotOneStyle = useTypingDotStyle(typing, 0);
+  const dotTwoStyle = useTypingDotStyle(typing, 1);
+  const dotThreeStyle = useTypingDotStyle(typing, 2);
 
   return (
     <View style={styles.canvas}>
-      <View style={styles.connectionLineClip}>
-        <Animated.View style={[styles.connectionLine, lineStyle]} />
-      </View>
-
-      <Animated.View style={[styles.leftFigure, leftFigureStyle]}>
-        <Figure fill={BRAND_LIGHT} faceOpacity={1} />
+      <Animated.View style={[styles.heartOne, heartOneStyle]}>
+        <Text style={styles.heartSmall}>💙</Text>
+      </Animated.View>
+      <Animated.View style={[styles.heartTwo, heartTwoStyle]}>
+        <Text style={styles.heartLarge}>💙</Text>
+      </Animated.View>
+      <Animated.View style={[styles.heartThree, heartThreeStyle]}>
+        <Text style={styles.heartTiny}>💙</Text>
       </Animated.View>
 
-      <Animated.View style={[styles.rightFigure, rightFigureStyle]}>
-        <Figure fill="rgba(0,166,246,0.18)" faceOpacity={0.7} />
+      <Animated.View style={[styles.buddyLeft, leftFaceStyle]}>
+        <Animated.View style={[styles.leftBubble, leftBubbleStyle]}>
+          <TypingDots color={GRAY_400} dotStyles={[dotOneStyle, dotTwoStyle, dotThreeStyle]} />
+        </Animated.View>
+        <Animated.Text style={[styles.buddyEmoji, leftGlowStyle]}>😄</Animated.Text>
       </Animated.View>
 
-      <Animated.View style={[styles.leftBubble, leftBubbleStyle]}>
-        <View style={styles.leftBubbleTail} />
-        <TypingDots
-          color={GRAY_400}
-          stylesForDots={[leftDotOneStyle, leftDotTwoStyle, leftDotThreeStyle]}
-        />
-      </Animated.View>
-
-      <Animated.View style={[styles.rightBubble, rightBubbleStyle]}>
-        <View style={styles.rightBubbleTail} />
-        <TypingDots
-          color="#ffffff"
-          stylesForDots={[rightDotOneStyle, rightDotTwoStyle, rightDotThreeStyle]}
-        />
-      </Animated.View>
-
-      <Animated.View style={[styles.heart, heartStyle]}>
-        <Ionicons name="heart" size={24} color={BRAND} />
+      <Animated.View style={[styles.buddyRight, rightFaceStyle]}>
+        <Animated.View style={[styles.rightBubble, rightBubbleStyle]}>
+          <TypingDots color="#ffffff" dotStyles={[dotOneStyle, dotTwoStyle, dotThreeStyle]} />
+        </Animated.View>
+        <Animated.Text style={[styles.buddyEmoji, rightGlowStyle]}>🥰</Animated.Text>
       </Animated.View>
     </View>
-  );
-}
-
-function Figure({ fill, faceOpacity }: { fill: string; faceOpacity: number }) {
-  return (
-    <>
-      <View style={[styles.figureBody, { backgroundColor: fill }]} />
-      <View style={[styles.figureHead, { backgroundColor: fill }]}>
-        <View style={[styles.figureEye, styles.figureEyeLeft, { opacity: faceOpacity }]} />
-        <View style={[styles.figureEye, styles.figureEyeRight, { opacity: faceOpacity }]} />
-        <View style={[styles.figureSmile, { opacity: faceOpacity }]} />
-      </View>
-    </>
   );
 }
 
 function TypingDots({
   color,
-  stylesForDots,
+  dotStyles,
 }: {
   color: string;
-  stylesForDots: ViewStyle[];
+  dotStyles: ViewStyle[];
 }) {
   return (
     <View style={styles.typingDots}>
-      {stylesForDots.map((dotStyle, index) => (
+      {dotStyles.map((dotStyle, index) => (
         <Animated.View
           key={index}
           style={[styles.typingDot, { backgroundColor: color }, dotStyle]}
@@ -384,444 +355,207 @@ const styles = StyleSheet.create({
     width: 180,
     height: 160,
     position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  plateShadow: {
-    position: "absolute",
-    left: 44,
-    top: 126,
-    width: 92,
-    height: 14,
-    borderRadius: 46,
-    backgroundColor: BRAND,
-  },
-  orbitCenter: {
+  centerPoint: {
     position: "absolute",
     left: 90,
-    top: 86,
+    top: 80,
   },
-  crumb: {
+  foodEmojiWrap: {
     position: "absolute",
-    left: -5.5,
-    top: -5.5,
-    width: 11,
-    height: 11,
-    borderRadius: 5.5,
+    left: -12,
+    top: -12,
+    width: 24,
+    height: 24,
   },
-  crumbSmall: {
+  foodEmoji: {
+    fontSize: 22,
+    lineHeight: 24,
+    textAlign: "center",
+  },
+  feedPlateWrap: {
+    position: "relative",
+    zIndex: 2,
+  },
+  feedPlate: {
+    fontSize: 64,
+    lineHeight: 72,
+  },
+  feedSparkle: {
     position: "absolute",
-    left: -4.5,
-    top: -4.5,
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
+    left: 2,
+    top: 5,
   },
-  crumbTiny: {
+  sparkleEmoji: {
+    fontSize: 16,
+  },
+  feedStar: {
     position: "absolute",
-    left: -4,
-    top: -4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  crumbOrange: {
-    backgroundColor: ORANGE,
-  },
-  crumbBrand: {
-    backgroundColor: BRAND,
-  },
-  crumbSky: {
-    backgroundColor: "#7bdcf8",
-  },
-  plateGroup: {
-    position: "absolute",
-    left: 38,
-    top: 48,
-    width: 104,
-    height: 72,
-    alignItems: "center",
-  },
-  plateBase: {
-    position: "absolute",
-    left: 0,
-    top: 39,
-    width: 104,
-    height: 26,
-    borderRadius: 52,
-    backgroundColor: "#ffffff",
-    borderWidth: 1.5,
-    borderColor: BORDER,
-  },
-  plateBowl: {
-    position: "absolute",
-    left: 8,
+    right: 2,
     top: 0,
-    width: 88,
-    height: 76,
-    borderRadius: 44,
-    backgroundColor: "#ffffff",
-    borderWidth: 1.5,
-    borderColor: BORDER,
-    alignItems: "center",
-    justifyContent: "center",
   },
-  plateRim: {
-    width: 72,
-    height: 60,
-    borderRadius: 36,
-    backgroundColor: "#f9fafb",
-    borderWidth: 1,
-    borderColor: GRAY_100,
-    alignItems: "center",
-    justifyContent: "center",
+  starEmoji: {
+    fontSize: 14,
   },
-  plateCenter: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#f5fcff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  plusGroup: {
-    width: 20,
-    height: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  plusVertical: {
-    position: "absolute",
-    width: 5,
-    height: 14,
-    borderRadius: 2.5,
-    backgroundColor: BRAND,
-  },
-  plusHorizontal: {
-    position: "absolute",
-    width: 14,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: BRAND,
-  },
-  fork: {
-    position: "absolute",
-    left: 50,
-    top: 50,
-    width: 16,
-    height: 54,
-  },
-  forkHandle: {
-    position: "absolute",
-    left: 5.5,
-    top: 17,
-    width: 3,
-    height: 34,
-    borderRadius: 1.5,
-    backgroundColor: GRAY_400,
-  },
-  forkCrossbar: {
-    position: "absolute",
-    left: 0,
-    top: 15,
-    width: 14,
-    height: 2.5,
-    borderRadius: 1.25,
-    backgroundColor: GRAY_400,
-  },
-  forkTineOne: {
-    position: "absolute",
-    left: 1,
-    top: 0,
-    width: 2.5,
-    height: 17,
-    borderRadius: 1.25,
-    backgroundColor: GRAY_400,
-  },
-  forkTineTwo: {
-    position: "absolute",
-    left: 6,
-    top: 0,
-    width: 2.5,
-    height: 17,
-    borderRadius: 1.25,
-    backgroundColor: GRAY_400,
-  },
-  forkTineThree: {
-    position: "absolute",
-    left: 11,
-    top: 0,
-    width: 2.5,
-    height: 17,
-    borderRadius: 1.25,
-    backgroundColor: GRAY_400,
-  },
-  knife: {
-    position: "absolute",
-    left: 118,
-    top: 50,
-    width: 14,
-    height: 54,
-  },
-  knifeBlade: {
-    position: "absolute",
-    left: 3.5,
-    top: 0,
-    width: 9,
-    height: 18,
-    borderTopLeftRadius: 9,
-    borderTopRightRadius: 2,
-    borderBottomRightRadius: 9,
-    backgroundColor: "#d1d5db",
-    transform: [{ skewY: "16deg" }],
-  },
-  knifeHandle: {
-    position: "absolute",
-    left: 3.5,
-    top: 8,
-    width: 3,
-    height: 43,
-    borderRadius: 1.5,
-    backgroundColor: GRAY_400,
-  },
-  radarCenter: {
-    position: "absolute",
-    left: 90,
-    top: 90,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  radarRing: {
-    position: "absolute",
-    borderWidth: 1.5,
-    borderColor: BRAND,
+  discoverStack: {
+    width: 80,
+    height: 110,
+    position: "relative",
   },
   discoverCard: {
     position: "absolute",
-    backgroundColor: "#ffffff",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    borderRadius: 16,
     borderWidth: 1.5,
     borderColor: BORDER,
-    shadowColor: BRAND,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 14,
-    elevation: 2,
-  },
-  discoverCardBottom: {
-    left: 57,
-    top: 56,
-    width: 66,
-    height: 78,
-    borderRadius: 14,
-  },
-  discoverCardMiddle: {
-    left: 55,
-    top: 52,
-    width: 70,
-    height: 78,
-    borderRadius: 14,
-  },
-  discoverCardTop: {
-    left: 53,
-    top: 48,
-    width: 74,
-    height: 78,
-    borderRadius: 14,
-    borderColor: "#bfdbfe",
-  },
-  cardSkeleton: {
-    flex: 1,
-    alignItems: "center",
-    paddingTop: 12,
-  },
-  skeletonAvatar: {
+    backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
+    gap: 6,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  skeletonAvatarInner: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: "rgba(71,189,239,0.45)",
+  discoverTopCard: {
+    borderWidth: 2,
+    borderColor: "#bfdbfe",
+    shadowColor: BRAND,
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+  },
+  cardEmoji: {
+    fontSize: 36,
+    lineHeight: 42,
   },
   skeletonLineWide: {
-    width: 40,
+    width: 48,
     height: 6,
     borderRadius: 3,
     backgroundColor: GRAY_100,
-    marginTop: 14,
   },
   skeletonLineShort: {
-    width: 28,
+    width: 32,
     height: 5,
     borderRadius: 2.5,
     backgroundColor: GRAY_100,
-    marginTop: 5,
   },
-  skeletonLineActive: {
+  skeletonActive: {
     backgroundColor: GRAY_200,
   },
-  passHint: {
+  nopeBadge: {
     position: "absolute",
-    left: 3,
-    top: 4,
-    width: 20,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "rgba(156,163,175,0.15)",
+    top: 8,
+    left: 6,
+    borderRadius: 999,
+    backgroundColor: "#fef2f2",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
   },
-  buddyHint: {
+  yepBadge: {
     position: "absolute",
-    right: 3,
-    top: 4,
-    width: 20,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "rgba(0,166,246,0.15)",
+    top: 8,
+    right: 6,
+    borderRadius: 999,
+    backgroundColor: BRAND_LIGHT,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
   },
-  centerDot: {
+  nopeText: {
+    color: DANGER,
+    fontSize: 10,
+    fontWeight: "800",
+  },
+  yepText: {
+    color: BRAND,
+    fontSize: 10,
+    fontWeight: "800",
+  },
+  magnifier: {
     position: "absolute",
-    left: 85,
-    top: 85,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: BRAND,
+    right: 24,
+    bottom: 10,
+  },
+  magnifierEmoji: {
+    fontSize: 28,
+  },
+  heartOne: {
+    position: "absolute",
+    top: 28,
+    left: 72,
+  },
+  heartSmall: {
+    fontSize: 16,
+  },
+  heartTwo: {
+    position: "absolute",
+    top: 34,
+    left: 84,
+  },
+  heartLarge: {
+    fontSize: 22,
+  },
+  heartThree: {
+    position: "absolute",
+    top: 30,
+    left: 96,
+  },
+  heartTiny: {
+    fontSize: 13,
+  },
+  buddyLeft: {
+    position: "absolute",
+    left: 14,
+    top: 46,
     alignItems: "center",
-    justifyContent: "center",
+    gap: 4,
   },
-  centerDotInner: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: "#ffffff",
-  },
-  connectionLineClip: {
+  buddyRight: {
     position: "absolute",
-    left: 68,
-    top: 98,
-    width: 44,
-    height: 4,
-    overflow: "hidden",
+    right: 14,
+    top: 46,
+    alignItems: "center",
+    gap: 4,
   },
-  connectionLine: {
-    width: 120,
-    height: 1.5,
-    borderTopWidth: 1.5,
-    borderStyle: "dashed",
-    borderColor: BRAND,
-  },
-  leftFigure: {
-    position: "absolute",
-    left: 30,
-    top: 78,
-    width: 36,
-    height: 51,
-  },
-  rightFigure: {
-    position: "absolute",
-    left: 114,
-    top: 78,
-    width: 36,
-    height: 51,
-  },
-  figureBody: {
-    position: "absolute",
-    left: 0,
-    top: 25,
-    width: 36,
-    height: 26,
-    borderRadius: 12,
-  },
-  figureHead: {
-    position: "absolute",
-    left: 4,
-    top: 0,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-  },
-  figureEye: {
-    position: "absolute",
-    top: 11,
-    width: 3.6,
-    height: 3.6,
-    borderRadius: 1.8,
-    backgroundColor: BRAND_DARK,
-  },
-  figureEyeLeft: {
-    left: 10,
-  },
-  figureEyeRight: {
-    right: 10,
-  },
-  figureSmile: {
-    position: "absolute",
-    left: 10,
-    top: 15,
-    width: 8,
-    height: 5,
-    borderBottomWidth: 1.8,
-    borderColor: BRAND_DARK,
-    borderRadius: 8,
+  buddyEmoji: {
+    fontSize: 42,
+    lineHeight: 48,
   },
   leftBubble: {
-    position: "absolute",
-    left: 26,
-    top: 56,
-    width: 38,
-    height: 24,
-    borderRadius: 11,
-    backgroundColor: "#ffffff",
-    borderWidth: 1.2,
+    borderRadius: 12,
+    borderWidth: 1.5,
     borderColor: BORDER,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  leftBubbleTail: {
-    position: "absolute",
-    left: 8,
-    bottom: -5,
-    width: 10,
-    height: 10,
     backgroundColor: "#ffffff",
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: BORDER,
-    transform: [{ rotate: "45deg" }],
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
   },
   rightBubble: {
-    position: "absolute",
-    left: 116,
-    top: 56,
-    width: 38,
-    height: 24,
-    borderRadius: 11,
+    borderRadius: 12,
     backgroundColor: BRAND,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  rightBubbleTail: {
-    position: "absolute",
-    right: 8,
-    bottom: -5,
-    width: 10,
-    height: 10,
-    backgroundColor: BRAND,
-    transform: [{ rotate: "45deg" }],
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    shadowColor: BRAND,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   typingDots: {
     flexDirection: "row",
-    gap: 4,
+    gap: 3,
   },
   typingDot: {
-    width: 5.6,
-    height: 5.6,
-    borderRadius: 2.8,
-  },
-  heart: {
-    position: "absolute",
-    left: 78,
-    top: 72,
-    width: 24,
-    height: 24,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
 });
