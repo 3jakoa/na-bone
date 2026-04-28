@@ -4,7 +4,6 @@ import { Ionicons } from "@expo/vector-icons";
 import {
   Platform,
   View,
-  Image,
   Modal,
   Text,
   Pressable,
@@ -16,7 +15,6 @@ import { registerForPushNotifications } from "../../lib/notifications";
 import { useTheme } from "../../lib/theme";
 
 export default function TabsLayout() {
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
   const { scheme } = useTheme();
   const isDark = scheme === "dark";
@@ -35,13 +33,6 @@ export default function TabsLayout() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
-      const { data: me } = await supabase
-        .from("profiles")
-        .select("id, photos")
-        .eq("user_id", user.id)
-        .single();
-      if (!me) return;
-      if (me.photos?.[0]) setPhotoUrl(me.photos[0]);
 
       registerForPushNotifications();
     })();
@@ -89,8 +80,8 @@ export default function TabsLayout() {
           name="discover"
           options={{
             title: "Išči",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="flame" size={size} color={color} />
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabEmoji emoji="🔥" size={size} color={color} focused={focused} />
             ),
           }}
         />
@@ -98,8 +89,8 @@ export default function TabsLayout() {
           name="feed"
           options={{
             title: "Boni",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="restaurant" size={size} color={color} />
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabEmoji emoji="🥣" size={size} color={color} focused={focused} />
             ),
           }}
         />
@@ -113,8 +104,8 @@ export default function TabsLayout() {
           name="matches"
           options={{
             title: "Buddies",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="chatbubbles" size={size} color={color} />
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabEmoji emoji="💬" size={size} color={color} focused={focused} />
             ),
           }}
         />
@@ -122,21 +113,9 @@ export default function TabsLayout() {
           name="profile"
           options={{
             title: "Profil",
-            tabBarIcon: ({ color, size }) =>
-              photoUrl ? (
-                <Image
-                  source={{ uri: photoUrl }}
-                  style={{
-                    width: size,
-                    height: size,
-                    borderRadius: size / 2,
-                    borderWidth: 2,
-                    borderColor: color,
-                  }}
-                />
-              ) : (
-                <Ionicons name="person-circle" size={size} color={color} />
-              ),
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabEmoji emoji="😎" size={size} color={color} focused={focused} />
+            ),
           }}
         />
       </Tabs>
@@ -146,7 +125,6 @@ export default function TabsLayout() {
           bottomPadding={androidBottomPadding}
           height={androidTabBarHeight}
           isDark={isDark}
-          photoUrl={photoUrl}
           onBlockedNavigate={setLeaveRoute}
         />
       ) : null}
@@ -268,25 +246,48 @@ type AndroidTabName = "discover" | "feed" | "matches" | "profile";
 const androidTabs: {
   name: AndroidTabName;
   title: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  emoji: string;
 }[] = [
-  { name: "discover", title: "Išči", icon: "flame" },
-  { name: "feed", title: "Boni", icon: "restaurant" },
-  { name: "matches", title: "Buddies", icon: "chatbubbles" },
-  { name: "profile", title: "Profil", icon: "person-circle" },
+  { name: "discover", title: "Išči", emoji: "🔥" },
+  { name: "feed", title: "Boni", emoji: "🥣" },
+  { name: "matches", title: "Buddies", emoji: "💬" },
+  { name: "profile", title: "Profil", emoji: "😎" },
 ];
+
+function TabEmoji({
+  emoji,
+  size,
+  color,
+  focused,
+}: {
+  emoji: string;
+  size: number;
+  color: string;
+  focused: boolean;
+}) {
+  return (
+    <Text
+      style={{
+        color,
+        fontSize: Math.round(size * 0.94),
+        lineHeight: size,
+        opacity: focused ? 1 : 0.58,
+      }}
+    >
+      {emoji}
+    </Text>
+  );
+}
 
 function AndroidTabBar({
   bottomPadding,
   height,
   isDark,
-  photoUrl,
   onBlockedNavigate,
 }: {
   bottomPadding: number;
   height: number;
   isDark: boolean;
-  photoUrl: string | null;
   onBlockedNavigate: (route: string) => void;
 }) {
   const pathname = usePathname();
@@ -340,20 +341,7 @@ function AndroidTabBar({
               justifyContent: "center",
             }}
           >
-            {tab.name === "profile" && photoUrl ? (
-              <Image
-                source={{ uri: photoUrl }}
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 12,
-                  borderWidth: 2,
-                  borderColor: color,
-                }}
-              />
-            ) : (
-              <Ionicons name={tab.icon} size={24} color={color} />
-            )}
+            <TabEmoji emoji={tab.emoji} size={24} color={color} focused={focused} />
             <Text
               style={{
                 marginTop: 2,
