@@ -16,6 +16,7 @@ import { supabase, type Bone, type Profile } from "../../lib/supabase";
 import { formatScheduledDate } from "../../lib/formatDate";
 import { BoneComposerCard } from "../../components/BoneComposerCard";
 import { createGuard } from "../../lib/createGuard";
+import { FeedEmptyAnimation } from "../../components/EmptyStateAnimations";
 
 type FeedItem = Bone & {
   author?: Pick<Profile, "id" | "name" | "photos" | "faculty">;
@@ -351,16 +352,12 @@ export default function Feed() {
               elevation: 0,
             }}
           >
-            <Image
-              source={require("../../assets/logo.png")}
-              style={{ width: 64, height: 64, borderRadius: 32 }}
-              resizeMode="cover"
-            />
-            <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
+            <FeedEmptyAnimation />
+            <Text className="text-gray-900 dark:text-white text-lg font-bold mt-3">
               Ni aktivnih bonov
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
-              Bodi prvi in objavi nov bon.
+            <Text className="text-gray-500 dark:text-gray-400 text-[13px] leading-5 mt-2 text-center">
+              Bodi prvi in objavi nov bon za kosilo.
             </Text>
           </View>
         </View>

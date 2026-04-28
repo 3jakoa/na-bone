@@ -18,6 +18,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { supabase, type Profile } from "../../lib/supabase";
+import { DiscoverEmptyAnimation } from "../../components/EmptyStateAnimations";
 
 const RIGHT_SWIPE_LIMIT_MESSAGE =
   "Porabil si vse današnje buddyje. Jutri lahko spet iščeš buddyja.";
@@ -364,15 +365,11 @@ export default function Discover() {
             className="items-center justify-center px-6"
             style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
           >
-            <Image
-              source={require("../../assets/logo.png")}
-              style={{ width: 64, height: 64, borderRadius: 32 }}
-              resizeMode="cover"
-            />
-            <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
+            <DiscoverEmptyAnimation />
+            <Text className="text-gray-900 dark:text-white text-lg font-bold mt-3">
               Ni več profilov
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
+            <Text className="text-gray-500 dark:text-gray-400 text-[13px] leading-5 mt-2 text-center">
               Preveri znova pozneje
             </Text>
           </View>
