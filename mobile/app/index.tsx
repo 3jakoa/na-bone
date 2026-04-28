@@ -133,7 +133,7 @@ export default function Index() {
           return router.replace(`/invite/${pendingInviteToken}` as any);
         }
 
-        router.replace("/(tabs)/discover");
+        router.replace("/(tabs)/feed");
       } catch (bootstrapError: any) {
         if (cancelled) return;
         setError(bootstrapError?.message ?? "Pri zagonu aplikacije je prišlo do napake.");
