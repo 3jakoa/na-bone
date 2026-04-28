@@ -16,6 +16,7 @@ import { supabase, type Bone, type Profile } from "../../lib/supabase";
 import { formatScheduledDate } from "../../lib/formatDate";
 import { BoneComposerCard } from "../../components/BoneComposerCard";
 import { createGuard } from "../../lib/createGuard";
+import { useLanguage } from "../../lib/i18n";
 import { FeedEmptyAnimation } from "../../components/EmptyStateAnimations";
 
 type FeedItem = Bone & {
@@ -40,6 +41,7 @@ export default function Feed() {
   const [selectedBone, setSelectedBone] = useState<FeedItem | null>(null);
   const [openComposerSignal, setOpenComposerSignal] = useState(0);
   const { compose } = useLocalSearchParams<{ compose?: string | string[] }>();
+  const { language, t } = useLanguage();
 
   const load = useCallback(async () => {
     setRefreshing(true);
@@ -69,7 +71,7 @@ export default function Feed() {
       if (matchesError) {
         setItems([]);
         setRefreshing(false);
-        Alert.alert("Napaka", matchesError.message);
+        Alert.alert(t("common.error"), matchesError.message);
         return;
       }
 
@@ -110,7 +112,7 @@ export default function Feed() {
     if (bonesError) {
       setItems([]);
       setRefreshing(false);
-      Alert.alert("Napaka", bonesError.message);
+      Alert.alert(t("common.error"), bonesError.message);
       return;
     }
 
@@ -194,7 +196,7 @@ export default function Feed() {
 
     setItems(visibleItems);
     setRefreshing(false);
-  }, []);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -216,10 +218,10 @@ export default function Feed() {
       return;
     }
 
-    Alert.alert("Zapuščaš ustvarjanje bona", "Vsi podatki se bodo ponastavili.", [
-      { text: "Ostani", style: "cancel" },
+    Alert.alert(t("feed.leaveCreateTitle"), t("feed.leaveCreateBody"), [
+      { text: t("common.stay"), style: "cancel" },
       {
-        text: "Zapusti",
+        text: t("common.leave"),
         style: "destructive",
         onPress: () => {
           createGuard.reset?.();
@@ -231,7 +233,7 @@ export default function Feed() {
 
   async function openPrivateInvite(item: FeedItem) {
     if (!item.match_id) {
-      return Alert.alert("Napaka", "Povabilo nima pogovora.");
+      return Alert.alert(t("common.error"), t("feed.inviteNoChat"));
     }
 
     if (item.user_id !== me?.id) {
@@ -256,17 +258,17 @@ export default function Feed() {
     const { data, error } = await supabase.rpc("respond_to_public_bone", {
       p_bone_id: item.id,
     });
-    if (error) return Alert.alert("Napaka", error.message);
+    if (error) return Alert.alert(t("common.error"), error.message);
 
     setSelectedBone(null);
     router.push(`/matches/${data as string}`);
   }
 
   function confirmCancelBone(item: FeedItem) {
-    Alert.alert("Umakni bon?", "Bon ne bo več prikazan drugim uporabnikom.", [
-      { text: "Nazaj", style: "cancel" },
+    Alert.alert(t("feed.cancelBonTitle"), t("feed.cancelBonBody"), [
+      { text: t("common.back"), style: "cancel" },
       {
-        text: "Umakni",
+        text: t("feed.cancelBon"),
         style: "destructive",
         onPress: () => cancelBone(item),
       },
@@ -314,8 +316,8 @@ export default function Feed() {
       setItems(previousItems);
       setSelectedBone(previousSelected);
       Alert.alert(
-        "Napaka",
-        error?.message ?? "Tega bona trenutno ni mogoče umakniti."
+        t("common.error"),
+        error?.message ?? t("feed.cancelFailed")
       );
     }
   }
@@ -354,10 +356,10 @@ export default function Feed() {
           >
             <FeedEmptyAnimation />
             <Text className="text-gray-900 dark:text-white text-lg font-bold mt-3">
-              Ni aktivnih bonov
+              {t("feed.noActive")}
             </Text>
             <Text className="text-gray-500 dark:text-gray-400 text-[13px] leading-5 mt-2 text-center">
-              Bodi prvi in objavi nov bon za kosilo.
+              {t("feed.noActiveBody")}
             </Text>
           </View>
         </View>
@@ -435,7 +437,7 @@ export default function Feed() {
                     {isMine && (
                       <View className="rounded-full bg-brand/10 px-2.5 py-1">
                         <Text className="text-[11px] font-semibold text-brand">
-                          Tvoj
+                          {t("common.your")}
                         </Text>
                       </View>
                     )}
@@ -453,7 +455,7 @@ export default function Feed() {
                             : "text-brand"
                         }`}
                       >
-                        {isPrivate ? "Zasebno" : "Javno"}
+                        {isPrivate ? t("common.private") : t("common.public")}
                       </Text>
                     </View>
                     {openCount > 0 ? (
@@ -465,7 +467,7 @@ export default function Feed() {
                           style={{ marginRight: 3 }}
                         />
                         <Text className="text-[11px] font-semibold text-gray-500 dark:text-gray-300">
-                          {openCount} odprli
+                          {t("feed.openedCount", { count: openCount })}
                         </Text>
                       </View>
                     ) : null}
@@ -499,7 +501,7 @@ export default function Feed() {
                         className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-1.5"
                         numberOfLines={1}
                       >
-                        {formatScheduledDate(item.scheduled_at)}
+                        {formatScheduledDate(item.scheduled_at, language)}
                       </Text>
                     </View>
                   </View>
@@ -526,7 +528,7 @@ export default function Feed() {
                       className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-2 shrink-0"
                     >
                       <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
-                        Umakni
+                        {t("feed.cancelBon")}
                       </Text>
                     </Pressable>
                   ) : (
@@ -540,7 +542,7 @@ export default function Feed() {
                       className="bg-brand rounded-full px-4 py-2.5 items-center shrink-0"
                     >
                       <Text className="text-white text-sm font-bold">
-                        Odpri chat
+                        {t("feed.openChat")}
                       </Text>
                     </Pressable>
                   )}
@@ -575,7 +577,7 @@ export default function Feed() {
                   <>
                     <View className="flex-row items-center justify-between px-5 pt-5 pb-2">
                       <Text className="text-lg font-bold text-gray-900 dark:text-white">
-                        {isPrivate ? "Zasebni bon" : "Javni bon"}
+                        {isPrivate ? t("feed.privateBon") : t("feed.publicBon")}
                       </Text>
                       <View className="flex-row items-center gap-2">
                         {isMine && (
@@ -584,7 +586,7 @@ export default function Feed() {
                             className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
                           >
                             <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
-                              Umakni bon
+                              {t("feed.cancelBonLong")}
                             </Text>
                           </Pressable>
                         )}
@@ -629,7 +631,7 @@ export default function Feed() {
                         {isMine && (
                           <View className="rounded-full bg-brand/10 px-3 py-1">
                             <Text className="text-xs font-semibold text-brand">
-                              Tvoj bon
+                              {t("common.yourBon")}
                             </Text>
                           </View>
                         )}
@@ -647,7 +649,7 @@ export default function Feed() {
                                 : "text-brand"
                             }`}
                           >
-                            {isPrivate ? "Zasebno" : "Javno"}
+                            {isPrivate ? t("common.private") : t("common.public")}
                           </Text>
                         </View>
                       </View>
@@ -667,7 +669,7 @@ export default function Feed() {
                       <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mb-3 self-start">
                         <Ionicons name="calendar" size={16} color="#00A6F6" />
                         <Text className="text-sm font-semibold text-brand ml-1.5">
-                          {formatScheduledDate(b.scheduled_at)}
+                          {formatScheduledDate(b.scheduled_at, language)}
                         </Text>
                       </View>
 
@@ -690,7 +692,7 @@ export default function Feed() {
                           className="bg-brand rounded-2xl py-4 items-center"
                         >
                           <Text className="text-white font-bold text-base">
-                            Odpri chat
+                            {t("feed.openChat")}
                           </Text>
                         </Pressable>
                       )}

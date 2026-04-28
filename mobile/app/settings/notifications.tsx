@@ -3,6 +3,7 @@ import { View, Text, Pressable, Switch, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../lib/supabase";
+import { useLanguage } from "../../lib/i18n";
 
 type Prefs = {
   notif_bones: boolean;
@@ -13,6 +14,7 @@ type Prefs = {
 export default function Notifications() {
   const [prefs, setPrefs] = useState<Prefs | null>(null);
   const [meUserId, setMeUserId] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     (async () => {
@@ -58,7 +60,7 @@ export default function Notifications() {
         <Pressable onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">Obvestila</Text>
+        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">{t("settings.notificationsTitle")}</Text>
       </View>
 
       {!prefs ? (
@@ -68,31 +70,31 @@ export default function Notifications() {
           <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm">
             <ToggleRow
               icon="restaurant-outline"
-              label="Novi boni"
-              description="Ko buddy objavi nov bon"
+              label={t("settings.newBoni")}
+              description={t("settings.newBoniDesc")}
               value={prefs.notif_bones}
               onToggle={(v) => update("notif_bones", v)}
             />
             <Sep />
             <ToggleRow
               icon="heart-outline"
-              label="Novi matchi"
-              description="Ko dobiš novega buddyja"
+              label={t("settings.newMatches")}
+              description={t("settings.newMatchesDesc")}
               value={prefs.notif_matches}
               onToggle={(v) => update("notif_matches", v)}
             />
             <Sep />
             <ToggleRow
               icon="chatbubble-outline"
-              label="Sporočila"
-              description="Nova sporočila od buddyjev"
+              label={t("settings.messages")}
+              description={t("settings.messagesDesc")}
               value={prefs.notif_messages}
               onToggle={(v) => update("notif_messages", v)}
             />
           </View>
 
           <Text className="text-xs text-gray-400 dark:text-gray-500 text-center mt-4 px-8">
-            Obvestila upravljaš tudi v nastavitvah sistema.
+            {t("settings.notificationsHint")}
           </Text>
         </>
       )}

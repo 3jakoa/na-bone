@@ -18,6 +18,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { supabase, type Profile } from "../../lib/supabase";
+import { useLanguage } from "../../lib/i18n";
 import { DiscoverEmptyAnimation } from "../../components/EmptyStateAnimations";
 
 const RIGHT_SWIPE_LIMIT_MESSAGE =
@@ -48,6 +49,7 @@ export default function Discover() {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const swiping = useRef(false);
+  const { t } = useLanguage();
 
   const loadDeck = useCallback(async () => {
     const {
@@ -92,14 +94,14 @@ export default function Discover() {
     ]);
 
     if (candidatesError) {
-      Alert.alert("Napaka", candidatesError.message);
+      Alert.alert(t("common.error"), candidatesError.message);
       setDeck([]);
     } else {
       setDeck((candidates ?? []) as Profile[]);
     }
 
     if (remainingError) {
-      Alert.alert("Napaka", remainingError.message);
+      Alert.alert(t("common.error"), remainingError.message);
       setRemainingRightSwipes(10);
     } else {
       setRemainingRightSwipes(
@@ -113,7 +115,7 @@ export default function Discover() {
     swiping.current = false;
     translateX.value = 0;
     translateY.value = 0;
-  }, [translateX, translateY]);
+  }, [t, translateX, translateY]);
 
   useFocusEffect(
     useCallback(() => {
@@ -143,7 +145,7 @@ export default function Discover() {
   }
 
   function showRightSwipeLimitMessage() {
-    Alert.alert("", RIGHT_SWIPE_LIMIT_MESSAGE);
+    Alert.alert("", t("discover.rightSwipeLimit"));
   }
 
   function completeSwipe(direction: "left" | "right") {
@@ -152,13 +154,13 @@ export default function Discover() {
 
   function promptPhotoRequired() {
     springCardBack();
-    Alert.alert("Dodaj sliko", "Dodaj vsaj eno sliko, da lahko swipaš.", [
+    Alert.alert(t("discover.addPhotoTitle"), t("discover.addPhotoBody"), [
       {
-        text: "Kasneje",
+        text: t("discover.later"),
         style: "cancel",
       },
       {
-        text: "Dodaj sliko",
+        text: t("discover.addPhotoTitle"),
         onPress: () => router.push("/edit-profile"),
       },
     ]);
@@ -232,7 +234,7 @@ export default function Discover() {
         return;
       }
 
-      Alert.alert("Napaka", error.message);
+      Alert.alert(t("common.error"), error.message);
       void loadDeck();
       return;
     }
@@ -249,13 +251,13 @@ export default function Discover() {
         .maybeSingle();
 
       if (match?.id) {
-        Alert.alert("Match!", `Ujel/a si se z ${target.name}.`, [
+        Alert.alert(t("discover.matchTitle"), t("discover.matchBody", { name: target.name }), [
           {
-            text: "Kasneje",
+            text: t("discover.later"),
             style: "cancel",
           },
           {
-            text: "Odpri chat",
+            text: t("discover.openChat"),
             onPress: () => router.push(`/matches/${match.id}`),
           },
         ]);
@@ -367,10 +369,10 @@ export default function Discover() {
           >
             <DiscoverEmptyAnimation />
             <Text className="text-gray-900 dark:text-white text-lg font-bold mt-3">
-              Ni več profilov
+              {t("discover.noProfiles")}
             </Text>
             <Text className="text-gray-500 dark:text-gray-400 text-[13px] leading-5 mt-2 text-center">
-              Preveri znova pozneje
+              {t("discover.checkLater")}
             </Text>
           </View>
         ) : (
@@ -405,7 +407,7 @@ export default function Discover() {
                   className="absolute top-6 left-6 z-10 rounded-full bg-brand px-4 py-2 shadow-sm"
                 >
                   <Text className="text-white text-base font-bold">
-                    Buddy
+                    {t("common.buddy")}
                   </Text>
                 </Animated.View>
                 <Animated.View
@@ -414,7 +416,7 @@ export default function Discover() {
                   className="absolute top-6 right-6 z-10 rounded-full bg-gray-500/90 px-4 py-2 shadow-sm dark:bg-neutral-600"
                 >
                   <Text className="text-white text-base font-bold">
-                    Naprej
+                    {t("discover.nextBadge")}
                   </Text>
                 </Animated.View>
 
@@ -426,10 +428,10 @@ export default function Discover() {
 
             <View className="items-center px-6 mt-4 mb-2">
               <Text className="text-sm font-semibold text-gray-400 dark:text-gray-500 text-center">
-                Povleci levo za naprej, desno za buddyja
+                {t("discover.instructions")}
               </Text>
               <Text className="text-xs text-gray-300 dark:text-gray-600 text-center mt-1">
-                Tapni kartico za več informacij
+                {t("discover.tapForMore")}
               </Text>
             </View>
           </View>

@@ -26,6 +26,7 @@ import {
   type Message,
   type Profile,
 } from "../../lib/supabase";
+import { useLanguage } from "../../lib/i18n";
 
 function sortMessages(a: Message, b: Message) {
   const timeDelta = Date.parse(a.created_at) - Date.parse(b.created_at);
@@ -59,7 +60,7 @@ function mergeMessages(prev: Message[], incoming: Message[]) {
 
 type LastOwnMessageStatus = {
   messageId: string;
-  label: "Pošiljanje..." | "Poslano" | "Videno";
+  label: string;
 };
 
 export default function Chat() {
@@ -83,6 +84,7 @@ export default function Chat() {
   const channelReadyRef = useRef(false);
   const latestMessageRef = useRef<Message | null>(null);
   const meRef = useRef<Profile | null>(null);
+  const { language, t } = useLanguage();
 
   useEffect(() => {
     if (!matchId) return;
@@ -108,14 +110,14 @@ export default function Chat() {
     if (lastMine.id.startsWith("temp-")) {
       return {
         messageId: lastMine.id,
-        label: "Pošiljanje...",
+        label: t("chat.sending"),
       };
     }
 
     if (!matchReadState) {
       return {
         messageId: lastMine.id,
-        label: "Poslano",
+        label: t("chat.sent"),
       };
     }
 
@@ -128,10 +130,10 @@ export default function Chat() {
       messageId: lastMine.id,
       label:
         otherLastReadAt && Date.parse(otherLastReadAt) >= Date.parse(lastMine.created_at)
-          ? "Videno"
-          : "Poslano",
+          ? t("chat.seen")
+          : t("chat.sent"),
     };
-  }, [matchReadState, me, messages]);
+  }, [matchReadState, me, messages, t]);
 
   const markChatSeen = useCallback(async () => {
     if (!matchId || matchClosedRef.current) return;
@@ -156,16 +158,16 @@ export default function Chat() {
     });
   }, [matchId]);
 
-  function leaveRemovedBuddy(message = "Ta buddy ni več na voljo.") {
+  function leaveRemovedBuddy(message = t("chat.removedDefault")) {
     if (matchClosedRef.current) return;
     matchClosedRef.current = true;
     setShowMenu(false);
     setOther(null);
     setMessages([]);
     setMatchReadState(null);
-    Alert.alert("Buddy odstranjen", message, [
+    Alert.alert(t("chat.removedTitle"), message, [
       {
-        text: "V redu",
+        text: t("common.ok"),
         onPress: () => router.replace("/matches"),
       },
     ]);
@@ -173,7 +175,7 @@ export default function Chat() {
 
   async function handleMatchActionError(message: string) {
     if (!matchId) {
-      Alert.alert("Napaka", message);
+      Alert.alert(t("common.error"), message);
       return;
     }
 
@@ -184,11 +186,11 @@ export default function Chat() {
       .maybeSingle();
 
     if (!error && !match) {
-      leaveRemovedBuddy("Ta buddy je bil odstranjen.");
+      leaveRemovedBuddy(t("chat.removedBody"));
       return;
     }
 
-    Alert.alert("Napaka", message);
+    Alert.alert(t("common.error"), message);
   }
 
   function removeBuddy() {
@@ -196,12 +198,12 @@ export default function Chat() {
 
     setShowMenu(false);
     Alert.alert(
-      "Odstrani buddyja",
-      `Ali res želiš odstraniti ${other.name}?`,
+      t("chat.removeBuddy"),
+      t("chat.removeBuddyConfirm", { name: other.name }),
       [
-        { text: "Prekliči", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Odstrani",
+          text: t("common.remove"),
           style: "destructive",
           onPress: async () => {
             const { error } = await supabase.rpc("remove_buddy", {
@@ -213,7 +215,7 @@ export default function Chat() {
               return;
             }
 
-            leaveRemovedBuddy("Ta buddy je bil odstranjen.");
+            leaveRemovedBuddy(t("chat.removedBody"));
           },
         },
       ]
@@ -279,7 +281,7 @@ export default function Chat() {
 
       if (!m) {
         if (!cancelled) {
-          leaveRemovedBuddy("Ta buddy je bil odstranjen.");
+          leaveRemovedBuddy(t("chat.removedBody"));
         }
         return;
       }
@@ -357,7 +359,7 @@ export default function Chat() {
           filter: `id=eq.${matchId}`,
         },
         () => {
-          leaveRemovedBuddy("Ta buddy je bil odstranjen.");
+          leaveRemovedBuddy(t("chat.removedBody"));
         }
       )
       .subscribe((status) => {
@@ -482,7 +484,7 @@ export default function Chat() {
               scrollRef.current?.scrollToEnd({ animated: true });
             });
           }}
-          placeholder="Sporočilo..."
+          placeholder={t("chat.messagePlaceholder")}
           placeholderTextColor="#888"
           className="flex-1 bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3 text-base text-gray-900 dark:text-white"
         />
@@ -589,7 +591,7 @@ export default function Chat() {
                           {poke.prompt}
                         </Text>
                         <Text className="text-xs text-amber-600 dark:text-amber-300 mt-1">
-                          Prejšnje povabilo
+                          {t("chat.previousInvite")}
                         </Text>
                       </View>
                     </View>
@@ -629,7 +631,7 @@ export default function Chat() {
                           : "text-gray-900 dark:text-gray-100"
                       }`}
                     >
-                      Povabilo na bon: {invite.restaurant}
+                      {t("chat.bonInvite", { restaurant: invite.restaurant })}
                     </Text>
                     <Text
                       className={`mt-1 text-sm ${
@@ -638,7 +640,7 @@ export default function Chat() {
                           : "text-gray-500 dark:text-gray-400"
                       }`}
                     >
-                      {formatScheduledDate(invite.scheduled_at)}
+                      {formatScheduledDate(invite.scheduled_at, language)}
                     </Text>
                     {invite.note && (
                       <Text
@@ -745,7 +747,7 @@ export default function Chat() {
                     <Ionicons name="person-outline" size={20} color="#00A6F6" />
                   </View>
                   <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
-                    Poglej profil
+                    {t("chat.viewProfile")}
                   </Text>
                 </Pressable>
 
@@ -760,7 +762,7 @@ export default function Chat() {
                     <Ionicons name="person-remove-outline" size={20} color="#ef4444" />
                   </View>
                   <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
-                    Odstrani buddyja
+                    {t("chat.removeBuddy")}
                   </Text>
                 </Pressable>
 
@@ -768,12 +770,12 @@ export default function Chat() {
                   onPress={() => {
                     setShowMenu(false);
                     Alert.alert(
-                      "Blokiraj",
-                      `Ali želiš blokirati ${other.name}? Ne bo mogel/la videti tvojih objav ali ti pisati.`,
+                      t("common.block"),
+                      t("chat.blockConfirm", { name: other.name }),
                       [
-                        { text: "Prekliči", style: "cancel" },
+                        { text: t("common.cancel"), style: "cancel" },
                         {
-                          text: "Blokiraj",
+                          text: t("common.block"),
                           style: "destructive",
                           onPress: async () => {
                             if (!me) return;
@@ -796,7 +798,7 @@ export default function Chat() {
                     <Ionicons name="ban-outline" size={20} color="#ef4444" />
                   </View>
                   <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
-                    Blokiraj uporabnika
+                    {t("chat.blockUser")}
                   </Text>
                 </Pressable>
               </>

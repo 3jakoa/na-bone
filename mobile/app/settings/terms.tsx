@@ -1,8 +1,11 @@
 import { View, Text, Pressable, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useLanguage } from "../../lib/i18n";
 
 export default function Terms() {
+  const { t } = useLanguage();
+
   return (
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
@@ -10,7 +13,7 @@ export default function Terms() {
           <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
-          Pogoji uporabe
+          {t("settings.termsTitle")}
         </Text>
       </View>
 
@@ -19,40 +22,15 @@ export default function Terms() {
         contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
       >
         <View className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-5 shadow-sm">
-          <Section title="1. Splošno">
-            Boni Buddy je mobilna aplikacija namenjena povezovanju študentov pri
-            koriščenju študentskih bonov. Z uporabo aplikacije se strinjate s
-            temi pogoji.
-          </Section>
-
-          <Section title="2. Uporabniški račun">
-            Za uporabo aplikacije potrebujete veljaven študentski e-mail naslov.
-            Odgovorni ste za varnost svojega računa in vseh aktivnosti pod
-            njim.
-          </Section>
-
-          <Section title="3. Vsebina">
-            Uporabniki so odgovorni za vsebino, ki jo objavljajo. Prepovedana
-            je objava žaljive, diskriminatorne ali nezakonite vsebine.
-          </Section>
-
-          <Section title="4. Zasebnost">
-            Vaše osebne podatke obdelujemo v skladu z GDPR. Podrobnosti
-            najdete v naši politiki zasebnosti.
-          </Section>
-
-          <Section title="5. Omejitev odgovornosti">
-            Boni Buddy ne prevzema odgovornosti za interakcije med uporabniki
-            zunaj aplikacije ali za morebitne škode nastale pri uporabi.
-          </Section>
-
-          <Section title="6. Spremembe pogojev">
-            Pridržujemo si pravico do spremembe teh pogojev. O bistvenih
-            spremembah bomo uporabnike obvestili prek aplikacije.
-          </Section>
+          <Section title={t("terms.generalTitle")}>{t("terms.generalBody")}</Section>
+          <Section title={t("terms.accountTitle")}>{t("terms.accountBody")}</Section>
+          <Section title={t("terms.contentTitle")}>{t("terms.contentBody")}</Section>
+          <Section title={t("terms.privacyTitle")}>{t("terms.privacyBody")}</Section>
+          <Section title={t("terms.liabilityTitle")}>{t("terms.liabilityBody")}</Section>
+          <Section title={t("terms.changesTitle")}>{t("terms.changesBody")}</Section>
 
           <Text className="text-xs text-gray-400 dark:text-gray-500 mt-6 text-center">
-            Zadnja posodobitev: april 2026
+            {t("settings.lastUpdated")}
           </Text>
         </View>
       </ScrollView>

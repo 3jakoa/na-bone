@@ -20,13 +20,17 @@ import { useFocusEffect } from "expo-router";
 import Toast from "react-native-toast-message";
 import { supabase } from "../lib/supabase";
 import { createGuard } from "../lib/createGuard";
+import {
+  useLanguage,
+  WEEKDAYS,
+  type Language,
+  type TranslationKey,
+} from "../lib/i18n";
 
 const HOURS = Array.from({ length: 16 }, (_, i) => {
   const h = 8 + i;
   return [`${h}:00`, `${h}:30`];
 }).flat();
-
-const SLOVENIAN_DAYS = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
 
 const LOCATION_SUGGESTIONS = [
   "Center",
@@ -48,7 +52,7 @@ const subtleCardShadow = {
 
 type ComposerStep = "location" | "day" | "time" | "visibility" | "note" | null;
 
-function buildDayOptions() {
+function buildDayOptions(language: Language) {
   const options: { offset: number; label: string; sublabel: string }[] = [];
   const now = new Date();
   for (let i = 0; i < 7; i++) {
@@ -57,20 +61,18 @@ function buildDayOptions() {
     const day = d.getDate();
     const month = d.getMonth() + 1;
     const sublabel = `${day}.${month}.`;
-    if (i === 0) options.push({ offset: 0, label: "Danes", sublabel });
-    else if (i === 1) options.push({ offset: 1, label: "Jutri", sublabel });
+    if (i === 0) options.push({ offset: 0, label: language === "en" ? "Today" : "Danes", sublabel });
+    else if (i === 1) options.push({ offset: 1, label: language === "en" ? "Tomorrow" : "Jutri", sublabel });
     else {
       options.push({
         offset: i,
-        label: SLOVENIAN_DAYS[d.getDay()],
+        label: WEEKDAYS[language][d.getDay()],
         sublabel,
       });
     }
   }
   return options;
 }
-
-const DAY_OPTIONS = buildDayOptions();
 
 function BoneAvatarBadge({
   photoUrl,
@@ -123,6 +125,8 @@ export function BoneComposerCard({
   const [meId, setMeId] = useState<string | null>(null);
   const [mePhotoUrl, setMePhotoUrl] = useState<string | null>(null);
   const [meInitial, setMeInitial] = useState("B");
+  const { language, t } = useLanguage();
+  const dayOptions = useMemo(() => buildDayOptions(language), [language]);
 
   const availableTimes = useMemo(() => {
     if (selectedDate === null) return [];
@@ -153,7 +157,7 @@ export function BoneComposerCard({
   const dayLabel =
     selectedDate === null
       ? null
-      : DAY_OPTIONS.find((option) => option.offset === selectedDate)?.label ?? null;
+      : dayOptions.find((option) => option.offset === selectedDate)?.label ?? null;
 
   useEffect(() => {
     if (!openSignal) return;
@@ -336,29 +340,29 @@ export function BoneComposerCard({
   async function submit() {
     const trimmedLocation = location.trim();
     if (!trimmedLocation) {
-      return Toast.show({ type: "error", text1: "Vpiši kam na bone." });
+      return Toast.show({ type: "error", text1: t("composer.enterLocation") });
     }
     if (selectedDate === null || !selectedTime) {
-      return Toast.show({ type: "error", text1: "Izberi termin." });
+      return Toast.show({ type: "error", text1: t("composer.chooseSlot") });
     }
     if (!visibility) {
-      return Toast.show({ type: "error", text1: "Izberi vidnost." });
+      return Toast.show({ type: "error", text1: t("composer.chooseVisibilityToast") });
     }
 
     const scheduledDate = getScheduledDate(selectedDate, selectedTime);
     if (scheduledDate.getTime() <= Date.now()) {
       return Toast.show({
         type: "error",
-        text1: "Izbrani čas je že mimo.",
-        text2: "Izberi čas v prihodnosti.",
+        text1: t("composer.timePast"),
+        text2: t("composer.chooseFuture"),
       });
     }
 
     if (!meId) {
       return Toast.show({
         type: "error",
-        text1: "Napaka",
-        text2: "Profila trenutno ni mogoče naložiti.",
+        text1: t("common.error"),
+        text2: t("composer.profileUnavailable"),
       });
     }
 
@@ -370,7 +374,7 @@ export function BoneComposerCard({
         if (buddyMatchIds.length === 0) {
           return Toast.show({
             type: "error",
-            text1: "Še nimaš buddyjev.",
+            text1: t("composer.noBuddies"),
           });
         }
 
@@ -387,8 +391,8 @@ export function BoneComposerCard({
         await onSuccess?.();
         Toast.show({
           type: "success",
-          text1: "Objavljeno!",
-          text2: "Tvoji buddyji vidijo tvoj bon.",
+          text1: t("composer.published"),
+          text2: t("composer.buddiesSee"),
         });
         return;
       }
@@ -408,14 +412,14 @@ export function BoneComposerCard({
       await onSuccess?.();
       Toast.show({
         type: "success",
-        text1: "Objavljeno!",
-        text2: "Tvoj bon je objavljen.",
+        text1: t("composer.published"),
+        text2: t("composer.bonPublished"),
       });
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: "Napaka",
-        text2: getBoneCreateErrorMessage(error),
+        text1: t("common.error"),
+        text2: getBoneCreateErrorMessage(error, t),
       });
     } finally {
       setLoading(false);
@@ -446,7 +450,7 @@ export function BoneComposerCard({
                 className="font-bold text-base text-gray-900 dark:text-white"
                 numberOfLines={1}
               >
-                Ustvari bon
+                {t("composer.createBon")}
               </Text>
             </Pressable>
 
@@ -457,7 +461,7 @@ export function BoneComposerCard({
               {isOpen ? (
                 <Pressable onPress={resetComposer}>
                   <Text className="text-[11px] font-semibold text-gray-400 dark:text-gray-500">
-                    Cancel
+                    {t("composer.cancel")}
                   </Text>
                 </Pressable>
               ) : null}
@@ -490,7 +494,7 @@ export function BoneComposerCard({
                         : "text-gray-400 dark:text-gray-500"
                     }`}
                   >
-                    {loading ? "..." : "Objavi"}
+                    {loading ? t("common.loadingDots") : t("composer.publish")}
                   </Text>
                 ) : (
                   <Ionicons name="add" size={18} color="#9CA3AF" />
@@ -523,7 +527,7 @@ export function BoneComposerCard({
               }
             }}
             onSubmitEditing={advanceAfterLocation}
-            placeholder="Kam na bone?"
+            placeholder={t("composer.where")}
             placeholderTextColor="#9CA3AF"
             className={`mt-0.5 text-sm py-0 ${
               isOpen
@@ -571,7 +575,7 @@ export function BoneComposerCard({
             <View className="flex-row gap-2">
               {selectedDate !== null ? (
                 <SummaryChip
-                  label={dayLabel ?? "Dan"}
+                  label={dayLabel ?? t("composer.day")}
                   active={activeStep === "day"}
                   onPress={() => setActiveStep("day")}
                 />
@@ -585,14 +589,14 @@ export function BoneComposerCard({
               ) : null}
               {visibility ? (
                 <SummaryChip
-                  label={visibility === "public" ? "Javno" : "Zasebno"}
+                  label={visibility === "public" ? t("common.public") : t("common.private")}
                   active={activeStep === "visibility"}
                   onPress={() => setActiveStep("visibility")}
                 />
               ) : null}
               {visibility ? (
                 <SummaryChip
-                  label={note.trim() ? "Opis dodan" : "Dodaj opis"}
+                  label={note.trim() ? t("composer.descriptionAdded") : t("composer.addDescription")}
                   active={activeStep === "note"}
                   onPress={() =>
                     setActiveStep((current) => (current === "note" ? null : "note"))
@@ -610,23 +614,23 @@ export function BoneComposerCard({
                 <Text className="text-xs text-gray-500 dark:text-gray-400">
                   {buddyMatchIds.length > 0
                     ? buddyMatchIds.length === 1
-                      ? "Ta bon bo videl 1 buddy."
-                      : `Ta bon bo videlo ${buddyMatchIds.length} buddyjev.`
-                    : "Za zaseben bon potrebuješ vsaj enega buddyja."}
+                      ? t("composer.privateOne")
+                      : t("composer.privateMany", { count: buddyMatchIds.length })
+                    : t("composer.privateNone")}
                 </Text>
               )}
             </View>
           ) : null}
 
           {activeStep === "day" ? (
-            <StepBlock title="Izberi dan">
+            <StepBlock title={t("composer.chooseDay")}>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
               >
                 <View className="flex-row gap-2">
-                  {DAY_OPTIONS.map((dayOption) => (
+                  {dayOptions.map((dayOption) => (
                     <Pressable
                       key={dayOption.offset}
                       onPress={() => handleSelectDay(dayOption.offset)}
@@ -662,7 +666,7 @@ export function BoneComposerCard({
           ) : null}
 
           {activeStep === "time" ? (
-            <StepBlock title="Izberi uro">
+            <StepBlock title={t("composer.chooseTime")}>
               {availableTimes.length > 0 ? (
                 <ScrollView
                   horizontal
@@ -695,14 +699,14 @@ export function BoneComposerCard({
                 </ScrollView>
               ) : (
                 <Text className="text-xs text-gray-500 dark:text-gray-400">
-                  Za ta dan ni več prostih terminov. Izberi drug dan.
+                  {t("composer.noTimes")}
                 </Text>
               )}
             </StepBlock>
           ) : null}
 
           {activeStep === "visibility" ? (
-            <StepBlock title="Izberi vidnost">
+            <StepBlock title={t("composer.chooseVisibility")}>
               <View className="flex-row gap-3">
                 <Pressable
                   onPress={() => handleSelectVisibility("public")}
@@ -719,7 +723,7 @@ export function BoneComposerCard({
                         : "text-gray-700 dark:text-gray-200"
                     }`}
                   >
-                    Javno
+                    {t("common.public")}
                   </Text>
                   <Text
                     className={`text-xs mt-0.5 ${
@@ -728,7 +732,7 @@ export function BoneComposerCard({
                         : "text-gray-400 dark:text-gray-500"
                     }`}
                   >
-                    Vsi vidijo
+                    {t("composer.everyoneSees")}
                   </Text>
                 </Pressable>
                 <Pressable
@@ -746,7 +750,7 @@ export function BoneComposerCard({
                         : "text-gray-700 dark:text-gray-200"
                     }`}
                   >
-                    Zasebno
+                    {t("common.private")}
                   </Text>
                   <Text
                     className={`text-xs mt-0.5 ${
@@ -755,7 +759,7 @@ export function BoneComposerCard({
                         : "text-gray-400 dark:text-gray-500"
                     }`}
                   >
-                    Samo buddies
+                    {t("composer.onlyBuddies")}
                   </Text>
                 </Pressable>
               </View>
@@ -763,11 +767,11 @@ export function BoneComposerCard({
           ) : null}
 
           {activeStep === "note" ? (
-            <StepBlock title="Dodaj opis (opcijsko)">
+            <StepBlock title={t("composer.addNoteOptional")}>
               <TextInput
                 value={note}
                 onChangeText={setNote}
-                placeholder="Npr. Iščem družbo za kosilo..."
+                placeholder={t("composer.notePlaceholder")}
                 placeholderTextColor="#888"
                 multiline
                 numberOfLines={3}
@@ -865,7 +869,10 @@ function isTimeSlotPast(selectedDate: number, timeSlot: string) {
   return slot.getTime() <= Date.now();
 }
 
-function getBoneCreateErrorMessage(error: unknown) {
+function getBoneCreateErrorMessage(
+  error: unknown,
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string
+) {
   const rawMessage =
     typeof error === "object" &&
     error !== null &&
@@ -880,11 +887,11 @@ function getBoneCreateErrorMessage(error: unknown) {
     rawMessage.includes("Cannot invite a blocked buddy") ||
     rawMessage.includes("No eligible buddies")
   ) {
-    return "Nekaterih buddyjev zaradi blokade ni mogoče vključiti v zaseben bon.";
+    return t("composer.blockedBuddies");
   }
 
   if (rawMessage.includes("Select at least one buddy")) {
-    return "Ni nobenega veljavnega buddyja za zaseben bon.";
+    return t("composer.noEligibleBuddies");
   }
 
   return rawMessage;

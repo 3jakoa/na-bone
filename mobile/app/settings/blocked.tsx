@@ -11,12 +11,14 @@ import {
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Profile } from "../../lib/supabase";
+import { useLanguage } from "../../lib/i18n";
 
 type BlockedUser = { id: string; profile: Profile };
 
 export default function BlockedUsers() {
   const [blocked, setBlocked] = useState<BlockedUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useFocusEffect(
     useCallback(() => {
@@ -55,10 +57,10 @@ export default function BlockedUsers() {
   );
 
   async function unblock(item: BlockedUser) {
-    Alert.alert("Odblokiraj", `Ali želiš odblokirati ${item.profile.name}?`, [
-      { text: "Prekliči", style: "cancel" },
+    Alert.alert(t("profileDetail.unblockTitle"), t("profileDetail.unblockConfirm", { name: item.profile.name }), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Odblokiraj",
+        text: t("common.unblock"),
         onPress: async () => {
           await supabase.from("blocked_users").delete().eq("id", item.id);
           setBlocked((prev) => prev.filter((b) => b.id !== item.id));
@@ -74,7 +76,7 @@ export default function BlockedUsers() {
           <Ionicons name="chevron-back" size={28} color="#888" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
-          Blokirani uporabniki
+          {t("settings.blockedTitle")}
         </Text>
       </View>
 
@@ -89,7 +91,7 @@ export default function BlockedUsers() {
             <View className="items-center mt-16">
               <Ionicons name="shield-checkmark-outline" size={48} color="#888" />
               <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
-                Ni blokiranih uporabnikov
+                {t("settings.noBlocked")}
               </Text>
             </View>
           }
@@ -129,7 +131,7 @@ export default function BlockedUsers() {
                 className="bg-gray-100 dark:bg-neutral-800 rounded-full px-4 py-2"
               >
                 <Text className="text-sm font-semibold text-gray-600 dark:text-gray-200">
-                  Odblokiraj
+                  {t("common.unblock")}
                 </Text>
               </Pressable>
             </View>

@@ -11,14 +11,9 @@ import {
 import { useLocalSearchParams, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Profile } from "../lib/supabase";
+import { getEducationLevelLabel, getGenderLabel, useLanguage } from "../lib/i18n";
 
 const { width } = Dimensions.get("window");
-
-const EDU_LABELS: Record<string, string> = {
-  dodiplomski: "Dodiplomski",
-  magistrski: "Magistrski",
-  doktorski: "Doktorski",
-};
 
 export default function ProfileDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,6 +21,7 @@ export default function ProfileDetail() {
   const [photoIdx, setPhotoIdx] = useState(0);
   const [meId, setMeId] = useState<string | null>(null);
   const [isBlocked, setIsBlocked] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!id) return;
@@ -149,13 +145,12 @@ export default function ProfileDetail() {
 
           <View className="flex-row flex-wrap gap-2 mt-3">
             <View className="bg-gray-100 dark:bg-neutral-800 rounded-full px-3 py-1.5">
-              <Text className="text-sm text-gray-600 dark:text-gray-200">{profile.gender}</Text>
+              <Text className="text-sm text-gray-600 dark:text-gray-200">{getGenderLabel(profile.gender, t)}</Text>
             </View>
             {profile.education_level && (
               <View className="bg-brand-light dark:bg-brand/20 rounded-full px-3 py-1.5">
                 <Text className="text-sm text-brand-dark dark:text-brand font-semibold">
-                  {EDU_LABELS[profile.education_level] ??
-                    profile.education_level}
+                  {getEducationLevelLabel(profile.education_level, t)}
                 </Text>
               </View>
             )}
@@ -164,7 +159,7 @@ export default function ProfileDetail() {
           {profile.bio && (
             <View className="mt-5">
               <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
-                O meni
+                {t("profile.aboutMe")}
               </Text>
               <Text className="text-base text-gray-700 dark:text-gray-200 leading-6">
                 {profile.bio}
@@ -177,12 +172,12 @@ export default function ProfileDetail() {
               onPress={() => {
                 if (isBlocked) {
                   Alert.alert(
-                    "Odblokiraj",
-                    `Ali želiš odblokirati ${profile.name}?`,
+                    t("profileDetail.unblockTitle"),
+                    t("profileDetail.unblockConfirm", { name: profile.name }),
                     [
-                      { text: "Prekliči", style: "cancel" },
+                      { text: t("common.cancel"), style: "cancel" },
                       {
-                        text: "Odblokiraj",
+                        text: t("common.unblock"),
                         onPress: async () => {
                           await supabase
                             .from("blocked_users")
@@ -196,12 +191,12 @@ export default function ProfileDetail() {
                   );
                 } else {
                   Alert.alert(
-                    "Blokiraj",
-                    `Ali želiš blokirati ${profile.name}? Ne bo mogel/la videti tvojih objav ali ti pisati.`,
+                    t("profileDetail.blockTitle"),
+                    t("profileDetail.blockConfirm", { name: profile.name }),
                     [
-                      { text: "Prekliči", style: "cancel" },
+                      { text: t("common.cancel"), style: "cancel" },
                       {
-                        text: "Blokiraj",
+                        text: t("common.block"),
                         style: "destructive",
                         onPress: async () => {
                           await supabase.from("blocked_users").insert({
@@ -225,7 +220,7 @@ export default function ProfileDetail() {
               <Text
                 className={`text-sm ${isBlocked ? "text-brand" : "text-gray-400 dark:text-gray-500"}`}
               >
-                {isBlocked ? "Odblokiraj uporabnika" : "Blokiraj uporabnika"}
+                {isBlocked ? t("profileDetail.unblockUser") : t("profileDetail.blockUser")}
               </Text>
             </Pressable>
           )}

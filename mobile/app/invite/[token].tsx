@@ -14,6 +14,7 @@ import {
   clearPendingBuddyInviteToken,
   setPendingBuddyInviteToken,
 } from "../../lib/buddyInvites";
+import { useLanguage, type TranslationKey } from "../../lib/i18n";
 
 type Preview = {
   status: "valid" | "used" | "expired" | "not_found";
@@ -22,9 +23,12 @@ type Preview = {
   inviter_photo: string | null;
 };
 
-function getInviteError(status?: Preview["status"]) {
+function getInviteError(
+  status: Preview["status"] | undefined,
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string
+) {
   if (status === "used" || status === "expired" || status === "not_found") {
-    return "Povezava ni več veljavna.";
+    return t("invite.invalid");
   }
   return null;
 }
@@ -41,6 +45,7 @@ export default function BuddyInvite() {
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   const load = useCallback(async () => {
     if (!token) return;
@@ -49,7 +54,7 @@ export default function BuddyInvite() {
 
     if (!isUuid(token)) {
       await clearPendingBuddyInviteToken();
-      setError("Povezava ni več veljavna.");
+      setError(t("invite.invalid"));
       setLoading(false);
       return;
     }
@@ -66,7 +71,7 @@ export default function BuddyInvite() {
 
     const nextPreview = data as Preview | null;
     setPreview(nextPreview);
-    const linkError = getInviteError(nextPreview?.status);
+    const linkError = getInviteError(nextPreview?.status, t);
     if (linkError) {
       await clearPendingBuddyInviteToken();
       setError(linkError);
@@ -96,7 +101,7 @@ export default function BuddyInvite() {
     }
 
     setLoading(false);
-  }, [token]);
+  }, [token, t]);
 
   useEffect(() => {
     load();
@@ -112,7 +117,7 @@ export default function BuddyInvite() {
     setAccepting(false);
 
     if (acceptError) {
-      const message = acceptError.message || "Povabila ni mogoče sprejeti.";
+      const message = acceptError.message || t("invite.acceptFailed");
       if (
         message.includes("veljavna") ||
         message.includes("uporabljena") ||
@@ -120,7 +125,7 @@ export default function BuddyInvite() {
       ) {
         await clearPendingBuddyInviteToken();
       }
-      return Alert.alert("Napaka", message);
+      return Alert.alert(t("common.error"), message);
     }
 
     await clearPendingBuddyInviteToken();
@@ -154,13 +159,15 @@ export default function BuddyInvite() {
 
         <Text className="text-2xl font-bold text-gray-900 dark:text-white text-center mt-5">
           {error
-            ? "Povabilo ne deluje"
-            : `${preview?.inviter_name ?? "Nekdo"} te vabi`}
+            ? t("invite.brokenTitle")
+            : t("invite.invitesYou", {
+                name: preview?.inviter_name ?? t("invite.someone"),
+              })}
         </Text>
         <Text className="text-gray-500 dark:text-gray-400 text-center mt-2 leading-5">
           {error
             ? error
-            : "Sprejmi povabilo, da postaneta buddyja in se lahko dogovorita za bone."}
+            : t("invite.body")}
         </Text>
         {!error && preview?.inviter_faculty ? (
           <Text className="text-xs text-gray-400 dark:text-gray-500 text-center mt-2">
@@ -174,7 +181,7 @@ export default function BuddyInvite() {
             className="bg-gray-100 dark:bg-neutral-800 rounded-2xl py-4 px-6 mt-6 w-full items-center"
           >
             <Text className="text-gray-700 dark:text-gray-100 font-bold">
-              Nazaj v aplikacijo
+              {t("invite.backToApp")}
             </Text>
           </Pressable>
         ) : (
@@ -184,7 +191,7 @@ export default function BuddyInvite() {
             className="bg-brand rounded-2xl py-4 px-6 mt-6 w-full items-center"
           >
             <Text className="text-white font-bold">
-              {accepting ? "Sprejemam..." : "Sprejmi povabilo"}
+              {accepting ? t("invite.accepting") : t("invite.accept")}
             </Text>
           </Pressable>
         )}

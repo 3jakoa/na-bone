@@ -18,6 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Profile, capitalizeName } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
 import { UNIVERSITIES, UNIVERSITY_NAMES } from "../lib/universities";
+import { getGenderLabel, useLanguage } from "../lib/i18n";
 
 type EducationLevel = "dodiplomski" | "magistrski" | "doktorski" | "";
 
@@ -35,6 +36,7 @@ export default function EditProfile() {
   const [loading, setLoading] = useState(false);
   const [showUniPicker, setShowUniPicker] = useState(false);
   const [showFacPicker, setShowFacPicker] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     (async () => {
@@ -64,7 +66,7 @@ export default function EditProfile() {
 
   async function addPhoto() {
     if (photos.length + newPhotos.length >= 6)
-      return Alert.alert("", "Največ 6 slik.");
+      return Alert.alert("", t("profile.maxPhotos"));
     const r = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.7,
@@ -87,7 +89,7 @@ export default function EditProfile() {
 
   async function save() {
     if (!me || !name.trim() || !age)
-      return Alert.alert("", "Izpolni ime in starost.");
+      return Alert.alert("", t("profile.fillNameAge"));
     Keyboard.dismiss();
     setLoading(true);
     try {
@@ -129,7 +131,7 @@ export default function EditProfile() {
 
       router.back();
     } catch (e: any) {
-      Alert.alert("Napaka", e.message ?? String(e));
+      Alert.alert(t("common.error"), e.message ?? String(e));
     } finally {
       setLoading(false);
     }
@@ -157,10 +159,10 @@ export default function EditProfile() {
           <Pressable onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={28} color="#888" />
           </Pressable>
-          <Text className="text-lg font-bold text-gray-900 dark:text-white">Uredi profil</Text>
+          <Text className="text-lg font-bold text-gray-900 dark:text-white">{t("profile.edit")}</Text>
           <Pressable onPress={save} disabled={loading}>
             <Text className="text-brand font-bold text-base">
-              {loading ? "..." : "Shrani"}
+              {loading ? t("common.loadingDots") : t("common.save")}
             </Text>
           </Pressable>
         </View>
@@ -168,7 +170,7 @@ export default function EditProfile() {
         {/* Photos grid */}
         <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm">
           <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
-            Slike ({allPhotos.length}/6)
+            {t("profile.photos")} ({allPhotos.length}/6)
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {allPhotos.map((uri, i) => (
@@ -183,7 +185,7 @@ export default function EditProfile() {
                 {i === 0 && (
                   <View className="absolute bottom-1 left-1 bg-brand rounded-full px-2 py-0.5">
                     <Text className="text-white text-xs font-semibold">
-                      Glavna
+                      {t("profile.main")}
                     </Text>
                   </View>
                 )}
@@ -202,7 +204,7 @@ export default function EditProfile() {
 
         {/* Basic info */}
         <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-2 shadow-sm">
-          <EditRow label="Ime">
+          <EditRow label={t("onboarding.name")}>
             <TextInput
               value={name}
               onChangeText={setName}
@@ -214,7 +216,7 @@ export default function EditProfile() {
           </EditRow>
           <View className="h-px bg-gray-100 dark:bg-neutral-800" />
           <View className="py-4">
-            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-2">Starost</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-2">{t("onboarding.age")}</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -241,7 +243,7 @@ export default function EditProfile() {
           </View>
           <View className="h-px bg-gray-100 dark:bg-neutral-800" />
           <View className="py-4">
-            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-2">Spol</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-2">{t("onboarding.gender")}</Text>
             <View className="flex-row gap-2">
               {(["moški", "ženska", "drugo"] as const).map((g) => (
                 <Pressable
@@ -252,7 +254,7 @@ export default function EditProfile() {
                   <Text
                     className={`text-sm font-semibold ${gender === g ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
                   >
-                    {g}
+                    {getGenderLabel(g, t)}
                   </Text>
                 </Pressable>
               ))}
@@ -263,14 +265,14 @@ export default function EditProfile() {
         {/* Education level */}
         <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
           <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
-            Stopnja študija
+            {t("onboarding.educationTitle")}
           </Text>
           <View className="flex-row gap-2">
             {(
               [
-                { key: "dodiplomski", label: "Dodiplomski" },
-                { key: "magistrski", label: "Magistrski" },
-                { key: "doktorski", label: "Doktorski" },
+                { key: "dodiplomski", label: t("onboarding.eduUndergrad") },
+                { key: "magistrski", label: t("onboarding.eduMasters") },
+                { key: "doktorski", label: t("onboarding.eduDoctoral") },
               ] as const
             ).map(({ key, label }) => (
               <Pressable
@@ -296,10 +298,10 @@ export default function EditProfile() {
             onPress={() => setShowUniPicker(!showUniPicker)}
             className="flex-row items-center justify-between py-4"
           >
-            <Text className="text-sm text-gray-500 dark:text-gray-400">Univerza</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400">{t("onboarding.university")}</Text>
             <View className="flex-row items-center">
               <Text className="text-sm text-gray-900 dark:text-white mr-1" numberOfLines={1}>
-                {university || "Izberi"}
+                {university || t("common.choose")}
               </Text>
               <Ionicons
                 name={showUniPicker ? "chevron-up" : "chevron-down"}
@@ -335,13 +337,13 @@ export default function EditProfile() {
             onPress={() => setShowFacPicker(!showFacPicker)}
             className="flex-row items-center justify-between py-4"
           >
-            <Text className="text-sm text-gray-500 dark:text-gray-400">Fakulteta</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400">{t("onboarding.faculty")}</Text>
             <View className="flex-row items-center">
               <Text
                 className="text-sm text-gray-900 dark:text-white mr-1 max-w-48"
                 numberOfLines={1}
               >
-                {faculty || "Izberi"}
+                {faculty || t("common.choose")}
               </Text>
               <Ionicons
                 name={showFacPicker ? "chevron-up" : "chevron-down"}
@@ -374,11 +376,11 @@ export default function EditProfile() {
 
         {/* Bio */}
         <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">Bio</Text>
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">{t("common.bio")}</Text>
           <TextInput
             value={bio}
             onChangeText={setBio}
-            placeholder="Nekaj o sebi..."
+            placeholder={t("profile.somethingAboutYou")}
             placeholderTextColor="#888"
             multiline
             numberOfLines={3}

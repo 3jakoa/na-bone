@@ -41,7 +41,7 @@ export function parseStructuredChatContent(
   return null;
 }
 
-export function getChatMessagePreview(content: string) {
+export function getChatMessagePreview(content: string, language: Language = "sl") {
   const parsed = parseStructuredChatContent(content);
   if (!parsed) {
     return {
@@ -51,7 +51,10 @@ export function getChatMessagePreview(content: string) {
 
   if (parsed.type === "bone_invite") {
     return {
-      preview: `Povabilo na bon: ${parsed.restaurant ?? "Restavracija"}`,
+      preview:
+        language === "en"
+          ? `Bon invite: ${parsed.restaurant ?? "Restaurant"}`
+          : `Povabilo na bon: ${parsed.restaurant ?? "Restavracija"}`,
     };
   }
 
@@ -59,3 +62,4 @@ export function getChatMessagePreview(content: string) {
     preview: parsed.prompt,
   };
 }
+import type { Language } from "./i18n";

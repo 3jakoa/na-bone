@@ -9,16 +9,17 @@ import {
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase, type Profile } from "../../lib/supabase";
-
-const EDU_LABELS: Record<string, string> = {
-  dodiplomski: "Dodiplomski",
-  magistrski: "Magistrski",
-  doktorski: "Doktorski",
-};
+import {
+  getEducationLevelLabel,
+  getGenderLabel,
+  useLanguage,
+} from "../../lib/i18n";
+import { LanguageSwitch } from "../../components/LanguageSwitch";
 
 export default function ProfileScreen() {
   const [me, setMe] = useState<Profile | null>(null);
   const [matchCount, setMatchCount] = useState(0);
+  const { t } = useLanguage();
 
   useFocusEffect(
     useCallback(() => {
@@ -103,7 +104,7 @@ export default function ProfileScreen() {
         {me.education_level && (
           <View className="bg-brand-light rounded-full px-3 py-1 mt-2">
             <Text className="text-brand-dark text-xs font-semibold">
-              {EDU_LABELS[me.education_level] ?? me.education_level}
+              {getEducationLevelLabel(me.education_level, t)}
             </Text>
           </View>
         )}
@@ -117,7 +118,7 @@ export default function ProfileScreen() {
         >
           <Ionicons name="people" size={20} color="#00A6F6" />
           <Text className="flex-1 ml-3 text-base font-semibold text-gray-900 dark:text-white">
-            Buddies
+            {t("common.buddies")}
           </Text>
           <Text className="text-base font-bold text-gray-900 dark:text-white mr-2">
             {matchCount}
@@ -129,10 +130,10 @@ export default function ProfileScreen() {
       {/* Bio */}
       <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm mb-4">
         <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
-          O meni
+          {t("profile.aboutMe")}
         </Text>
         <Text className="text-base text-gray-700 dark:text-gray-200 leading-6">
-          {me.bio || "Še nisi dodal/a bio-ja. Uredi profil!"}
+          {me.bio || t("profile.noBio")}
         </Text>
       </View>
 
@@ -140,7 +141,7 @@ export default function ProfileScreen() {
       {me.photos.length > 0 && (
         <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm mb-4">
           <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
-            Slike
+            {t("profile.photos")}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View className="flex-row gap-2">
@@ -170,17 +171,17 @@ export default function ProfileScreen() {
 
       {/* Details */}
       <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
-        <DetailRow icon="person-outline" label="Spol" value={me.gender} />
+        <DetailRow icon="person-outline" label={t("profile.gender")} value={getGenderLabel(me.gender, t)} />
         <Sep />
         <DetailRow
           icon="school-outline"
-          label="Fakulteta"
+          label={t("profile.faculty")}
           value={me.faculty}
         />
         <Sep />
         <DetailRow
           icon="library-outline"
-          label="Univerza"
+          label={t("profile.university")}
           value={me.university}
         />
         {me.education_level && (
@@ -188,8 +189,8 @@ export default function ProfileScreen() {
             <Sep />
             <DetailRow
               icon="ribbon-outline"
-              label="Stopnja"
-              value={EDU_LABELS[me.education_level] ?? me.education_level}
+              label={t("profile.educationLevel")}
+              value={getEducationLevelLabel(me.education_level, t)}
             />
           </>
         )}
@@ -197,33 +198,41 @@ export default function ProfileScreen() {
 
       {/* Settings */}
       <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
+        <View className="flex-row items-center px-5 py-3.5">
+          <Ionicons name="language-outline" size={20} color="#888" />
+          <Text className="flex-1 ml-3 text-base text-gray-800 dark:text-gray-100">
+            {t("common.language")}
+          </Text>
+          <LanguageSwitch />
+        </View>
+        <Sep />
         <SettingsRow
           icon="notifications-outline"
-          label="Obvestila"
+          label={t("profile.notifications")}
           onPress={() => router.push("/settings/notifications")}
         />
         <Sep />
         <SettingsRow
           icon="shield-checkmark-outline"
-          label="Zasebnost"
+          label={t("profile.privacy")}
           onPress={() => router.push("/settings/privacy")}
         />
         <Sep />
         <SettingsRow
           icon="ban-outline"
-          label="Blokirani uporabniki"
+          label={t("profile.blockedUsers")}
           onPress={() => router.push("/settings/blocked")}
         />
         <Sep />
         <SettingsRow
           icon="help-circle-outline"
-          label="Pomoč"
+          label={t("profile.help")}
           onPress={() => router.push("/settings/help")}
         />
         <Sep />
         <SettingsRow
           icon="document-text-outline"
-          label="Pogoji uporabe"
+          label={t("profile.terms")}
           onPress={() => router.push("/settings/terms")}
         />
       </View>
@@ -233,7 +242,7 @@ export default function ProfileScreen() {
         onPress={logout}
         className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl py-4 items-center shadow-sm"
       >
-        <Text className="text-red-500 font-semibold text-base">Odjava</Text>
+        <Text className="text-red-500 font-semibold text-base">{t("common.logout")}</Text>
       </Pressable>
     </ScrollView>
   );
