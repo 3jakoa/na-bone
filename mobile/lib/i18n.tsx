@@ -167,6 +167,7 @@ const translations = {
     "feed.noActive": "Ni aktivnih bonov",
     "feed.noActiveBody": "Bodi prvi in objavi nov bon za kosilo.",
     "feed.openChat": "Odpri chat",
+    "feed.openedCount": "{count} odprli",
     "feed.publicBon": "Javni bon",
     "feed.privateBon": "Zasebni bon",
 
@@ -467,6 +468,7 @@ const translations = {
     "feed.noActive": "No active boni",
     "feed.noActiveBody": "Be first and post a new bon.",
     "feed.openChat": "Open chat",
+    "feed.openedCount": "{count} opened",
     "feed.publicBon": "Public bon",
     "feed.privateBon": "Private bon",
 

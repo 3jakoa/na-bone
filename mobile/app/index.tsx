@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { router } from "expo-router";
 import * as Network from "expo-network";
+import { AnimatedSplashScreen } from "../components/AnimatedSplashScreen";
 import { useProductVariant } from "../lib/productVariant";
 import { supabase } from "../lib/supabase";
 import { getPendingBuddyInviteToken } from "../lib/buddyInvites";
@@ -135,7 +136,7 @@ export default function Index() {
           return router.replace(`/invite/${pendingInviteToken}` as any);
         }
 
-        router.replace("/(tabs)/discover");
+        router.replace("/(tabs)/feed");
       } catch (bootstrapError: any) {
         if (cancelled) return;
         setError(bootstrapError?.message ?? t("bootstrap.startError"));
@@ -201,9 +202,5 @@ export default function Index() {
     );
   }
 
-  return (
-    <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-neutral-950">
-      <ActivityIndicator size="large" color="#00A6F6" />
-    </View>
-  );
+  return <AnimatedSplashScreen />;
 }

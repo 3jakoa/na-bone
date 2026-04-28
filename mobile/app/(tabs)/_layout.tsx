@@ -4,7 +4,6 @@ import { Ionicons } from "@expo/vector-icons";
 import {
   Platform,
   View,
-  Image,
   Modal,
   Text,
   Pressable,
@@ -17,13 +16,12 @@ import { useTheme } from "../../lib/theme";
 import { useLanguage, type TranslationKey } from "../../lib/i18n";
 
 export default function TabsLayout() {
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
   const { scheme } = useTheme();
   const { t } = useLanguage();
   const isDark = scheme === "dark";
   const pathname = usePathname();
-  const activeTab = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "discover";
+  const activeTab = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "feed";
   const insets = useSafeAreaInsets();
   const androidBottomPadding = Math.max(insets.bottom, 8);
   const androidTabBarHeight = 64 + androidBottomPadding;
@@ -37,13 +35,6 @@ export default function TabsLayout() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
-      const { data: me } = await supabase
-        .from("profiles")
-        .select("id, photos")
-        .eq("user_id", user.id)
-        .single();
-      if (!me) return;
-      if (me.photos?.[0]) setPhotoUrl(me.photos[0]);
 
       registerForPushNotifications();
     })();
@@ -91,8 +82,8 @@ export default function TabsLayout() {
           name="discover"
           options={{
             title: t("tabs.discover"),
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="flame" size={size} color={color} />
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabEmoji emoji="🔥" size={size} color={color} focused={focused} />
             ),
           }}
         />
@@ -100,8 +91,8 @@ export default function TabsLayout() {
           name="feed"
           options={{
             title: t("tabs.boni"),
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="restaurant" size={size} color={color} />
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabEmoji emoji="🥣" size={size} color={color} focused={focused} />
             ),
           }}
         />
@@ -115,8 +106,8 @@ export default function TabsLayout() {
           name="matches"
           options={{
             title: t("tabs.matches"),
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="chatbubbles" size={size} color={color} />
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabEmoji emoji="💬" size={size} color={color} focused={focused} />
             ),
           }}
         />
@@ -124,21 +115,9 @@ export default function TabsLayout() {
           name="profile"
           options={{
             title: t("tabs.profile"),
-            tabBarIcon: ({ color, size }) =>
-              photoUrl ? (
-                <Image
-                  source={{ uri: photoUrl }}
-                  style={{
-                    width: size,
-                    height: size,
-                    borderRadius: size / 2,
-                    borderWidth: 2,
-                    borderColor: color,
-                  }}
-                />
-              ) : (
-                <Ionicons name="person-circle" size={size} color={color} />
-              ),
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabEmoji emoji="😎" size={size} color={color} focused={focused} />
+            ),
           }}
         />
       </Tabs>
@@ -148,7 +127,6 @@ export default function TabsLayout() {
           bottomPadding={androidBottomPadding}
           height={androidTabBarHeight}
           isDark={isDark}
-          photoUrl={photoUrl}
           onBlockedNavigate={setLeaveRoute}
         />
       ) : null}
@@ -270,30 +248,53 @@ type AndroidTabName = "discover" | "feed" | "matches" | "profile";
 const androidTabs: {
   name: AndroidTabName;
   titleKey: TranslationKey;
-  icon: keyof typeof Ionicons.glyphMap;
+  emoji: string;
 }[] = [
-  { name: "discover", titleKey: "tabs.discover", icon: "flame" },
-  { name: "feed", titleKey: "tabs.boni", icon: "restaurant" },
-  { name: "matches", titleKey: "tabs.matches", icon: "chatbubbles" },
-  { name: "profile", titleKey: "tabs.profile", icon: "person-circle" },
+  { name: "discover", titleKey: "tabs.discover", emoji: "🔥" },
+  { name: "feed", titleKey: "tabs.boni", emoji: "🥣" },
+  { name: "matches", titleKey: "tabs.matches", emoji: "💬" },
+  { name: "profile", titleKey: "tabs.profile", emoji: "😎" },
 ];
+
+function TabEmoji({
+  emoji,
+  size,
+  color,
+  focused,
+}: {
+  emoji: string;
+  size: number;
+  color: string;
+  focused: boolean;
+}) {
+  return (
+    <Text
+      style={{
+        color,
+        fontSize: Math.round(size * 0.94),
+        lineHeight: size,
+        opacity: focused ? 1 : 0.58,
+      }}
+    >
+      {emoji}
+    </Text>
+  );
+}
 
 function AndroidTabBar({
   bottomPadding,
   height,
   isDark,
-  photoUrl,
   onBlockedNavigate,
 }: {
   bottomPadding: number;
   height: number;
   isDark: boolean;
-  photoUrl: string | null;
   onBlockedNavigate: (route: string) => void;
 }) {
   const pathname = usePathname();
   const { t } = useLanguage();
-  const activeRoute = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "discover";
+  const activeRoute = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "feed";
 
   function goToTab(name: AndroidTabName) {
     if (createGuard.dirty && name !== activeRoute) {
@@ -344,20 +345,7 @@ function AndroidTabBar({
               justifyContent: "center",
             }}
           >
-            {tab.name === "profile" && photoUrl ? (
-              <Image
-                source={{ uri: photoUrl }}
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 12,
-                  borderWidth: 2,
-                  borderColor: color,
-                }}
-              />
-            ) : (
-              <Ionicons name={tab.icon} size={24} color={color} />
-            )}
+            <TabEmoji emoji={tab.emoji} size={24} color={color} focused={focused} />
             <Text
               style={{
                 marginTop: 2,

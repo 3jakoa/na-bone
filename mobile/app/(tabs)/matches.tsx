@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { getChatMessagePreview } from "../../lib/chatContent";
 import { supabase, type Message, type Profile } from "../../lib/supabase";
 import { useLanguage, WEEKDAYS, type Language } from "../../lib/i18n";
+import { MatchesEmptyAnimation } from "../../components/EmptyStateAnimations";
 
 const INVITE_BASE_URL = "https://bonibuddy.app/invite";
 
@@ -399,15 +400,11 @@ export default function Matches() {
           className="items-center justify-center px-6"
           style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
         >
-          <Image
-            source={require("../../assets/logo.png")}
-            style={{ width: 64, height: 64, borderRadius: 32 }}
-            resizeMode="cover"
-          />
-          <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5">
+          <MatchesEmptyAnimation />
+          <Text className="text-gray-900 dark:text-white text-lg font-bold mt-3">
             {t("matches.noMatches")}
           </Text>
-          <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
+          <Text className="text-gray-500 dark:text-gray-400 text-[13px] leading-5 mt-2 text-center">
             {t("matches.noMatchesBody")}
           </Text>
         </View>
