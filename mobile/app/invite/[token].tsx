@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { supabase } from "../../lib/supabase";
 import {
   clearPendingBuddyInviteToken,
@@ -153,7 +153,7 @@ export default function BuddyInvite() {
             className="rounded-full bg-brand-light dark:bg-brand/20 items-center justify-center"
             style={{ width: 88, height: 88 }}
           >
-            <Ionicons name="person" size={36} color="#00A6F6" />
+            <EmojiIcon name="person" size={36} color="#00A6F6" />
           </View>
         )}
 

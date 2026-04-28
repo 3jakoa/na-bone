@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, Switch, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { supabase } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
 
@@ -58,7 +58,7 @@ export default function Notifications() {
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#888" />
+          <EmojiIcon name="chevron-back" size={28} color="#888" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">{t("settings.notificationsTitle")}</Text>
       </View>
@@ -117,7 +117,7 @@ function ToggleRow({
 }) {
   return (
     <View className="flex-row items-center px-5 py-4">
-      <Ionicons name={icon as any} size={20} color="#888" />
+      <EmojiIcon name={icon as any} size={20} color="#888" />
       <View className="flex-1 ml-3">
         <Text className="text-base text-gray-800 dark:text-gray-100">{label}</Text>
         <Text className="text-xs text-gray-400 dark:text-gray-500">{description}</Text>

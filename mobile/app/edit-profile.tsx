@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../components/EmojiIcon";
 import { supabase, type Profile, capitalizeName } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
 import { UNIVERSITIES, UNIVERSITY_NAMES } from "../lib/universities";
@@ -157,7 +157,7 @@ export default function EditProfile() {
         {/* Header */}
         <View className="flex-row items-center justify-between px-6 pt-16 pb-4">
           <Pressable onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={28} color="#888" />
+            <EmojiIcon name="chevron-back" size={28} color="#888" />
           </Pressable>
           <Text className="text-lg font-bold text-gray-900 dark:text-white">{t("profile.edit")}</Text>
           <Pressable onPress={save} disabled={loading}>
@@ -180,7 +180,7 @@ export default function EditProfile() {
                   onPress={() => removePhoto(i)}
                   className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-red-500 items-center justify-center"
                 >
-                  <Ionicons name="close" size={14} color="#fff" />
+                  <EmojiIcon name="close" size={14} color="#fff" />
                 </Pressable>
                 {i === 0 && (
                   <View className="absolute bottom-1 left-1 bg-brand rounded-full px-2 py-0.5">
@@ -196,7 +196,7 @@ export default function EditProfile() {
                 onPress={addPhoto}
                 className="w-24 h-24 rounded-2xl bg-gray-100 dark:bg-neutral-800 items-center justify-center border-2 border-dashed border-gray-300 dark:border-neutral-700"
               >
-                <Ionicons name="add" size={28} color="#999" />
+                <EmojiIcon name="add" size={28} color="#999" />
               </Pressable>
             )}
           </View>
@@ -303,7 +303,7 @@ export default function EditProfile() {
               <Text className="text-sm text-gray-900 dark:text-white mr-1" numberOfLines={1}>
                 {university || t("common.choose")}
               </Text>
-              <Ionicons
+              <EmojiIcon
                 name={showUniPicker ? "chevron-up" : "chevron-down"}
                 size={16}
                 color="#999"
@@ -345,7 +345,7 @@ export default function EditProfile() {
               >
                 {faculty || t("common.choose")}
               </Text>
-              <Ionicons
+              <EmojiIcon
                 name={showFacPicker ? "chevron-up" : "chevron-down"}
                 size={16}
                 color="#999"

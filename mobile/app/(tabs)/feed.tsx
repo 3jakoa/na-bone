@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from "react-native";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { supabase, type Bone, type Profile } from "../../lib/supabase";
 import { formatScheduledDate } from "../../lib/formatDate";
 import { BoneComposerCard } from "../../components/BoneComposerCard";
@@ -460,7 +460,7 @@ export default function Feed() {
                     </View>
                     {openCount > 0 ? (
                       <View className="rounded-full bg-gray-100 dark:bg-neutral-800 px-2.5 py-1 flex-row items-center">
-                        <Ionicons
+                        <EmojiIcon
                           name="people-outline"
                           size={12}
                           color="#6B7280"
@@ -477,7 +477,7 @@ export default function Feed() {
                 <View className="flex-row items-start justify-between gap-3 mb-3">
                   <View className="flex-1 min-w-0">
                     <View className="flex-row items-start">
-                      <Ionicons
+                      <EmojiIcon
                         name="location"
                         size={17}
                         color="#00A6F6"
@@ -491,7 +491,7 @@ export default function Feed() {
                       </Text>
                     </View>
                     <View className="flex-row items-start mt-2">
-                      <Ionicons
+                      <EmojiIcon
                         name="calendar"
                         size={17}
                         color="#00A6F6"
@@ -594,7 +594,7 @@ export default function Feed() {
                           onPress={() => setSelectedBone(null)}
                           hitSlop={10}
                         >
-                          <Ionicons name="close" size={26} color="#888" />
+                          <EmojiIcon name="close" size={26} color="#888" />
                         </Pressable>
                       </View>
                     </View>
@@ -655,7 +655,7 @@ export default function Feed() {
                       </View>
 
                       <View className="flex-row items-start mb-3">
-                        <Ionicons
+                        <EmojiIcon
                           name="location"
                           size={18}
                           color="#00A6F6"
@@ -667,7 +667,7 @@ export default function Feed() {
                       </View>
 
                       <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mb-3 self-start">
-                        <Ionicons name="calendar" size={16} color="#00A6F6" />
+                        <EmojiIcon name="calendar" size={16} color="#00A6F6" />
                         <Text className="text-sm font-semibold text-brand ml-1.5">
                           {formatScheduledDate(b.scheduled_at, language)}
                         </Text>

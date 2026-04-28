@@ -9,7 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../components/EmojiIcon";
 import { supabase, type Profile } from "../lib/supabase";
 import { getEducationLevelLabel, getGenderLabel, useLanguage } from "../lib/i18n";
 
@@ -65,7 +65,7 @@ export default function ProfileDetail() {
           onPress={() => router.back()}
           className="w-10 h-10 rounded-full bg-black/30 items-center justify-center"
         >
-          <Ionicons name="chevron-back" size={24} color="#fff" />
+          <EmojiIcon name="chevron-back" size={24} color="#fff" />
         </Pressable>
       </View>
 
@@ -131,13 +131,13 @@ export default function ProfileDetail() {
           </Text>
 
           <View className="flex-row items-center mt-2">
-            <Ionicons name="school-outline" size={16} color="#999" />
+            <EmojiIcon name="school-outline" size={16} color="#999" />
             <Text className="text-base text-gray-500 dark:text-gray-400 ml-1.5">
               {profile.faculty}
             </Text>
           </View>
           <View className="flex-row items-center mt-1">
-            <Ionicons name="library-outline" size={16} color="#999" />
+            <EmojiIcon name="library-outline" size={16} color="#999" />
             <Text className="text-sm text-gray-400 dark:text-gray-500 ml-1.5">
               {profile.university}
             </Text>
@@ -212,7 +212,7 @@ export default function ProfileDetail() {
               }}
               className="flex-row items-center justify-center mt-10 py-3 gap-2"
             >
-              <Ionicons
+              <EmojiIcon
                 name={isBlocked ? "shield-checkmark-outline" : "ban-outline"}
                 size={16}
                 color={isBlocked ? "#00A6F6" : "#aaa"}

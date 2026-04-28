@@ -8,7 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../components/EmojiIcon";
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,7 +30,7 @@ export default function PhotoViewer() {
         onPress={() => router.back()}
         className="absolute top-16 right-5 z-20 w-10 h-10 rounded-full bg-white/20 items-center justify-center"
       >
-        <Ionicons name="close" size={24} color="#fff" />
+        <EmojiIcon name="close" size={24} color="#fff" />
       </Pressable>
 
       {/* Photos */}

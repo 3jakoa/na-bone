@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import {
   Platform,
   View,
@@ -169,7 +169,7 @@ export default function TabsLayout() {
                   marginBottom: 12,
                 }}
               >
-                <Ionicons name="warning-outline" size={28} color="#ef4444" />
+                <EmojiIcon name="warning-outline" size={28} color="#ef4444" />
               </View>
               <Text
                 style={{

@@ -14,7 +14,7 @@ import {
   Modal,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { logProductEvent } from "../../lib/productEvents";
@@ -492,7 +492,7 @@ export default function Chat() {
           onPress={send}
           className="w-11 h-11 bg-brand rounded-full items-center justify-center"
         >
-          <Ionicons name="send" size={18} color="#fff" />
+          <EmojiIcon name="send" size={18} color="#fff" />
         </Pressable>
       </View>
     </View>
@@ -506,7 +506,7 @@ export default function Chat() {
       {/* Header */}
       <View className="flex-row items-center gap-3 px-5 pt-16 pb-3 bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-800">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={24} color="#888" />
+          <EmojiIcon name="chevron-back" size={24} color="#888" />
         </Pressable>
         {other && (
           <Pressable
@@ -537,7 +537,7 @@ export default function Chat() {
           onPress={() => setShowMenu(true)}
           className="w-9 h-9 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center"
         >
-          <Ionicons name="ellipsis-vertical" size={18} color="#999" />
+          <EmojiIcon name="ellipsis-vertical" size={18} color="#999" />
         </Pressable>
       </View>
 
@@ -580,7 +580,7 @@ export default function Chat() {
                     style={{ width: "100%" }}
                   >
                     <View className="flex-row items-start">
-                      <Ionicons
+                      <EmojiIcon
                         name="flash-outline"
                         size={18}
                         color="#D97706"
@@ -744,7 +744,7 @@ export default function Chat() {
                     className="w-10 h-10 rounded-full items-center justify-center"
                     style={{ backgroundColor: "#00A6F615" }}
                   >
-                    <Ionicons name="person-outline" size={20} color="#00A6F6" />
+                    <EmojiIcon name="person-outline" size={20} color="#00A6F6" />
                   </View>
                   <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
                     {t("chat.viewProfile")}
@@ -759,7 +759,7 @@ export default function Chat() {
                     className="w-10 h-10 rounded-full items-center justify-center"
                     style={{ backgroundColor: "#ef444415" }}
                   >
-                    <Ionicons name="person-remove-outline" size={20} color="#ef4444" />
+                    <EmojiIcon name="person-remove-outline" size={20} color="#ef4444" />
                   </View>
                   <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
                     {t("chat.removeBuddy")}
@@ -795,7 +795,7 @@ export default function Chat() {
                     className="w-10 h-10 rounded-full items-center justify-center"
                     style={{ backgroundColor: "#ef444415" }}
                   >
-                    <Ionicons name="ban-outline" size={20} color="#ef4444" />
+                    <EmojiIcon name="ban-outline" size={20} color="#ef4444" />
                   </View>
                   <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
                     {t("chat.blockUser")}

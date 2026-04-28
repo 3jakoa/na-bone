@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, Pressable, ScrollView, Linking, Alert } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { useLanguage, type TranslationKey } from "../../lib/i18n";
 
 const SUPPORT_EMAIL = "bonibuddyapp@gmail.com";
@@ -43,7 +43,7 @@ export default function Help() {
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#888" />
+          <EmojiIcon name="chevron-back" size={28} color="#888" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">{t("settings.helpTitle")}</Text>
       </View>
@@ -67,7 +67,7 @@ export default function Help() {
                 <Text className="flex-1 text-base text-gray-800 dark:text-gray-100">
                   {item.q}
                 </Text>
-                <Ionicons
+                <EmojiIcon
                   name={openIdx === i ? "chevron-up" : "chevron-down"}
                   size={18}
                   color="#888"
@@ -153,12 +153,12 @@ function HelpRow({
 }) {
   return (
     <Pressable onPress={onPress} className="flex-row items-center px-5 py-4">
-      <Ionicons name={icon as any} size={20} color="#888" />
+      <EmojiIcon name={icon as any} size={20} color="#888" />
       <View className="flex-1 ml-3">
         <Text className="text-base text-gray-800 dark:text-gray-100">{title}</Text>
         <Text className="text-xs text-gray-400 dark:text-gray-500">{subtitle}</Text>
       </View>
-      <Ionicons name="chevron-forward" size={18} color="#888" />
+      <EmojiIcon name="chevron-forward" size={18} color="#888" />
     </Pressable>
   );
 }

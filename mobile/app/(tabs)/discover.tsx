@@ -7,7 +7,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   interpolate,
@@ -462,7 +462,7 @@ const CardContent = memo(function CardContent({ profile }: { profile: Profile })
           {profile.name}, {profile.age}
         </Text>
         <View className="flex-row items-center mt-1">
-          <Ionicons name="school-outline" size={14} color="#999" />
+          <EmojiIcon name="school-outline" size={14} color="#999" />
           <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1">{profile.faculty}</Text>
         </View>
         {profile.bio && (

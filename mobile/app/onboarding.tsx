@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../components/EmojiIcon";
 import { supabase, capitalizeName } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
 import { UNIVERSITIES, UNIVERSITY_NAMES } from "../lib/universities";
@@ -125,7 +125,7 @@ export default function Onboarding() {
           <View className="flex-row items-center mb-2">
             {step > 0 && (
               <Pressable onPress={goBack} className="mr-3">
-                <Ionicons name="chevron-back" size={24} color="#888" />
+                <EmojiIcon name="chevron-back" size={24} color="#888" />
               </Pressable>
             )}
             <View className="flex-1 flex-row gap-2">
@@ -337,7 +337,7 @@ export default function Onboarding() {
                 onPress={() => setEducationLevel(key)}
                 className={`flex-row items-center py-4 px-5 rounded-2xl mb-2 ${educationLevel === key ? "bg-brand" : "bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800"}`}
               >
-                <Ionicons
+                <EmojiIcon
                   name={icon}
                   size={22}
                   color={educationLevel === key ? "#fff" : "#999"}
@@ -381,7 +381,7 @@ export default function Onboarding() {
                 />
               ) : (
                 <View className="items-center">
-                  <Ionicons name="camera" size={40} color="#888" />
+                  <EmojiIcon name="camera" size={40} color="#888" />
                   <Text className="text-gray-400 dark:text-gray-500 text-sm mt-2">
                     {t("onboarding.addPhoto")}
                   </Text>
