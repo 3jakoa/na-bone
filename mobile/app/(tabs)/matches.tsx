@@ -9,7 +9,7 @@ import {
   Share,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { getChatMessagePreview } from "../../lib/chatContent";
 import { supabase, type Message, type Profile } from "../../lib/supabase";
 import { useLanguage, WEEKDAYS, type Language } from "../../lib/i18n";
@@ -356,20 +356,13 @@ export default function Matches() {
   }
 
   const header = (
-    <View className="px-6 mb-4 flex-row items-center justify-between">
-      <View>
-        {loaded && items.length > 0 ? (
-          <Text className="text-sm text-gray-400 dark:text-gray-500">
-            {items.length} {items.length === 1 ? t("matches.conversationOne") : t("matches.conversationMany")}
-          </Text>
-        ) : null}
-      </View>
+    <View className="px-6 mb-4 flex-row items-center justify-end">
       <Pressable
         onPress={inviteBuddy}
         disabled={inviteLoading}
         className="bg-brand-light dark:bg-brand/20 rounded-full px-4 py-2 flex-row items-center"
       >
-        <Ionicons name="person-add-outline" size={16} color="#00A6F6" />
+        <EmojiIcon name="person-add-outline" size={16} color="#00A6F6" />
         <Text className="text-brand font-bold text-sm ml-1.5">
           {inviteLoading ? t("common.loadingDots") : t("matches.addBuddy")}
         </Text>
@@ -385,7 +378,7 @@ export default function Matches() {
           className="items-center justify-center px-6"
           style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
         >
-          <Ionicons name="warning-outline" size={52} color="#9CA3AF" />
+          <EmojiIcon name="warning-outline" size={52} color="#9CA3AF" />
           <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5 text-center">
             {loadError}
           </Text>
@@ -454,7 +447,7 @@ export default function Matches() {
                       className="flex-row items-center bg-orange-50 dark:bg-orange-500/20 rounded-full px-2 py-0.5 ml-2 shrink-0"
                       style={{ gap: 2 }}
                     >
-                      <Ionicons name="flame" size={11} color="#F97316" />
+                      <EmojiIcon name="flame" size={11} color="#F97316" />
                       <Text className="text-xs font-bold text-orange-500">
                         {item.streak}
                       </Text>

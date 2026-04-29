@@ -9,7 +9,7 @@ import {
   Modal,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { supabase, type Profile } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
 
@@ -133,7 +133,7 @@ export default function Buddies() {
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#888" />
+          <EmojiIcon name="chevron-back" size={28} color="#888" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
           {t("settings.buddiesTitle")}
@@ -148,7 +148,7 @@ export default function Buddies() {
         ListEmptyComponent={
           loading ? null : (
             <View className="items-center mt-16">
-              <Ionicons name="people-outline" size={48} color="#888" />
+              <EmojiIcon name="people-outline" size={48} color="#888" />
               <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
                 {t("settings.noBuddies")}
               </Text>
@@ -199,13 +199,13 @@ export default function Buddies() {
                 onPress={() => router.push(`/matches/${item.matchId}`)}
                 className="w-10 h-10 rounded-full bg-brand-light dark:bg-brand/20 items-center justify-center"
               >
-                <Ionicons name="chatbubble" size={18} color="#00A6F6" />
+                <EmojiIcon name="chatbubble" size={18} color="#00A6F6" />
               </Pressable>
               <Pressable
                 onPress={() => setActionBuddy(item)}
                 className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center"
               >
-                <Ionicons
+                <EmojiIcon
                   name="ellipsis-horizontal"
                   size={18}
                   color="#999"
@@ -325,7 +325,7 @@ function ActionRow({
         className="w-10 h-10 rounded-full items-center justify-center"
         style={{ backgroundColor: color + "15" }}
       >
-        <Ionicons name={icon as any} size={20} color={color} />
+        <EmojiIcon name={icon as any} size={20} color={color} />
       </View>
       <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">{label}</Text>
     </Pressable>

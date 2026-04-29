@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { supabase, type Profile } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
 
@@ -73,7 +73,7 @@ export default function BlockedUsers() {
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#888" />
+          <EmojiIcon name="chevron-back" size={28} color="#888" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
           {t("settings.blockedTitle")}
@@ -89,7 +89,7 @@ export default function BlockedUsers() {
           contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 32 }}
           ListEmptyComponent={
             <View className="items-center mt-16">
-              <Ionicons name="shield-checkmark-outline" size={48} color="#888" />
+              <EmojiIcon name="shield-checkmark-outline" size={48} color="#888" />
               <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
                 {t("settings.noBlocked")}
               </Text>

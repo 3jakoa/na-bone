@@ -1,6 +1,6 @@
 import { View, Text, Pressable, ScrollView } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { useLanguage } from "../../lib/i18n";
 
 export default function Terms() {
@@ -10,7 +10,7 @@ export default function Terms() {
     <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#888" />
+          <EmojiIcon name="chevron-back" size={28} color="#888" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
           {t("settings.termsTitle")}

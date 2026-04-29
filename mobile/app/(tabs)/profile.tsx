@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "../../components/EmojiIcon";
 import { supabase, type Profile } from "../../lib/supabase";
 import {
   getEducationLevelLabel,
@@ -64,7 +64,7 @@ export default function ProfileScreen() {
           onPress={() => router.push("/edit-profile")}
           className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900 shadow-sm items-center justify-center"
         >
-          <Ionicons name="pencil" size={18} color="#999" />
+          <EmojiIcon name="pencil" size={18} color="#999" />
         </Pressable>
       </View>
 
@@ -97,7 +97,7 @@ export default function ProfileScreen() {
           {me.name}, {me.age}
         </Text>
         <View className="flex-row items-center mt-1">
-          <Ionicons name="school-outline" size={14} color="#999" />
+          <EmojiIcon name="school-outline" size={14} color="#999" />
           <Text className="text-gray-500 dark:text-gray-400 ml-1">{me.faculty}</Text>
         </View>
         <Text className="text-gray-400 dark:text-gray-500 text-sm">{me.university}</Text>
@@ -116,14 +116,14 @@ export default function ProfileScreen() {
           onPress={() => router.push("/settings/buddies")}
           className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-4 flex-row items-center shadow-sm"
         >
-          <Ionicons name="people" size={20} color="#00A6F6" />
+          <EmojiIcon name="people" size={20} color="#00A6F6" />
           <Text className="flex-1 ml-3 text-base font-semibold text-gray-900 dark:text-white">
             {t("common.buddies")}
           </Text>
           <Text className="text-base font-bold text-gray-900 dark:text-white mr-2">
             {matchCount}
           </Text>
-          <Ionicons name="chevron-forward" size={18} color="#888" />
+          <EmojiIcon name="chevron-forward" size={18} color="#888" />
         </Pressable>
       </View>
 
@@ -199,7 +199,7 @@ export default function ProfileScreen() {
       {/* Settings */}
       <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
         <View className="flex-row items-center px-5 py-3.5">
-          <Ionicons name="language-outline" size={20} color="#888" />
+          <EmojiIcon name="language-outline" size={20} color="#888" />
           <Text className="flex-1 ml-3 text-base text-gray-800 dark:text-gray-100">
             {t("common.language")}
           </Text>
@@ -259,7 +259,7 @@ function DetailRow({
 }) {
   return (
     <View className="flex-row items-center px-5 py-3.5">
-      <Ionicons name={icon as any} size={18} color="#999" />
+      <EmojiIcon name={icon as any} size={18} color="#999" />
       <Text className="text-sm text-gray-400 dark:text-gray-500 ml-3 w-20">{label}</Text>
       <Text className="text-sm text-gray-900 dark:text-gray-100 flex-1 text-right">{value}</Text>
     </View>
@@ -277,9 +277,9 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} className="flex-row items-center px-5 py-3.5">
-      <Ionicons name={icon as any} size={20} color="#888" />
+      <EmojiIcon name={icon as any} size={20} color="#888" />
       <Text className="flex-1 ml-3 text-base text-gray-800 dark:text-gray-100">{label}</Text>
-      <Ionicons name="chevron-forward" size={18} color="#888" />
+      <EmojiIcon name="chevron-forward" size={18} color="#888" />
     </Pressable>
   );
 }

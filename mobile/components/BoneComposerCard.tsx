@@ -15,7 +15,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { EmojiIcon } from "./EmojiIcon";
 import { useFocusEffect } from "expo-router";
 import Toast from "react-native-toast-message";
 import { supabase } from "../lib/supabase";
@@ -497,7 +497,7 @@ export function BoneComposerCard({
                     {loading ? t("common.loadingDots") : t("composer.publish")}
                   </Text>
                 ) : (
-                  <Ionicons name="add" size={18} color="#9CA3AF" />
+                  <EmojiIcon name="add" size={18} color="#9CA3AF" />
                 )}
               </Pressable>
             </View>
