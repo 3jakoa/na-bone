@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
+import { StyleSheet, Text, View, type ViewStyle } from "react-native";
 import Animated, {
   Easing,
   Extrapolation,
@@ -39,13 +39,14 @@ function phase(value: number, offset: number) {
   return (value + offset) % 1;
 }
 
-function useFoodOrbitStyle(progress: SharedValue<number>, index: number) {
+function useFoodFloatStyle(progress: SharedValue<number>, offset: number) {
   return useAnimatedStyle<ViewStyle>(() => {
-    const angle = phase(progress.value, index / 5) * Math.PI * 2;
+    const p = phase(progress.value, offset);
     return {
+      opacity: interpolate(p, [0, 0.5, 1], [0.55, 1, 0.55]),
       transform: [
-        { translateX: Math.cos(angle) * 58 },
-        { translateY: Math.sin(angle) * 58 },
+        { translateY: interpolate(p, [0, 0.5, 1], [0, -8, 0]) },
+        { scale: interpolate(p, [0, 0.5, 1], [0.96, 1.04, 0.96]) },
       ],
     };
   });
@@ -90,70 +91,38 @@ function useHeartStyle(progress: SharedValue<number>, offset: number, variant: 0
 }
 
 export function FeedEmptyAnimation() {
-  const bounce = useLoop(2200, Easing.inOut(Easing.ease));
-  const orbit = useLoop(5000, Easing.linear);
-  const sparkle = useLoop(2200);
+  const progress = useLoop(2600, Easing.inOut(Easing.ease));
 
   const plateStyle = useAnimatedStyle<ViewStyle>(() => ({
     transform: [
-      { translateY: interpolate(bounce.value, [0, 0.4, 0.6, 1], [0, -14, -10, 0]) },
-      { scale: interpolate(bounce.value, [0, 0.4, 0.6, 1], [1, 1.12, 1.08, 1]) },
+      { translateY: interpolate(progress.value, [0, 0.5, 1], [0, -8, 0]) },
+      { scale: interpolate(progress.value, [0, 0.5, 1], [1, 1.06, 1]) },
     ],
   }));
 
-  const firstFoodStyle = useFoodOrbitStyle(orbit, 0);
-  const secondFoodStyle = useFoodOrbitStyle(orbit, 1);
-  const thirdFoodStyle = useFoodOrbitStyle(orbit, 2);
-  const fourthFoodStyle = useFoodOrbitStyle(orbit, 3);
-  const fifthFoodStyle = useFoodOrbitStyle(orbit, 4);
-
-  const sparkleStyle = useAnimatedStyle<ViewStyle>(() => ({
-    opacity: interpolate(sparkle.value, [0, 0.5, 1], [0, 1, 0]),
-    transform: [
-      { translateX: interpolate(sparkle.value, [0, 0.5, 1], [0, -8, 0]) },
-      { translateY: interpolate(sparkle.value, [0, 0.5, 1], [0, -12, 0]) },
-      { scale: interpolate(sparkle.value, [0, 0.5, 1], [0, 1, 0]) },
-    ],
-  }));
-
-  const starStyle = useAnimatedStyle<ViewStyle>(() => {
-    const p = phase(sparkle.value, 0.18);
-    return {
-      opacity: interpolate(p, [0, 0.5, 1], [0, 1, 0]),
-      transform: [
-        { translateX: interpolate(p, [0, 0.5, 1], [0, 10, 0]) },
-        { translateY: interpolate(p, [0, 0.5, 1], [0, -10, 0]) },
-        { scale: interpolate(p, [0, 0.5, 1], [0, 1, 0]) },
-      ],
-    };
-  });
+  const firstFoodStyle = useFoodFloatStyle(progress, 0);
+  const secondFoodStyle = useFoodFloatStyle(progress, 0.28);
+  const thirdFoodStyle = useFoodFloatStyle(progress, 0.56);
 
   const foods = [
-    { emoji: "🍜", style: firstFoodStyle },
-    { emoji: "🍕", style: secondFoodStyle },
-    { emoji: "🥗", style: thirdFoodStyle },
-    { emoji: "🍣", style: fourthFoodStyle },
-    { emoji: "🌮", style: fifthFoodStyle },
+    { emoji: "🍜", placement: styles.foodTopLeft, style: firstFoodStyle },
+    { emoji: "🥗", placement: styles.foodTopRight, style: secondFoodStyle },
+    { emoji: "🍕", placement: styles.foodBottom, style: thirdFoodStyle },
   ];
 
   return (
     <View style={styles.canvas}>
-      <View style={styles.centerPoint}>
-        {foods.map((food) => (
-          <Animated.View key={food.emoji} style={[styles.foodEmojiWrap, food.style]}>
-            <Text style={styles.foodEmoji}>{food.emoji}</Text>
-          </Animated.View>
-        ))}
-      </View>
+      {foods.map((food) => (
+        <Animated.View
+          key={food.emoji}
+          style={[styles.foodEmojiWrap, food.placement, food.style]}
+        >
+          <Text style={styles.foodEmoji}>{food.emoji}</Text>
+        </Animated.View>
+      ))}
 
       <Animated.View style={[styles.feedPlateWrap, plateStyle]}>
         <Text style={styles.feedPlate}>🍽️</Text>
-        <Animated.View style={[styles.feedSparkle, sparkleStyle]}>
-          <Text style={styles.sparkleEmoji}>✨</Text>
-        </Animated.View>
-        <Animated.View style={[styles.feedStar, starStyle]}>
-          <Text style={styles.starEmoji}>⭐</Text>
-        </Animated.View>
       </Animated.View>
     </View>
   );
@@ -161,7 +130,6 @@ export function FeedEmptyAnimation() {
 
 export function DiscoverEmptyAnimation() {
   const cards = useLoop(3800);
-  const glass = useLoop(2400);
 
   const bottomCardStyle = useAnimatedStyle<ViewStyle>(() => ({
     opacity: 0.5,
@@ -206,8 +174,8 @@ export function DiscoverEmptyAnimation() {
 
   const glassStyle = useAnimatedStyle<ViewStyle>(() => ({
     transform: [
-      { scale: interpolate(glass.value, [0, 0.5, 1], [1, 1.15, 1]) },
-      { rotate: `${interpolate(glass.value, [0, 0.5, 1], [-10, 10, -10])}deg` },
+      { scale: interpolate(cards.value, [0, 0.5, 1], [1, 1.08, 1]) },
+      { rotate: `${interpolate(cards.value, [0, 0.5, 1], [-8, 8, -8])}deg` },
     ],
   }));
 
@@ -266,19 +234,6 @@ export function MatchesEmptyAnimation() {
     ],
   }));
 
-  const leftGlowStyle = useAnimatedStyle<TextStyle>(() => ({
-    textShadowColor: `rgba(0,166,246,${interpolate(drift.value, [0, 0.5, 1], [0, 0.5, 0])})`,
-    textShadowRadius: interpolate(drift.value, [0, 0.5, 1], [0, 8, 0]),
-  }));
-
-  const rightGlowStyle = useAnimatedStyle<TextStyle>(() => {
-    const p = phase(drift.value, 0.5);
-    return {
-      textShadowColor: `rgba(0,166,246,${interpolate(p, [0, 0.5, 1], [0, 0.5, 0])})`,
-      textShadowRadius: interpolate(p, [0, 0.5, 1], [0, 8, 0]),
-    };
-  });
-
   const leftBubbleStyle = useAnimatedStyle<ViewStyle>(() => ({
     opacity: interpolate(drift.value, [0, 0.15, 0.65, 1], [0, 1, 1, 0], Extrapolation.CLAMP),
     transform: [
@@ -318,14 +273,14 @@ export function MatchesEmptyAnimation() {
         <Animated.View style={[styles.leftBubble, leftBubbleStyle]}>
           <TypingDots color={GRAY_400} dotStyles={[dotOneStyle, dotTwoStyle, dotThreeStyle]} />
         </Animated.View>
-        <Animated.Text style={[styles.buddyEmoji, leftGlowStyle]}>😄</Animated.Text>
+        <Text style={styles.buddyEmoji}>😄</Text>
       </Animated.View>
 
       <Animated.View style={[styles.buddyRight, rightFaceStyle]}>
         <Animated.View style={[styles.rightBubble, rightBubbleStyle]}>
           <TypingDots color="#ffffff" dotStyles={[dotOneStyle, dotTwoStyle, dotThreeStyle]} />
         </Animated.View>
-        <Animated.Text style={[styles.buddyEmoji, rightGlowStyle]}>🥰</Animated.Text>
+        <Text style={styles.buddyEmoji}>🥰</Text>
       </Animated.View>
     </View>
   );
@@ -358,21 +313,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  centerPoint: {
-    position: "absolute",
-    left: 90,
-    top: 80,
-  },
   foodEmojiWrap: {
     position: "absolute",
-    left: -12,
-    top: -12,
-    width: 24,
-    height: 24,
+    width: 34,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  foodTopLeft: {
+    left: 30,
+    top: 30,
+  },
+  foodTopRight: {
+    right: 26,
+    top: 28,
+  },
+  foodBottom: {
+    left: 70,
+    bottom: 16,
   },
   foodEmoji: {
-    fontSize: 22,
-    lineHeight: 24,
+    fontSize: 24,
+    lineHeight: 30,
     textAlign: "center",
   },
   feedPlateWrap: {
@@ -382,22 +344,6 @@ const styles = StyleSheet.create({
   feedPlate: {
     fontSize: 64,
     lineHeight: 72,
-  },
-  feedSparkle: {
-    position: "absolute",
-    left: 2,
-    top: 5,
-  },
-  sparkleEmoji: {
-    fontSize: 16,
-  },
-  feedStar: {
-    position: "absolute",
-    right: 2,
-    top: 0,
-  },
-  starEmoji: {
-    fontSize: 14,
   },
   discoverStack: {
     width: 80,
