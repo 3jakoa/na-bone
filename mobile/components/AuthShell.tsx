@@ -25,19 +25,10 @@ import {
   OpenSans_700Bold,
   OpenSans_800ExtraBold,
 } from "@expo-google-fonts/open-sans";
+import { design } from "../lib/design";
 import { LanguageSwitch } from "./LanguageSwitch";
 
-const colors = {
-  brand: "#00A6F6",
-  text: "#111827",
-  muted: "#9CA3AF",
-  subtle: "#B0BAC6",
-  fieldBg: "#F7F9FC",
-  fieldBorder: "#DDE3EB",
-  divider: "#EDF0F4",
-  page: "#F5F8FB",
-  white: "#FFFFFF",
-};
+const colors = design.colors;
 
 type AuthShellProps = {
   children: ReactNode;
@@ -140,7 +131,7 @@ export function AuthField({
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor="#C8D0DA"
+          placeholderTextColor={colors.subtle}
           secureTextEntry={isSecure && !visible}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
@@ -282,7 +273,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontFamily: "Poppins_700Bold",
     fontSize: 48,
-    letterSpacing: -1.4,
+    letterSpacing: 0,
     lineHeight: 54,
   },
   logoAccent: {
@@ -318,10 +309,10 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     minHeight: 52,
-    borderRadius: 14,
+    borderRadius: design.radius.input,
     borderWidth: 1.5,
-    borderColor: colors.fieldBorder,
-    backgroundColor: colors.fieldBg,
+    borderColor: colors.border,
+    backgroundColor: colors.field,
     color: colors.text,
     fontFamily: "OpenSans_600SemiBold",
     fontSize: 16,
@@ -355,7 +346,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    borderRadius: 16,
+    borderRadius: design.radius.button,
     backgroundColor: colors.brand,
     marginBottom: 16,
     shadowColor: colors.brand,
@@ -366,14 +357,14 @@ const styles = StyleSheet.create({
   },
   primaryBase: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 16,
+    borderRadius: design.radius.button,
     backgroundColor: colors.brand,
   },
   primaryText: {
     color: colors.white,
     fontFamily: "OpenSans_800ExtraBold",
     fontSize: 16,
-    letterSpacing: -0.1,
+    letterSpacing: 0,
     zIndex: 1,
   },
   textButton: {
@@ -399,7 +390,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.divider,
   },
   dividerText: {
-    color: "#C4CAD3",
+    color: colors.subtle,
     fontFamily: "OpenSans_600SemiBold",
     fontSize: 12,
   },
@@ -410,14 +401,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    borderRadius: 16,
+    borderRadius: design.radius.button,
     borderWidth: 1.5,
-    borderColor: colors.fieldBorder,
+    borderColor: colors.border,
     backgroundColor: colors.white,
     marginBottom: 28,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowColor: colors.brand,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 1 },
     elevation: 1,
   },
@@ -426,7 +417,7 @@ const styles = StyleSheet.create({
     height: 18,
   },
   googleText: {
-    color: "#374151",
+    color: colors.textSoft,
     fontFamily: "OpenSans_700Bold",
     fontSize: 14,
   },

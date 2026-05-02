@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { EmojiIcon } from "../components/EmojiIcon";
+import { design } from "../lib/design";
 import { supabase, type Profile } from "../lib/supabase";
 import { getEducationLevelLabel, getGenderLabel, useLanguage } from "../lib/i18n";
 
@@ -54,18 +55,18 @@ export default function ProfileDetail() {
     })();
   }, [id]);
 
-  if (!profile) return <View className="flex-1 bg-gray-50 dark:bg-neutral-950" />;
+  if (!profile) return <View className="flex-1 bg-page" />;
 
   const photos = profile.photos.length > 0 ? profile.photos : [];
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
+    <View className="flex-1 bg-page">
       <View className="absolute top-0 left-0 right-0 z-20 flex-row items-center justify-between px-5 pt-16 pb-3">
         <Pressable
           onPress={() => router.back()}
           className="w-10 h-10 rounded-full bg-black/30 items-center justify-center"
         >
-          <EmojiIcon name="chevron-back" size={24} color="#fff" />
+          <EmojiIcon name="chevron-back" size={24} color={design.colors.white} />
         </Pressable>
       </View>
 
@@ -108,7 +109,7 @@ export default function ProfileDetail() {
                 {photos.map((_, i) => (
                   <View
                     key={i}
-                    className={`w-2 h-2 rounded-full ${i === photoIdx ? "bg-brand" : "bg-gray-300 dark:bg-neutral-700"}`}
+                    className={`w-2 h-2 rounded-full ${i === photoIdx ? "bg-brand" : "bg-subtle"}`}
                   />
                 ))}
               </View>
@@ -117,39 +118,39 @@ export default function ProfileDetail() {
         ) : (
           <View
             style={{ width, height: width }}
-            className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
+            className="bg-brand-light items-center justify-center"
           >
-            <Text className="text-8xl font-bold text-brand-dark dark:text-brand">
+            <Text className="text-8xl font-bold text-brand-dark">
               {profile.name[0]}
             </Text>
           </View>
         )}
 
         <View className="px-6 pt-6 pb-10">
-          <Text className="text-3xl font-bold text-gray-900 dark:text-white">
+          <Text className="text-3xl font-bold text-ink">
             {profile.name}, {profile.age}
           </Text>
 
           <View className="flex-row items-center mt-2">
-            <EmojiIcon name="school-outline" size={16} color="#999" />
-            <Text className="text-base text-gray-500 dark:text-gray-400 ml-1.5">
+            <EmojiIcon name="school-outline" size={16} color={design.colors.muted} />
+            <Text className="text-base text-muted ml-1.5">
               {profile.faculty}
             </Text>
           </View>
           <View className="flex-row items-center mt-1">
-            <EmojiIcon name="library-outline" size={16} color="#999" />
-            <Text className="text-sm text-gray-400 dark:text-gray-500 ml-1.5">
+            <EmojiIcon name="library-outline" size={16} color={design.colors.muted} />
+            <Text className="text-sm text-muted ml-1.5">
               {profile.university}
             </Text>
           </View>
 
           <View className="flex-row flex-wrap gap-2 mt-3">
-            <View className="bg-gray-100 dark:bg-neutral-800 rounded-full px-3 py-1.5">
-              <Text className="text-sm text-gray-600 dark:text-gray-200">{getGenderLabel(profile.gender, t)}</Text>
+            <View className="bg-field rounded-full px-3 py-1.5">
+              <Text className="text-sm text-soft">{getGenderLabel(profile.gender, t)}</Text>
             </View>
             {profile.education_level && (
-              <View className="bg-brand-light dark:bg-brand/20 rounded-full px-3 py-1.5">
-                <Text className="text-sm text-brand-dark dark:text-brand font-semibold">
+              <View className="bg-brand-light rounded-full px-3 py-1.5">
+                <Text className="text-sm text-brand-dark font-semibold">
                   {getEducationLevelLabel(profile.education_level, t)}
                 </Text>
               </View>
@@ -158,10 +159,10 @@ export default function ProfileDetail() {
 
           {profile.bio && (
             <View className="mt-5">
-              <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+              <Text className="text-sm font-semibold text-muted mb-1.5">
                 {t("profile.aboutMe")}
               </Text>
-              <Text className="text-base text-gray-700 dark:text-gray-200 leading-6">
+              <Text className="text-base text-soft leading-6">
                 {profile.bio}
               </Text>
             </View>
@@ -215,10 +216,10 @@ export default function ProfileDetail() {
               <EmojiIcon
                 name={isBlocked ? "shield-checkmark-outline" : "ban-outline"}
                 size={16}
-                color={isBlocked ? "#00A6F6" : "#aaa"}
+                color={isBlocked ? design.colors.brand : design.colors.subtle}
               />
               <Text
-                className={`text-sm ${isBlocked ? "text-brand" : "text-gray-400 dark:text-gray-500"}`}
+                className={`text-sm ${isBlocked ? "text-brand" : "text-muted"}`}
               >
                 {isBlocked ? t("profileDetail.unblockUser") : t("profileDetail.blockUser")}
               </Text>

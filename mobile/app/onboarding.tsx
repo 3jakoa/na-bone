@@ -21,15 +21,16 @@ import { UNIVERSITIES, UNIVERSITY_NAMES } from "../lib/universities";
 import { getPendingBuddyInviteToken } from "../lib/buddyInvites";
 import { useLanguage } from "../lib/i18n";
 import { LanguageSwitch } from "../components/LanguageSwitch";
+import { design } from "../lib/design";
 
 const { width } = Dimensions.get("window");
 const STEPS = 5;
-const BRAND = "#00A6F6";
-const PAGE_BG = "#F5F8FB";
-const TEXT = "#111827";
-const MUTED = "#9CA3AF";
-const FIELD_BG = "#F7F9FC";
-const FIELD_BORDER = "#DDE3EB";
+const BRAND = design.colors.brand;
+const PAGE_BG = design.colors.page;
+const TEXT = design.colors.text;
+const MUTED = design.colors.muted;
+const FIELD_BG = design.colors.field;
+const FIELD_BORDER = design.colors.border;
 
 type EducationLevel = "dodiplomski" | "magistrski" | "doktorski" | "";
 
@@ -201,7 +202,7 @@ export default function Onboarding() {
               value={name}
               onChangeText={setName}
               placeholder={t("onboarding.namePlaceholder")}
-              placeholderTextColor="#888"
+              placeholderTextColor={design.colors.subtle}
               autoCapitalize="words"
               returnKeyType="next"
               style={styles.input}
@@ -377,7 +378,7 @@ export default function Onboarding() {
                 <EmojiIcon
                   name={icon}
                   size={22}
-                  color={educationLevel === key ? "#fff" : MUTED}
+                  color={educationLevel === key ? design.colors.white : MUTED}
                 />
                 <Text
                   style={[
@@ -456,7 +457,7 @@ export default function Onboarding() {
               value={bio}
               onChangeText={setBio}
               placeholder={t("onboarding.bioPlaceholder")}
-              placeholderTextColor="#888"
+              placeholderTextColor={design.colors.subtle}
               multiline
               numberOfLines={4}
               textAlignVertical="top"
@@ -507,7 +508,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 5,
     borderRadius: 999,
-    backgroundColor: "#DDE3EB",
+    backgroundColor: design.colors.border,
   },
   progressSegmentActive: {
     backgroundColor: BRAND,
@@ -525,7 +526,7 @@ const styles = StyleSheet.create({
     color: TEXT,
     fontSize: 32,
     fontWeight: "800",
-    letterSpacing: -0.4,
+    letterSpacing: 0,
     lineHeight: 38,
     marginBottom: 8,
   },
@@ -562,7 +563,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   counterText: {
-    color: "#C8D0DA",
+    color: design.colors.subtle,
     fontSize: 12,
     textAlign: "right",
     marginBottom: 24,
@@ -599,7 +600,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   listOptionText: {
-    color: "#374151",
+    color: design.colors.textSoft,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -618,7 +619,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   iconOptionText: {
-    color: "#374151",
+    color: design.colors.textSoft,
     fontSize: 16,
     fontWeight: "700",
     marginLeft: 12,
@@ -628,12 +629,12 @@ const styles = StyleSheet.create({
     backgroundColor: BRAND,
   },
   optionText: {
-    color: "#374151",
+    color: design.colors.textSoft,
     fontSize: 16,
     fontWeight: "700",
   },
   optionTextActive: {
-    color: "#FFFFFF",
+    color: design.colors.white,
   },
   photoPicker: {
     alignSelf: "center",
@@ -659,7 +660,7 @@ const styles = StyleSheet.create({
     minHeight: 58,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 22,
+    borderRadius: design.radius.button,
     backgroundColor: BRAND,
     shadowColor: BRAND,
     shadowOpacity: 0.18,
@@ -668,7 +669,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   primaryButtonText: {
-    color: "#FFFFFF",
+    color: design.colors.white,
     fontSize: 16,
     fontWeight: "800",
   },

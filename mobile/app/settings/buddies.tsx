@@ -12,6 +12,7 @@ import { router, useFocusEffect } from "expo-router";
 import { EmojiIcon } from "../../components/EmojiIcon";
 import { supabase, type Profile } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
+import { design } from "../../lib/design";
 
 type Buddy = { matchId: string; profile: Profile };
 
@@ -130,15 +131,15 @@ export default function Buddies() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
+    <View className="flex-1 bg-page">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <EmojiIcon name="chevron-back" size={28} color="#888" />
+          <EmojiIcon name="chevron-back" size={28} color={design.colors.muted} />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
+        <Text className="text-lg font-bold text-ink ml-3">
           {t("settings.buddiesTitle")}
         </Text>
-        <Text className="text-gray-400 dark:text-gray-500 text-sm ml-2">({buddies.length})</Text>
+        <Text className="text-muted text-sm ml-2">({buddies.length})</Text>
       </View>
 
       <FlatList
@@ -148,11 +149,11 @@ export default function Buddies() {
         ListEmptyComponent={
           loading ? null : (
             <View className="items-center mt-16">
-              <EmojiIcon name="people-outline" size={48} color="#888" />
-              <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
+              <EmojiIcon name="people-outline" size={48} color={design.colors.muted} />
+              <Text className="text-muted text-lg mt-4">
                 {t("settings.noBuddies")}
               </Text>
-              <Text className="text-gray-300 dark:text-gray-600 text-sm mt-1">
+              <Text className="text-subtle text-sm mt-1">
                 {t("settings.swipeToFind")}
               </Text>
             </View>
@@ -161,7 +162,7 @@ export default function Buddies() {
         renderItem={({ item }) => (
           <Pressable
             onPress={() => router.push(`/matches/${item.matchId}`)}
-            className="bg-white dark:bg-neutral-900 rounded-3xl p-4 flex-row items-center shadow-sm"
+            className="bg-surface rounded-[24px] p-4 flex-row items-center border border-line"
           >
             <Pressable
               onPress={() =>
@@ -176,9 +177,9 @@ export default function Buddies() {
               ) : (
                 <View
                   style={{ width: 56, height: 56, borderRadius: 28 }}
-                  className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
+                  className="bg-brand-light items-center justify-center"
                 >
-                  <Text className="font-bold text-brand-dark dark:text-brand text-lg">
+                  <Text className="font-bold text-brand-dark text-lg">
                     {item.profile.name[0]}
                   </Text>
                 </View>
@@ -186,10 +187,10 @@ export default function Buddies() {
             </Pressable>
 
             <View className="flex-1 ml-3">
-              <Text className="font-bold text-gray-900 dark:text-white">
+              <Text className="font-bold text-ink">
                 {item.profile.name}, {item.profile.age}
               </Text>
-              <Text className="text-xs text-gray-400 dark:text-gray-500">
+              <Text className="text-xs text-muted">
                 {item.profile.faculty}
               </Text>
             </View>
@@ -197,18 +198,18 @@ export default function Buddies() {
             <View className="flex-row gap-2">
               <Pressable
                 onPress={() => router.push(`/matches/${item.matchId}`)}
-                className="w-10 h-10 rounded-full bg-brand-light dark:bg-brand/20 items-center justify-center"
+                className="w-10 h-10 rounded-full bg-brand-light items-center justify-center"
               >
-                <EmojiIcon name="chatbubble" size={18} color="#00A6F6" />
+                <EmojiIcon name="chatbubble" size={18} color={design.colors.brand} />
               </Pressable>
               <Pressable
                 onPress={() => setActionBuddy(item)}
-                className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center"
+                className="w-10 h-10 rounded-full bg-field items-center justify-center"
               >
                 <EmojiIcon
                   name="ellipsis-horizontal"
                   size={18}
-                  color="#999"
+                  color={design.colors.muted}
                 />
               </Pressable>
             </View>
@@ -229,10 +230,10 @@ export default function Buddies() {
         >
           <Pressable
             onPress={() => {}}
-            className="bg-white dark:bg-neutral-900 rounded-t-3xl px-5 pt-3 pb-10"
+            className="bg-surface rounded-t-[32px] px-5 pt-3 pb-10"
           >
             {/* Handle bar */}
-            <View className="w-10 h-1 rounded-full bg-gray-300 dark:bg-neutral-700 self-center mb-5" />
+            <View className="w-10 h-1 rounded-full bg-line self-center mb-5" />
 
             {actionBuddy && (
               <>
@@ -246,18 +247,18 @@ export default function Buddies() {
                   ) : (
                     <View
                       style={{ width: 44, height: 44, borderRadius: 22 }}
-                      className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
+                      className="bg-brand-light items-center justify-center"
                     >
-                      <Text className="font-bold text-brand-dark dark:text-brand">
+                      <Text className="font-bold text-brand-dark">
                         {actionBuddy.profile.name[0]}
                       </Text>
                     </View>
                   )}
                   <View className="ml-3">
-                    <Text className="font-bold text-gray-900 dark:text-white text-base">
+                    <Text className="font-bold text-ink text-base">
                       {actionBuddy.profile.name}
                     </Text>
-                    <Text className="text-xs text-gray-400 dark:text-gray-500">
+                    <Text className="text-xs text-muted">
                       {actionBuddy.profile.faculty}
                     </Text>
                   </View>
@@ -267,7 +268,7 @@ export default function Buddies() {
                 <ActionRow
                   icon="chatbubble-outline"
                   label={t("settings.sendMessage")}
-                  color="#00A6F6"
+                  color={design.colors.brand}
                   onPress={() => {
                     setActionBuddy(null);
                     router.push(`/matches/${actionBuddy.matchId}`);
@@ -276,7 +277,7 @@ export default function Buddies() {
                 <ActionRow
                   icon="person-outline"
                   label={t("settings.viewProfile")}
-                  color="#00A6F6"
+                  color={design.colors.brand}
                   onPress={() => {
                     setActionBuddy(null);
                     router.push(
@@ -287,13 +288,13 @@ export default function Buddies() {
                 <ActionRow
                   icon="person-remove-outline"
                   label={t("settings.removeBuddyTitle")}
-                  color="#ef4444"
+                  color={design.colors.danger}
                   onPress={() => removeBuddy(actionBuddy)}
                 />
                 <ActionRow
                   icon="ban-outline"
                   label={t("settings.blockUser")}
-                  color="#ef4444"
+                  color={design.colors.danger}
                   onPress={() => blockUser(actionBuddy)}
                 />
               </>
@@ -319,7 +320,7 @@ function ActionRow({
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
+      className="flex-row items-center py-4 px-2 rounded-[22px] active:bg-page"
     >
       <View
         className="w-10 h-10 rounded-full items-center justify-center"
@@ -327,7 +328,7 @@ function ActionRow({
       >
         <EmojiIcon name={icon as any} size={20} color={color} />
       </View>
-      <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">{label}</Text>
+      <Text className="ml-3 text-base text-soft font-medium">{label}</Text>
     </Pressable>
   );
 }

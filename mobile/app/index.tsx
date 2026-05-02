@@ -150,20 +150,20 @@ export default function Index() {
 
   if (offline) {
     return (
-      <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-neutral-950 px-8">
-        <View className="w-full max-w-sm bg-white dark:bg-neutral-900 rounded-3xl px-6 py-8 shadow-sm">
-          <Text className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3">
+      <View className="flex-1 items-center justify-center bg-page px-8">
+        <View className="w-full max-w-sm bg-surface rounded-[24px] px-6 py-8 border border-line">
+          <Text className="text-2xl font-bold text-ink text-center mb-3">
             {t("bootstrap.offlineTitle")}
           </Text>
-          <Text className="text-base text-gray-600 dark:text-gray-300 text-center leading-6 mb-4">
+          <Text className="text-base text-soft text-center leading-6 mb-4">
             {t("bootstrap.offlineBody")}
           </Text>
-          <Text className="text-sm text-gray-500 dark:text-gray-400 text-center leading-5 mb-6">
+          <Text className="text-sm text-muted text-center leading-5 mb-6">
             {t("bootstrap.offlineHint")}
           </Text>
           <Pressable
             onPress={() => setAttempt((value) => value + 1)}
-            className="bg-brand rounded-2xl px-6 py-4 items-center"
+            className="bg-brand rounded-[24px] px-6 py-4 items-center"
           >
             <Text className="text-white font-bold text-base">{t("common.retry")}</Text>
           </Pressable>
@@ -174,16 +174,16 @@ export default function Index() {
 
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-neutral-950 px-8">
-        <Text className="text-base font-semibold text-gray-900 dark:text-white text-center mb-2">
+      <View className="flex-1 items-center justify-center bg-page px-8">
+        <Text className="text-base font-semibold text-ink text-center mb-2">
           {t("bootstrap.profileLoadFailed")}
         </Text>
-        <Text className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
+        <Text className="text-sm text-muted text-center mb-6">
           {error}
         </Text>
         <Pressable
           onPress={() => setAttempt((a) => a + 1)}
-          className="bg-brand rounded-2xl px-6 py-3"
+          className="bg-brand rounded-[24px] px-6 py-3"
         >
           <Text className="text-white font-bold">{t("common.retry")}</Text>
         </Pressable>
@@ -194,7 +194,7 @@ export default function Index() {
           }}
           className="mt-3 px-6 py-3"
         >
-          <Text className="text-gray-500 dark:text-gray-400 font-semibold">
+          <Text className="text-muted font-semibold">
             {t("common.logout")}
           </Text>
         </Pressable>

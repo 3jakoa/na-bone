@@ -19,6 +19,7 @@ import { supabase, type Profile, capitalizeName } from "../lib/supabase";
 import { uploadImage } from "../lib/upload";
 import { UNIVERSITIES, UNIVERSITY_NAMES } from "../lib/universities";
 import { getGenderLabel, useLanguage } from "../lib/i18n";
+import { design } from "../lib/design";
 
 type EducationLevel = "dodiplomski" | "magistrski" | "doktorski" | "";
 
@@ -140,16 +141,16 @@ export default function EditProfile() {
   const faculties = university ? (UNIVERSITIES[university] ?? []) : [];
   const allPhotos = [...photos, ...newPhotos];
 
-  if (!me) return <View className="flex-1 bg-gray-50 dark:bg-neutral-950" />;
+  if (!me) return <View className="flex-1 bg-page" />;
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-gray-50 dark:bg-neutral-950"
+      className="flex-1 bg-page"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
-          className="flex-1 bg-gray-50 dark:bg-neutral-950"
+          className="flex-1 bg-page"
           contentContainerStyle={{ paddingBottom: 120 }}
           keyboardDismissMode="on-drag"
           keyboardShouldPersistTaps="handled"
@@ -157,9 +158,9 @@ export default function EditProfile() {
         {/* Header */}
         <View className="flex-row items-center justify-between px-6 pt-16 pb-4">
           <Pressable onPress={() => router.back()}>
-            <EmojiIcon name="chevron-back" size={28} color="#888" />
+            <EmojiIcon name="chevron-back" size={28} color={design.colors.muted} />
           </Pressable>
-          <Text className="text-lg font-bold text-gray-900 dark:text-white">{t("profile.edit")}</Text>
+          <Text className="text-lg font-bold text-ink">{t("profile.edit")}</Text>
           <Pressable onPress={save} disabled={loading}>
             <Text className="text-brand font-bold text-base">
               {loading ? t("common.loadingDots") : t("common.save")}
@@ -168,8 +169,8 @@ export default function EditProfile() {
         </View>
 
         {/* Photos grid */}
-        <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+        <View className="bg-surface mx-4 rounded-[24px] px-5 py-4 border border-line">
+          <Text className="text-sm font-semibold text-muted mb-3">
             {t("profile.photos")} ({allPhotos.length}/6)
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -178,9 +179,10 @@ export default function EditProfile() {
                 <Image source={{ uri }} style={{ width: 96, height: 96, borderRadius: 16 }} />
                 <Pressable
                   onPress={() => removePhoto(i)}
-                  className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-red-500 items-center justify-center"
+                  className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full items-center justify-center"
+                  style={{ backgroundColor: design.colors.danger }}
                 >
-                  <EmojiIcon name="close" size={14} color="#fff" />
+                  <EmojiIcon name="close" size={14} color={design.colors.white} />
                 </Pressable>
                 {i === 0 && (
                   <View className="absolute bottom-1 left-1 bg-brand rounded-full px-2 py-0.5">
@@ -194,29 +196,29 @@ export default function EditProfile() {
             {allPhotos.length < 6 && (
               <Pressable
                 onPress={addPhoto}
-                className="w-24 h-24 rounded-2xl bg-gray-100 dark:bg-neutral-800 items-center justify-center border-2 border-dashed border-gray-300 dark:border-neutral-700"
+                className="w-24 h-24 rounded-[22px] bg-field items-center justify-center border-2 border-dashed border-line"
               >
-                <EmojiIcon name="add" size={28} color="#999" />
+                <EmojiIcon name="add" size={28} color={design.colors.muted} />
               </Pressable>
             )}
           </View>
         </View>
 
         {/* Basic info */}
-        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-2 shadow-sm">
+        <View className="bg-surface mx-4 mt-4 rounded-[24px] px-5 py-2 border border-line">
           <EditRow label={t("onboarding.name")}>
             <TextInput
               value={name}
               onChangeText={setName}
               autoCapitalize="words"
               returnKeyType="done"
-              placeholderTextColor="#888"
-              className="flex-1 text-base text-right text-gray-900 dark:text-white"
+              placeholderTextColor={design.colors.subtle}
+              className="flex-1 text-base text-right text-ink"
             />
           </EditRow>
-          <View className="h-px bg-gray-100 dark:bg-neutral-800" />
+          <View className="h-px bg-field" />
           <View className="py-4">
-            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-2">{t("onboarding.age")}</Text>
+            <Text className="text-sm text-muted mb-2">{t("onboarding.age")}</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -228,10 +230,10 @@ export default function EditProfile() {
                     <Pressable
                       key={a}
                       onPress={() => setAge(a)}
-                      className={`w-11 h-11 rounded-xl items-center justify-center ${age === a ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
+                      className={`w-11 h-11 rounded-[18px] items-center justify-center ${age === a ? "bg-brand" : "bg-field"}`}
                     >
                       <Text
-                        className={`text-sm font-semibold ${age === a ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
+                        className={`text-sm font-semibold ${age === a ? "text-white" : "text-soft"}`}
                       >
                         {a}
                       </Text>
@@ -241,18 +243,18 @@ export default function EditProfile() {
               </View>
             </ScrollView>
           </View>
-          <View className="h-px bg-gray-100 dark:bg-neutral-800" />
+          <View className="h-px bg-field" />
           <View className="py-4">
-            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-2">{t("onboarding.gender")}</Text>
+            <Text className="text-sm text-muted mb-2">{t("onboarding.gender")}</Text>
             <View className="flex-row gap-2">
               {(["moški", "ženska", "drugo"] as const).map((g) => (
                 <Pressable
                   key={g}
                   onPress={() => setGender(g)}
-                  className={`flex-1 py-2.5 rounded-2xl items-center ${gender === g ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
+                  className={`flex-1 py-2.5 rounded-[22px] items-center ${gender === g ? "bg-brand" : "bg-field"}`}
                 >
                   <Text
-                    className={`text-sm font-semibold ${gender === g ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
+                    className={`text-sm font-semibold ${gender === g ? "text-white" : "text-soft"}`}
                   >
                     {getGenderLabel(g, t)}
                   </Text>
@@ -263,8 +265,8 @@ export default function EditProfile() {
         </View>
 
         {/* Education level */}
-        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
+        <View className="bg-surface mx-4 mt-4 rounded-[24px] px-5 py-4 border border-line">
+          <Text className="text-sm font-semibold text-muted mb-2">
             {t("onboarding.educationTitle")}
           </Text>
           <View className="flex-row gap-2">
@@ -280,10 +282,10 @@ export default function EditProfile() {
                 onPress={() =>
                   setEducationLevel(educationLevel === key ? "" : key)
                 }
-                className={`flex-1 py-2.5 rounded-2xl items-center ${educationLevel === key ? "bg-brand" : "bg-gray-100 dark:bg-neutral-800"}`}
+                className={`flex-1 py-2.5 rounded-[22px] items-center ${educationLevel === key ? "bg-brand" : "bg-field"}`}
               >
                 <Text
-                  className={`text-xs font-semibold ${educationLevel === key ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
+                  className={`text-xs font-semibold ${educationLevel === key ? "text-white" : "text-soft"}`}
                 >
                   {label}
                 </Text>
@@ -293,20 +295,20 @@ export default function EditProfile() {
         </View>
 
         {/* University */}
-        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-2 shadow-sm">
+        <View className="bg-surface mx-4 mt-4 rounded-[24px] px-5 py-2 border border-line">
           <Pressable
             onPress={() => setShowUniPicker(!showUniPicker)}
             className="flex-row items-center justify-between py-4"
           >
-            <Text className="text-sm text-gray-500 dark:text-gray-400">{t("onboarding.university")}</Text>
+            <Text className="text-sm text-muted">{t("onboarding.university")}</Text>
             <View className="flex-row items-center">
-              <Text className="text-sm text-gray-900 dark:text-white mr-1" numberOfLines={1}>
+              <Text className="text-sm text-ink mr-1" numberOfLines={1}>
                 {university || t("common.choose")}
               </Text>
               <EmojiIcon
                 name={showUniPicker ? "chevron-up" : "chevron-down"}
                 size={16}
-                color="#999"
+                color={design.colors.muted}
               />
             </View>
           </Pressable>
@@ -321,10 +323,10 @@ export default function EditProfile() {
                     setShowUniPicker(false);
                     setShowFacPicker(true);
                   }}
-                  className={`py-3 px-4 rounded-2xl mb-1 ${university === u ? "bg-brand" : "bg-gray-50 dark:bg-neutral-800"}`}
+                  className={`py-3 px-4 rounded-[22px] mb-1 ${university === u ? "bg-brand" : "bg-page"}`}
                 >
                   <Text
-                    className={`text-sm ${university === u ? "text-white font-semibold" : "text-gray-700 dark:text-gray-200"}`}
+                    className={`text-sm ${university === u ? "text-white font-semibold" : "text-soft"}`}
                   >
                     {u}
                   </Text>
@@ -332,15 +334,15 @@ export default function EditProfile() {
               ))}
             </View>
           )}
-          <View className="h-px bg-gray-100 dark:bg-neutral-800" />
+          <View className="h-px bg-field" />
           <Pressable
             onPress={() => setShowFacPicker(!showFacPicker)}
             className="flex-row items-center justify-between py-4"
           >
-            <Text className="text-sm text-gray-500 dark:text-gray-400">{t("onboarding.faculty")}</Text>
+            <Text className="text-sm text-muted">{t("onboarding.faculty")}</Text>
             <View className="flex-row items-center">
               <Text
-                className="text-sm text-gray-900 dark:text-white mr-1 max-w-48"
+                className="text-sm text-ink mr-1 max-w-48"
                 numberOfLines={1}
               >
                 {faculty || t("common.choose")}
@@ -348,7 +350,7 @@ export default function EditProfile() {
               <EmojiIcon
                 name={showFacPicker ? "chevron-up" : "chevron-down"}
                 size={16}
-                color="#999"
+                color={design.colors.muted}
               />
             </View>
           </Pressable>
@@ -361,10 +363,10 @@ export default function EditProfile() {
                     setFaculty(f);
                     setShowFacPicker(false);
                   }}
-                  className={`py-3 px-4 rounded-2xl mb-1 ${faculty === f ? "bg-brand" : "bg-gray-50 dark:bg-neutral-800"}`}
+                  className={`py-3 px-4 rounded-[22px] mb-1 ${faculty === f ? "bg-brand" : "bg-page"}`}
                 >
                   <Text
-                    className={`text-sm ${faculty === f ? "text-white font-semibold" : "text-gray-700 dark:text-gray-200"}`}
+                    className={`text-sm ${faculty === f ? "text-white font-semibold" : "text-soft"}`}
                   >
                     {f}
                   </Text>
@@ -375,20 +377,20 @@ export default function EditProfile() {
         </View>
 
         {/* Bio */}
-        <View className="bg-white dark:bg-neutral-900 mx-4 mt-4 rounded-3xl px-5 py-4 shadow-sm">
-          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">{t("common.bio")}</Text>
+        <View className="bg-surface mx-4 mt-4 rounded-[24px] px-5 py-4 border border-line">
+          <Text className="text-sm font-semibold text-muted mb-2">{t("common.bio")}</Text>
           <TextInput
             value={bio}
             onChangeText={setBio}
             placeholder={t("profile.somethingAboutYou")}
-            placeholderTextColor="#888"
+            placeholderTextColor={design.colors.subtle}
             multiline
             numberOfLines={3}
             textAlignVertical="top"
             maxLength={300}
-            className="text-base text-gray-900 dark:text-white min-h-20 bg-gray-50 dark:bg-neutral-800 rounded-2xl px-4 py-3"
+            className="text-base text-ink min-h-20 bg-field rounded-[22px] px-4 py-3"
           />
-          <Text className="text-xs text-gray-300 dark:text-gray-600 text-right mt-1">
+          <Text className="text-xs text-subtle text-right mt-1">
             {bio.length}/300
           </Text>
         </View>
@@ -407,7 +409,7 @@ function EditRow({
 }) {
   return (
     <View className="flex-row items-center justify-between py-4">
-      <Text className="text-sm text-gray-500 dark:text-gray-400">{label}</Text>
+      <Text className="text-sm text-muted">{label}</Text>
       {children}
     </View>
   );

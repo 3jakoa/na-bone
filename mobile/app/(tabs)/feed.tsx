@@ -18,6 +18,7 @@ import { BoneComposerCard } from "../../components/BoneComposerCard";
 import { createGuard } from "../../lib/createGuard";
 import { useLanguage } from "../../lib/i18n";
 import { FeedEmptyAnimation } from "../../components/EmptyStateAnimations";
+import { design } from "../../lib/design";
 
 type FeedItem = Bone & {
   author?: Pick<Profile, "id" | "name" | "photos" | "faculty">;
@@ -323,7 +324,7 @@ export default function Feed() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
+    <View className="flex-1 bg-page pt-16">
       {items.length === 0 ? (
         <View className="flex-1">
           <ScrollView
@@ -355,10 +356,10 @@ export default function Feed() {
             }}
           >
             <FeedEmptyAnimation />
-            <Text className="text-gray-900 dark:text-white text-lg font-bold mt-3">
+            <Text className="text-brand text-lg font-bold mt-3">
               {t("feed.noActive")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 text-[13px] leading-5 mt-2 text-center">
+            <Text className="text-muted text-[13px] leading-5 mt-2 text-center">
               {t("feed.noActiveBody")}
             </Text>
           </View>
@@ -391,7 +392,7 @@ export default function Feed() {
                   }
                   setSelectedBone(item);
                 }}
-                className="bg-white dark:bg-neutral-900 rounded-2xl p-4 shadow-sm"
+                className="bg-surface rounded-[22px] p-4"
               >
                 <View className="flex-row items-start justify-between gap-3 mb-3">
                   {item.author && (
@@ -410,21 +411,21 @@ export default function Feed() {
                           style={{ width: 36, height: 36, borderRadius: 18 }}
                         />
                       ) : (
-                        <View className="w-9 h-9 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
-                          <Text className="font-bold text-brand-dark dark:text-brand">
+                        <View className="w-9 h-9 rounded-full bg-brand-light items-center justify-center">
+                          <Text className="font-bold text-brand-dark">
                             {item.author.name[0]}
                           </Text>
                         </View>
                       )}
                       <View className="ml-2.5 flex-1 min-w-0">
                         <Text
-                          className="font-semibold text-gray-900 dark:text-white"
+                          className="font-semibold text-ink"
                           numberOfLines={1}
                         >
                           {item.author.name}
                         </Text>
                         <Text
-                          className="text-xs text-gray-400 dark:text-gray-500"
+                          className="text-xs text-muted"
                           numberOfLines={1}
                         >
                           {item.author.faculty}
@@ -444,14 +445,14 @@ export default function Feed() {
                     <View
                       className={`rounded-full px-2.5 py-1 ${
                         isPrivate
-                          ? "bg-gray-100 dark:bg-neutral-800"
-                          : "bg-blue-50 dark:bg-brand/20"
+                          ? "bg-field"
+                          : "bg-brand-light"
                       }`}
                     >
                       <Text
                         className={`text-[11px] font-semibold ${
                           isPrivate
-                            ? "text-gray-500 dark:text-gray-300"
+                            ? "text-muted"
                             : "text-brand"
                         }`}
                       >
@@ -459,14 +460,14 @@ export default function Feed() {
                       </Text>
                     </View>
                     {openCount > 0 ? (
-                      <View className="rounded-full bg-gray-100 dark:bg-neutral-800 px-2.5 py-1 flex-row items-center">
+                      <View className="rounded-full bg-field px-2.5 py-1 flex-row items-center">
                         <EmojiIcon
                           name="people-outline"
                           size={12}
-                          color="#6B7280"
+                          color={design.colors.muted}
                           style={{ marginRight: 3 }}
                         />
-                        <Text className="text-[11px] font-semibold text-gray-500 dark:text-gray-300">
+                        <Text className="text-[11px] font-semibold text-muted">
                           {t("feed.openedCount", { count: openCount })}
                         </Text>
                       </View>
@@ -480,11 +481,11 @@ export default function Feed() {
                       <EmojiIcon
                         name="location"
                         size={17}
-                        color="#00A6F6"
+                        color={design.colors.brand}
                         style={{ marginTop: 3 }}
                       />
                       <Text
-                        className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-1.5"
+                        className="flex-1 font-bold text-base text-ink ml-1.5"
                         numberOfLines={2}
                       >
                         {item.restaurant}
@@ -494,11 +495,11 @@ export default function Feed() {
                       <EmojiIcon
                         name="calendar"
                         size={17}
-                        color="#00A6F6"
+                        color={design.colors.brand}
                         style={{ marginTop: 3 }}
                       />
                       <Text
-                        className="flex-1 font-bold text-base text-gray-900 dark:text-white ml-1.5"
+                        className="flex-1 font-bold text-base text-ink ml-1.5"
                         numberOfLines={1}
                       >
                         {formatScheduledDate(item.scheduled_at, language)}
@@ -510,7 +511,7 @@ export default function Feed() {
                 <View className="flex-row items-center justify-between gap-3">
                   {item.note ? (
                     <Text
-                      className="flex-1 text-sm text-gray-600 dark:text-gray-300"
+                      className="flex-1 text-sm text-soft"
                       numberOfLines={2}
                     >
                       {item.note}
@@ -525,9 +526,10 @@ export default function Feed() {
                         event.stopPropagation();
                         confirmCancelBone(item);
                       }}
-                      className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-2 shrink-0"
+                      className="rounded-full px-3 py-2 shrink-0"
+                      style={{ backgroundColor: design.colors.dangerBg }}
                     >
-                      <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
+                      <Text className="text-xs font-semibold" style={{ color: design.colors.danger }}>
                         {t("feed.cancelBon")}
                       </Text>
                     </Pressable>
@@ -565,7 +567,7 @@ export default function Feed() {
         >
           <Pressable
             onPress={() => {}}
-            className="bg-white dark:bg-neutral-900 rounded-3xl w-full max-w-md"
+            className="bg-surface rounded-[24px] w-full max-w-md"
             style={{ maxHeight: "85%" }}
           >
             {selectedBone &&
@@ -576,16 +578,17 @@ export default function Feed() {
                 return (
                   <>
                     <View className="flex-row items-center justify-between px-5 pt-5 pb-2">
-                      <Text className="text-lg font-bold text-gray-900 dark:text-white">
+                      <Text className="text-lg font-bold text-ink">
                         {isPrivate ? t("feed.privateBon") : t("feed.publicBon")}
                       </Text>
                       <View className="flex-row items-center gap-2">
                         {isMine && (
                           <Pressable
                             onPress={() => confirmCancelBone(b)}
-                            className="rounded-full bg-red-50 dark:bg-red-500/10 px-3 py-1.5"
+                            className="rounded-full px-3 py-1.5"
+                            style={{ backgroundColor: design.colors.dangerBg }}
                           >
-                            <Text className="text-xs font-semibold text-red-500 dark:text-red-300">
+                            <Text className="text-xs font-semibold" style={{ color: design.colors.danger }}>
                               {t("feed.cancelBonLong")}
                             </Text>
                           </Pressable>
@@ -594,7 +597,7 @@ export default function Feed() {
                           onPress={() => setSelectedBone(null)}
                           hitSlop={10}
                         >
-                          <EmojiIcon name="close" size={26} color="#888" />
+                          <EmojiIcon name="close" size={26} color={design.colors.muted} />
                         </Pressable>
                       </View>
                     </View>
@@ -610,17 +613,17 @@ export default function Feed() {
                               style={{ width: 48, height: 48, borderRadius: 24 }}
                             />
                           ) : (
-                            <View className="w-12 h-12 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
-                              <Text className="font-bold text-brand-dark dark:text-brand">
+                            <View className="w-12 h-12 rounded-full bg-brand-light items-center justify-center">
+                              <Text className="font-bold text-brand-dark">
                                 {b.author.name[0]}
                               </Text>
                             </View>
                           )}
                           <View className="ml-3 flex-1">
-                            <Text className="font-semibold text-gray-900 dark:text-white">
+                            <Text className="font-semibold text-ink">
                               {b.author.name}
                             </Text>
-                            <Text className="text-xs text-gray-400 dark:text-gray-500">
+                            <Text className="text-xs text-muted">
                               {b.author.faculty}
                             </Text>
                           </View>
@@ -638,14 +641,14 @@ export default function Feed() {
                         <View
                           className={`rounded-full px-3 py-1 ${
                             isPrivate
-                              ? "bg-gray-100 dark:bg-neutral-800"
-                              : "bg-blue-50 dark:bg-brand/20"
+                              ? "bg-field"
+                              : "bg-brand-light"
                           }`}
                         >
                           <Text
                             className={`text-xs font-semibold ${
                               isPrivate
-                                ? "text-gray-500 dark:text-gray-300"
+                                ? "text-muted"
                                 : "text-brand"
                             }`}
                           >
@@ -658,24 +661,24 @@ export default function Feed() {
                         <EmojiIcon
                           name="location"
                           size={18}
-                          color="#00A6F6"
+                          color={design.colors.brand}
                           style={{ marginTop: 3 }}
                         />
-                        <Text className="flex-1 font-bold text-lg text-gray-900 dark:text-white ml-2">
+                        <Text className="flex-1 font-bold text-lg text-ink ml-2">
                           {b.restaurant}
                         </Text>
                       </View>
 
-                      <View className="bg-blue-50 dark:bg-brand/20 rounded-xl px-3 py-2 flex-row items-center mb-3 self-start">
-                        <EmojiIcon name="calendar" size={16} color="#00A6F6" />
+                      <View className="bg-brand-light rounded-[18px] px-3 py-2 flex-row items-center mb-3 self-start">
+                        <EmojiIcon name="calendar" size={16} color={design.colors.brand} />
                         <Text className="text-sm font-semibold text-brand ml-1.5">
                           {formatScheduledDate(b.scheduled_at, language)}
                         </Text>
                       </View>
 
                       {b.note ? (
-                        <View className="bg-gray-50 dark:bg-neutral-800 rounded-2xl p-4 mb-4">
-                          <Text className="text-sm text-gray-700 dark:text-gray-200 leading-5">
+                        <View className="bg-page rounded-[22px] p-4 mb-4">
+                          <Text className="text-sm text-soft leading-5">
                             {b.note}
                           </Text>
                         </View>
@@ -689,7 +692,7 @@ export default function Feed() {
                               void respond(b);
                             })
                           }
-                          className="bg-brand rounded-2xl py-4 items-center"
+                          className="bg-brand rounded-[22px] py-4 items-center"
                         >
                           <Text className="text-white font-bold text-base">
                             {t("feed.openChat")}

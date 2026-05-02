@@ -12,14 +12,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase";
 import { createGuard } from "../../lib/createGuard";
 import { registerForPushNotifications } from "../../lib/notifications";
-import { useTheme } from "../../lib/theme";
 import { useLanguage, type TranslationKey } from "../../lib/i18n";
+import { design } from "../../lib/design";
 
 export default function TabsLayout() {
   const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
-  const { scheme } = useTheme();
   const { t } = useLanguage();
-  const isDark = scheme === "dark";
   const pathname = usePathname();
   const activeTab = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "feed";
   const insets = useSafeAreaInsets();
@@ -45,13 +43,13 @@ export default function TabsLayout() {
       <Tabs
         screenOptions={({ route }) => ({
           headerShown: false,
-          tabBarActiveTintColor: "#00A6F6",
-          tabBarInactiveTintColor: isDark ? "#666" : "#999",
+          tabBarActiveTintColor: design.colors.brand,
+          tabBarInactiveTintColor: design.colors.muted,
           tabBarStyle: {
             display: Platform.OS === "android" ? "none" : "flex",
-            backgroundColor: isDark ? "#0a0a0a" : "#fff",
+            backgroundColor: design.colors.surface,
             borderTopWidth: 0.5,
-            borderTopColor: isDark ? "#262626" : "#e5e5e5",
+            borderTopColor: design.colors.border,
             paddingBottom: tabBarBottomPadding,
             paddingTop: 8,
             height: tabBarHeight,
@@ -126,7 +124,6 @@ export default function TabsLayout() {
         <AndroidTabBar
           bottomPadding={androidBottomPadding}
           height={androidTabBarHeight}
-          isDark={isDark}
           onBlockedNavigate={setLeaveRoute}
         />
       ) : null}
@@ -141,7 +138,7 @@ export default function TabsLayout() {
           onPress={() => setLeaveRoute(null)}
           style={{
             flex: 1,
-            backgroundColor: "rgba(0,0,0,0.4)",
+            backgroundColor: design.colors.overlay,
             justifyContent: "center",
             alignItems: "center",
             paddingHorizontal: 32,
@@ -150,8 +147,8 @@ export default function TabsLayout() {
           <Pressable
             onPress={() => {}}
             style={{
-              backgroundColor: isDark ? "#171717" : "#fff",
-              borderRadius: 24,
+              backgroundColor: design.colors.surface,
+              borderRadius: design.radius.sheet,
               width: "100%",
               paddingHorizontal: 24,
               paddingVertical: 28,
@@ -163,19 +160,19 @@ export default function TabsLayout() {
                   width: 56,
                   height: 56,
                   borderRadius: 28,
-                  backgroundColor: isDark ? "#3b0f0f" : "#FEF2F2",
+                  backgroundColor: design.colors.dangerBg,
                   alignItems: "center",
                   justifyContent: "center",
                   marginBottom: 12,
                 }}
               >
-                <EmojiIcon name="warning-outline" size={28} color="#ef4444" />
+                <EmojiIcon name="warning-outline" size={28} color={design.colors.danger} />
               </View>
               <Text
                 style={{
                   fontSize: 18,
                   fontWeight: "700",
-                  color: isDark ? "#f5f5f5" : "#111827",
+                  color: design.colors.text,
                   textAlign: "center",
                 }}
               >
@@ -184,7 +181,7 @@ export default function TabsLayout() {
               <Text
                 style={{
                   fontSize: 14,
-                  color: isDark ? "#a3a3a3" : "#6b7280",
+                  color: design.colors.muted,
                   textAlign: "center",
                   marginTop: 8,
                 }}
@@ -203,32 +200,32 @@ export default function TabsLayout() {
                   );
                 }
               }}
-              android_ripple={{ color: "#dc2626" }}
+              android_ripple={{ color: design.colors.danger }}
               style={{
-                backgroundColor: "#ef4444",
-                borderRadius: 16,
+                backgroundColor: design.colors.danger,
+                borderRadius: design.radius.control,
                 paddingVertical: 14,
                 alignItems: "center" as const,
                 marginBottom: 12,
               }}
             >
-              <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
+              <Text style={{ color: design.colors.white, fontWeight: "700", fontSize: 16 }}>
                 {t("common.leave")}
               </Text>
             </Pressable>
             <Pressable
               onPress={() => setLeaveRoute(null)}
-              android_ripple={{ color: "#d1d5db" }}
+              android_ripple={{ color: design.colors.border }}
               style={{
-                backgroundColor: isDark ? "#262626" : "#f3f4f6",
-                borderRadius: 16,
+                backgroundColor: design.colors.field,
+                borderRadius: design.radius.control,
                 paddingVertical: 14,
                 alignItems: "center" as const,
               }}
             >
               <Text
                 style={{
-                  color: isDark ? "#e5e5e5" : "#374151",
+                  color: design.colors.textSoft,
                   fontWeight: "700",
                   fontSize: 16,
                 }}
@@ -284,12 +281,10 @@ function TabEmoji({
 function AndroidTabBar({
   bottomPadding,
   height,
-  isDark,
   onBlockedNavigate,
 }: {
   bottomPadding: number;
   height: number;
-  isDark: boolean;
   onBlockedNavigate: (route: string) => void;
 }) {
   const pathname = usePathname();
@@ -316,9 +311,9 @@ function AndroidTabBar({
         paddingTop: 8,
         paddingBottom: bottomPadding,
         paddingHorizontal: 6,
-        backgroundColor: isDark ? "#0a0a0a" : "#fff",
+        backgroundColor: design.colors.surface,
         borderTopWidth: 0.5,
-        borderTopColor: isDark ? "#262626" : "#e5e5e5",
+        borderTopColor: design.colors.border,
         flexDirection: "row",
         alignItems: "center",
         elevation: 24,
@@ -327,7 +322,7 @@ function AndroidTabBar({
     >
       {androidTabs.map((tab) => {
         const focused = activeRoute === tab.name;
-        const color = focused ? "#00A6F6" : isDark ? "#666" : "#999";
+        const color = focused ? design.colors.brand : design.colors.muted;
         const title = t(tab.titleKey);
 
         return (
@@ -336,7 +331,7 @@ function AndroidTabBar({
             accessibilityRole="button"
             accessibilityState={focused ? { selected: true } : undefined}
             accessibilityLabel={title}
-            android_ripple={{ color: isDark ? "#1f1f1f" : "#f3f4f6" }}
+            android_ripple={{ color: design.colors.field }}
             onPress={() => goToTab(tab.name)}
             style={{
               flex: 1,

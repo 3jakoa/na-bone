@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { router } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
+import { design } from "../../lib/design";
 
 export default function CreateRedirect() {
   useEffect(() => {
@@ -11,8 +12,8 @@ export default function CreateRedirect() {
   }, []);
 
   return (
-    <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-neutral-950">
-      <ActivityIndicator color="#00A6F6" />
+    <View className="flex-1 items-center justify-center bg-page">
+      <ActivityIndicator color={design.colors.brand} />
     </View>
   );
 }

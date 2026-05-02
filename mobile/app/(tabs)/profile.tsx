@@ -15,6 +15,7 @@ import {
   useLanguage,
 } from "../../lib/i18n";
 import { LanguageSwitch } from "../../components/LanguageSwitch";
+import { design } from "../../lib/design";
 
 export default function ProfileScreen() {
   const [me, setMe] = useState<Profile | null>(null);
@@ -52,19 +53,19 @@ export default function ProfileScreen() {
     router.replace("/auth/login");
   }
 
-  if (!me) return <View className="flex-1 bg-gray-50 dark:bg-neutral-950" />;
+  if (!me) return <View className="flex-1 bg-page" />;
 
   return (
     <ScrollView
-      className="flex-1 bg-gray-50 dark:bg-neutral-950"
+      className="flex-1 bg-page"
       contentContainerStyle={{ paddingBottom: 32 }}
     >
       <View className="pt-16 px-6 flex-row justify-end mb-4">
         <Pressable
           onPress={() => router.push("/edit-profile")}
-          className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900 shadow-sm items-center justify-center"
+          className="w-10 h-10 rounded-full bg-surface items-center justify-center"
         >
-          <EmojiIcon name="pencil" size={18} color="#999" />
+          <EmojiIcon name="pencil" size={18} color={design.colors.muted} />
         </Pressable>
       </View>
 
@@ -83,24 +84,24 @@ export default function ProfileScreen() {
           {me.photos[0] ? (
             <Image
               source={{ uri: me.photos[0] }}
-              style={{ width: 128, height: 128, borderRadius: 64, borderWidth: 4, borderColor: "#fff" }}
+              style={{ width: 128, height: 128, borderRadius: 64, borderWidth: 4, borderColor: design.colors.white }}
             />
           ) : (
-            <View className="w-32 h-32 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center border-4 border-white dark:border-neutral-900 shadow-sm">
-              <Text className="text-5xl font-bold text-brand-dark dark:text-brand">
+            <View className="w-32 h-32 rounded-full bg-brand-light items-center justify-center border-4 border-white">
+              <Text className="text-5xl font-bold text-brand-dark">
                 {me.name[0]}
               </Text>
             </View>
           )}
         </Pressable>
-        <Text className="text-2xl font-bold mt-4 text-gray-900 dark:text-white">
+        <Text className="text-2xl font-bold mt-4 text-ink">
           {me.name}, {me.age}
         </Text>
         <View className="flex-row items-center mt-1">
-          <EmojiIcon name="school-outline" size={14} color="#999" />
-          <Text className="text-gray-500 dark:text-gray-400 ml-1">{me.faculty}</Text>
+          <EmojiIcon name="school-outline" size={14} color={design.colors.muted} />
+          <Text className="text-muted ml-1">{me.faculty}</Text>
         </View>
-        <Text className="text-gray-400 dark:text-gray-500 text-sm">{me.university}</Text>
+        <Text className="text-muted text-sm">{me.university}</Text>
         {me.education_level && (
           <View className="bg-brand-light rounded-full px-3 py-1 mt-2">
             <Text className="text-brand-dark text-xs font-semibold">
@@ -114,33 +115,33 @@ export default function ProfileScreen() {
       <View className="mx-4 mb-4">
         <Pressable
           onPress={() => router.push("/settings/buddies")}
-          className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-4 flex-row items-center shadow-sm"
+          className="bg-surface rounded-[24px] px-5 py-4 flex-row items-center border border-line"
         >
-          <EmojiIcon name="people" size={20} color="#00A6F6" />
-          <Text className="flex-1 ml-3 text-base font-semibold text-gray-900 dark:text-white">
+          <EmojiIcon name="people" size={20} color={design.colors.brand} />
+          <Text className="flex-1 ml-3 text-base font-semibold text-ink">
             {t("common.buddies")}
           </Text>
-          <Text className="text-base font-bold text-gray-900 dark:text-white mr-2">
+          <Text className="text-base font-bold text-ink mr-2">
             {matchCount}
           </Text>
-          <EmojiIcon name="chevron-forward" size={18} color="#888" />
+          <EmojiIcon name="chevron-forward" size={18} color={design.colors.muted} />
         </Pressable>
       </View>
 
       {/* Bio */}
-      <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm mb-4">
-        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+      <View className="bg-surface mx-4 rounded-[24px] px-5 py-4 mb-4 border border-line">
+        <Text className="text-sm font-semibold text-muted mb-1.5">
           {t("profile.aboutMe")}
         </Text>
-        <Text className="text-base text-gray-700 dark:text-gray-200 leading-6">
+        <Text className="text-base text-soft leading-6">
           {me.bio || t("profile.noBio")}
         </Text>
       </View>
 
       {/* Photos */}
       {me.photos.length > 0 && (
-        <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl px-5 py-4 shadow-sm mb-4">
-          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+        <View className="bg-surface mx-4 rounded-[24px] px-5 py-4 mb-4 border border-line">
+          <Text className="text-sm font-semibold text-muted mb-3">
             {t("profile.photos")}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -170,7 +171,7 @@ export default function ProfileScreen() {
       )}
 
       {/* Details */}
-      <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
+      <View className="bg-surface mx-4 rounded-[24px] overflow-hidden mb-4 border border-line">
         <DetailRow icon="person-outline" label={t("profile.gender")} value={getGenderLabel(me.gender, t)} />
         <Sep />
         <DetailRow
@@ -197,10 +198,10 @@ export default function ProfileScreen() {
       </View>
 
       {/* Settings */}
-      <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm mb-4">
+      <View className="bg-surface mx-4 rounded-[24px] overflow-hidden mb-4 border border-line">
         <View className="flex-row items-center px-5 py-3.5">
-          <EmojiIcon name="language-outline" size={20} color="#888" />
-          <Text className="flex-1 ml-3 text-base text-gray-800 dark:text-gray-100">
+          <EmojiIcon name="language-outline" size={20} color={design.colors.muted} />
+          <Text className="flex-1 ml-3 text-base text-soft">
             {t("common.language")}
           </Text>
           <LanguageSwitch />
@@ -240,9 +241,9 @@ export default function ProfileScreen() {
       {/* Logout */}
       <Pressable
         onPress={logout}
-        className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl py-4 items-center shadow-sm"
+        className="bg-surface mx-4 rounded-[24px] py-4 items-center border border-line"
       >
-        <Text className="text-red-500 font-semibold text-base">{t("common.logout")}</Text>
+        <Text className="font-semibold text-base" style={{ color: design.colors.danger }}>{t("common.logout")}</Text>
       </Pressable>
     </ScrollView>
   );
@@ -259,9 +260,9 @@ function DetailRow({
 }) {
   return (
     <View className="flex-row items-center px-5 py-3.5">
-      <EmojiIcon name={icon as any} size={18} color="#999" />
-      <Text className="text-sm text-gray-400 dark:text-gray-500 ml-3 w-20">{label}</Text>
-      <Text className="text-sm text-gray-900 dark:text-gray-100 flex-1 text-right">{value}</Text>
+      <EmojiIcon name={icon as any} size={18} color={design.colors.muted} />
+      <Text className="text-sm text-muted ml-3 w-20">{label}</Text>
+      <Text className="text-sm text-ink flex-1 text-right">{value}</Text>
     </View>
   );
 }
@@ -277,13 +278,13 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} className="flex-row items-center px-5 py-3.5">
-      <EmojiIcon name={icon as any} size={20} color="#888" />
-      <Text className="flex-1 ml-3 text-base text-gray-800 dark:text-gray-100">{label}</Text>
-      <EmojiIcon name="chevron-forward" size={18} color="#888" />
+      <EmojiIcon name={icon as any} size={20} color={design.colors.muted} />
+      <Text className="flex-1 ml-3 text-base text-soft">{label}</Text>
+      <EmojiIcon name="chevron-forward" size={18} color={design.colors.muted} />
     </Pressable>
   );
 }
 
 function Sep() {
-  return <View className="h-px bg-gray-100 dark:bg-neutral-800 ml-14" />;
+  return <View className="h-px bg-field ml-14" />;
 }

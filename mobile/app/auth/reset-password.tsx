@@ -5,6 +5,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { completeAuthCallbackFromUrl } from "../../lib/auth";
 import { useLanguage } from "../../lib/i18n";
+import { design } from "../../lib/design";
 
 type RouteParams = Record<string, string | string[] | undefined>;
 
@@ -123,27 +124,27 @@ export default function ResetPassword() {
 
   if (!ready) {
     return (
-      <View className="flex-1 bg-gray-50 dark:bg-neutral-950 justify-center px-6">
-        <View className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-8 shadow-sm items-center">
+      <View className="flex-1 bg-page justify-center px-6">
+        <View className="bg-surface rounded-[24px] px-5 py-8 items-center">
           {error ? (
             <>
-              <Text className="text-lg font-bold text-gray-900 dark:text-white text-center mb-2">
+              <Text className="text-lg font-bold text-ink text-center mb-2">
                 {t("auth.linkNotWorking")}
               </Text>
-              <Text className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
+              <Text className="text-sm text-muted text-center mb-6">
                 {error}
               </Text>
               <Pressable
                 onPress={() => router.replace("./forgot-password")}
-                className="bg-brand rounded-2xl py-4 px-6 items-center"
+                className="bg-brand rounded-[22px] py-4 px-6 items-center"
               >
                 <Text className="text-white font-bold">{t("auth.sendNewLink")}</Text>
               </Pressable>
             </>
           ) : (
             <>
-              <ActivityIndicator size="large" color="#00A6F6" />
-              <Text className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+              <ActivityIndicator size="large" color={design.colors.brand} />
+              <Text className="text-sm text-muted mt-4">
                 {t("auth.checkingLink")}
               </Text>
             </>
@@ -154,22 +155,22 @@ export default function ResetPassword() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 justify-center px-6">
+    <View className="flex-1 bg-page justify-center px-6">
       <View className="items-center mb-10">
         <Image
           source={require("../../assets/logo.png")}
           style={{ width: 96, height: 96, borderRadius: 48 }}
         />
-        <Text className="text-3xl font-bold text-gray-900 dark:text-white mt-4">
+        <Text className="text-3xl font-bold text-ink mt-4">
           {t("auth.newPassword")}
         </Text>
-        <Text className="text-gray-500 dark:text-gray-400 mt-1 text-center">
+        <Text className="text-muted mt-1 text-center">
           {t("auth.newPasswordSubtitle")}
         </Text>
       </View>
 
-      <View className="bg-white dark:bg-neutral-900 rounded-3xl px-5 py-6 shadow-sm">
-        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+      <View className="bg-surface rounded-[24px] px-5 py-6">
+        <Text className="text-sm font-semibold text-muted mb-1.5">
           {t("auth.newPassword")}
         </Text>
         <TextInput
@@ -177,10 +178,10 @@ export default function ResetPassword() {
           onChangeText={setPassword}
           secureTextEntry
           placeholder={t("auth.minEightChars")}
-          placeholderTextColor="#888"
-          className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-4"
+          placeholderTextColor={design.colors.subtle}
+          className="bg-field border border-line rounded-[22px] px-4 py-3.5 text-base text-ink mb-4"
         />
-        <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+        <Text className="text-sm font-semibold text-muted mb-1.5">
           {t("auth.confirmPassword")}
         </Text>
         <TextInput
@@ -188,14 +189,14 @@ export default function ResetPassword() {
           onChangeText={setConfirm}
           secureTextEntry
           placeholder={t("auth.repeatNewPassword")}
-          placeholderTextColor="#888"
-          className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-base text-gray-900 dark:text-white mb-6"
+          placeholderTextColor={design.colors.subtle}
+          className="bg-field border border-line rounded-[22px] px-4 py-3.5 text-base text-ink mb-6"
         />
 
         <Pressable
           onPress={handleUpdatePassword}
           disabled={loading}
-          className="bg-brand rounded-2xl py-4 items-center"
+          className="bg-brand rounded-[22px] py-4 items-center"
         >
           <Text className="text-white font-bold text-base">
             {loading ? t("common.saving") : t("auth.saveNewPassword")}

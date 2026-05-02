@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { EmojiIcon } from "../../components/EmojiIcon";
+import { design } from "../../lib/design";
 import { supabase } from "../../lib/supabase";
 import {
   clearPendingBuddyInviteToken,
@@ -134,15 +135,15 @@ export default function BuddyInvite() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-gray-50 dark:bg-neutral-950 items-center justify-center">
-        <ActivityIndicator color="#00A6F6" />
+      <View className="flex-1 bg-page items-center justify-center">
+        <ActivityIndicator color={design.colors.brand} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 px-6 justify-center">
-      <View className="bg-white dark:bg-neutral-900 rounded-3xl p-6 items-center shadow-sm">
+    <View className="flex-1 bg-page px-6 justify-center">
+      <View className="bg-surface rounded-[24px] p-6 items-center border border-line">
         {preview?.inviter_photo ? (
           <Image
             source={{ uri: preview.inviter_photo }}
@@ -150,27 +151,27 @@ export default function BuddyInvite() {
           />
         ) : (
           <View
-            className="rounded-full bg-brand-light dark:bg-brand/20 items-center justify-center"
+            className="rounded-full bg-brand-light items-center justify-center"
             style={{ width: 88, height: 88 }}
           >
-            <EmojiIcon name="person" size={36} color="#00A6F6" />
+            <EmojiIcon name="person" size={36} color={design.colors.brand} />
           </View>
         )}
 
-        <Text className="text-2xl font-bold text-gray-900 dark:text-white text-center mt-5">
+        <Text className="text-2xl font-bold text-ink text-center mt-5">
           {error
             ? t("invite.brokenTitle")
             : t("invite.invitesYou", {
                 name: preview?.inviter_name ?? t("invite.someone"),
               })}
         </Text>
-        <Text className="text-gray-500 dark:text-gray-400 text-center mt-2 leading-5">
+        <Text className="text-muted text-center mt-2 leading-5">
           {error
             ? error
             : t("invite.body")}
         </Text>
         {!error && preview?.inviter_faculty ? (
-          <Text className="text-xs text-gray-400 dark:text-gray-500 text-center mt-2">
+          <Text className="text-xs text-muted text-center mt-2">
             {preview.inviter_faculty}
           </Text>
         ) : null}
@@ -178,9 +179,9 @@ export default function BuddyInvite() {
         {error ? (
           <Pressable
             onPress={() => router.replace("/")}
-            className="bg-gray-100 dark:bg-neutral-800 rounded-2xl py-4 px-6 mt-6 w-full items-center"
+            className="bg-field rounded-[24px] py-4 px-6 mt-6 w-full items-center"
           >
-            <Text className="text-gray-700 dark:text-gray-100 font-bold">
+            <Text className="text-soft font-bold">
               {t("invite.backToApp")}
             </Text>
           </Pressable>
@@ -188,7 +189,7 @@ export default function BuddyInvite() {
           <Pressable
             onPress={acceptInvite}
             disabled={accepting}
-            className="bg-brand rounded-2xl py-4 px-6 mt-6 w-full items-center"
+            className="bg-brand rounded-[24px] py-4 px-6 mt-6 w-full items-center"
           >
             <Text className="text-white font-bold">
               {accepting ? t("invite.accepting") : t("invite.accept")}
