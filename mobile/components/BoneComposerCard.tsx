@@ -115,6 +115,7 @@ export function BoneComposerCard({
   const [visibility, setVisibility] = useState<"public" | "private" | null>(null);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasWarning, setHasWarning] = useState(false);
   const [buddyMatchIds, setBuddyMatchIds] = useState<string[]>([]);
   const [loadingBuddies, setLoadingBuddies] = useState(false);
   const [meId, setMeId] = useState<string | null>(null);
@@ -270,6 +271,7 @@ export function BoneComposerCard({
   }, [selectedDate, selectedTime]);
 
   function openComposer(focusInput = false) {
+    if (!isOpen) setHasWarning(false);
     setIsOpen(true);
     setActiveStep(getNextIncompleteStep({ location, selectedDate, selectedTime, visibility }));
     if (!focusInput) return;
@@ -288,6 +290,7 @@ export function BoneComposerCard({
     setIsOpen(false);
     setActiveStep(null);
     setIsLocationFocused(false);
+    setHasWarning(false);
     createGuard.dirty = false;
   }
 
@@ -304,6 +307,7 @@ export function BoneComposerCard({
   }
 
   function handleSuggestionPress(suggestion: string) {
+    setHasWarning(false);
     setLocation(suggestion);
     setIsLocationFocused(false);
     inputRef.current?.blur();
@@ -317,19 +321,69 @@ export function BoneComposerCard({
   }
 
   function handleSelectDay(offset: number) {
+    setHasWarning(false);
     setSelectedDate(offset);
     setSelectedTime("");
     setActiveStep("time");
   }
 
   function handleSelectTime(timeSlot: string) {
+    setHasWarning(false);
     setSelectedTime(timeSlot);
     setActiveStep(visibility === null ? "visibility" : null);
   }
 
   function handleSelectVisibility(nextVisibility: "public" | "private") {
+    setHasWarning(false);
     setVisibility(nextVisibility);
     setActiveStep(null);
+  }
+
+  function handleNextPress() {
+    const nextStep = getNextIncompleteStep({
+      location,
+      selectedDate,
+      selectedTime,
+      visibility,
+    });
+
+    if (nextStep) {
+      setIsOpen(true);
+      setActiveStep(nextStep);
+      setHasWarning(activeStep === nextStep || nextStep === "location");
+
+      if (nextStep === "location") {
+        requestAnimationFrame(() => {
+          inputRef.current?.focus();
+        });
+      } else {
+        setIsLocationFocused(false);
+        inputRef.current?.blur();
+      }
+      return;
+    }
+
+    if (
+      selectedDate !== null &&
+      selectedTime &&
+      getScheduledDate(selectedDate, selectedTime).getTime() <= Date.now()
+    ) {
+      setHasWarning(true);
+      Toast.show({
+        type: "error",
+        text1: t("composer.timePast"),
+        text2: t("composer.chooseFuture"),
+      });
+      return;
+    }
+
+    if (visibility === "private" && buddyMatchIds.length === 0) {
+      setHasWarning(true);
+      Toast.show({
+        type: "error",
+        text1: t("composer.noBuddies"),
+      });
+    }
   }
 
   async function submit() {
@@ -423,12 +477,11 @@ export function BoneComposerCard({
 
   return (
     <View
-      style={subtleCardShadow}
-      className={`rounded-[24px] px-4 py-3.5 mb-4 ${
-        isOpen
-          ? "bg-surface border border-transparent"
-          : "bg-surface border border-transparent"
-      }`}
+      style={[
+        subtleCardShadow,
+        { borderColor: hasWarning ? design.colors.danger : "transparent" },
+      ]}
+      className="rounded-[24px] px-4 py-3.5 mb-4 bg-surface border"
     >
       <View className="flex-row items-center">
         <Pressable onPress={() => openComposer(true)} className="shrink-0">
@@ -467,7 +520,10 @@ export function BoneComposerCard({
                     openComposer(true);
                     return;
                   }
-                  if (!canSubmit) return;
+                  if (!canSubmit) {
+                    handleNextPress();
+                    return;
+                  }
                   void submit();
                 }}
                 disabled={loading}
@@ -489,7 +545,11 @@ export function BoneComposerCard({
                         : "text-muted"
                     }`}
                   >
-                    {loading ? t("common.loadingDots") : t("composer.publish")}
+                    {loading
+                      ? t("common.loadingDots")
+                      : canSubmit
+                        ? t("composer.publish")
+                        : t("common.next")}
                   </Text>
                 ) : (
                   <EmojiIcon name="add" size={18} color={design.colors.muted} />
@@ -502,6 +562,7 @@ export function BoneComposerCard({
             ref={inputRef}
             value={location}
             onChangeText={(nextValue) => {
+              setHasWarning(false);
               setLocation(nextValue);
               if (!isOpen) setIsOpen(true);
             }}
@@ -544,6 +605,7 @@ export function BoneComposerCard({
               showsHorizontalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               className="mb-3"
+              style={{ transform: [{ translateY: 8 }] }}
             >
               <View className="flex-row gap-2">
                 {LOCATION_SUGGESTIONS.map((suggestion) => (
