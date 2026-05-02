@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { EmojiIcon } from "../../components/EmojiIcon";
+import { MatchesEmptyAnimation } from "../../components/EmptyStateAnimations";
 import { supabase, type Profile } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
 import { design } from "../../lib/design";
@@ -149,12 +150,12 @@ export default function Buddies() {
         ListEmptyComponent={
           loading ? null : (
             <View className="items-center mt-16">
-              <EmojiIcon name="people-outline" size={48} color={design.colors.muted} />
-              <Text className="text-muted text-lg mt-4">
-                {t("settings.noBuddies")}
+              <MatchesEmptyAnimation />
+              <Text className="text-brand text-lg font-bold mt-3">
+                {t("matches.noMatches")}
               </Text>
-              <Text className="text-subtle text-sm mt-1">
-                {t("settings.swipeToFind")}
+              <Text className="text-muted text-[13px] leading-5 mt-2 text-center">
+                {t("matches.noMatchesBody")}
               </Text>
             </View>
           )

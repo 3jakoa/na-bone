@@ -117,7 +117,7 @@ export default function ProfileScreen() {
           onPress={() => router.push("/settings/buddies")}
           className="bg-surface rounded-[24px] px-5 py-4 flex-row items-center border border-line"
         >
-          <EmojiIcon name="people" size={20} color={design.colors.brand} />
+          <Text className="text-xl leading-6">🤩</Text>
           <Text className="flex-1 ml-3 text-base font-semibold text-ink">
             {t("common.buddies")}
           </Text>
