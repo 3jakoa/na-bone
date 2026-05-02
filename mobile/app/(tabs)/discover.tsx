@@ -376,7 +376,7 @@ export default function Discover() {
             {behindCard && (
               <View
                 className="absolute w-full h-full bg-surface rounded-[24px] overflow-hidden"
-                style={[cardShadow, { transform: [{ scale: 0.95 }], top: 10 }]}
+                style={[cardShadow, { transform: [{ scale: 0.95 }], top: 10, zIndex: 1 }]}
               >
                 <CardContent profile={behindCard} />
               </View>
@@ -390,6 +390,7 @@ export default function Discover() {
                     width: "100%",
                     height: "100%",
                     opacity: cardVisible ? 1 : 0,
+                    zIndex: 2,
                   },
                   cardAnimatedStyle,
                   cardShadow,
@@ -421,7 +422,11 @@ export default function Discover() {
               </Animated.View>
             </GestureDetector>
 
-            <View className="items-center px-6 mt-4 mb-2">
+            <View
+              pointerEvents="none"
+              className="absolute left-0 right-0 items-center px-6"
+              style={{ bottom: -58, zIndex: 0 }}
+            >
               <Text className="text-sm font-semibold text-muted text-center">
                 {t("discover.instructions")}
               </Text>

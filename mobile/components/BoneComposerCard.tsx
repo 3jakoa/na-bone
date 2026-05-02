@@ -426,7 +426,7 @@ export function BoneComposerCard({
       style={subtleCardShadow}
       className={`rounded-[24px] px-4 py-3.5 mb-4 ${
         isOpen
-          ? "bg-brand-light border border-brand/20"
+          ? "bg-surface border border-transparent"
           : "bg-surface border border-transparent"
       }`}
     >
