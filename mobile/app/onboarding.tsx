@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions,
   Keyboard,
+  StyleSheet,
   TouchableWithoutFeedback,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -23,6 +24,12 @@ import { LanguageSwitch } from "../components/LanguageSwitch";
 
 const { width } = Dimensions.get("window");
 const STEPS = 5;
+const BRAND = "#00A6F6";
+const PAGE_BG = "#F5F8FB";
+const TEXT = "#111827";
+const MUTED = "#9CA3AF";
+const FIELD_BG = "#F7F9FC";
+const FIELD_BORDER = "#DDE3EB";
 
 type EducationLevel = "dodiplomski" | "magistrski" | "doktorski" | "";
 
@@ -116,23 +123,26 @@ export default function Onboarding() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
+      <View style={styles.screen}>
         {/* Progress bar */}
-        <View className="pt-16 px-6 pb-4 bg-gray-50 dark:bg-neutral-950">
+        <View style={styles.header}>
           <View className="flex-row justify-end mb-4">
             <LanguageSwitch />
           </View>
           <View className="flex-row items-center mb-2">
             {step > 0 && (
               <Pressable onPress={goBack} className="mr-3">
-                <EmojiIcon name="chevron-back" size={24} color="#888" />
+                <EmojiIcon name="chevron-back" size={24} color={MUTED} />
               </Pressable>
             )}
             <View className="flex-1 flex-row gap-2">
               {Array.from({ length: STEPS }).map((_, i) => (
                 <View
                   key={i}
-                  className={`flex-1 h-1 rounded-full ${i <= step ? "bg-brand" : "bg-gray-200 dark:bg-neutral-800"}`}
+                  style={[
+                    styles.progressSegment,
+                    i <= step && styles.progressSegmentActive,
+                  ]}
                 />
               ))}
             </View>
@@ -157,7 +167,7 @@ export default function Onboarding() {
               className="ml-3"
               hitSlop={10}
             >
-              <Text className="text-xs font-semibold text-gray-400 dark:text-gray-500">
+              <Text style={styles.logoutText}>
                 {t("common.logout")}
               </Text>
             </Pressable>
@@ -175,16 +185,16 @@ export default function Onboarding() {
           {/* Step 1: Name, Age, Gender */}
           <ScrollView
             style={{ width }}
-            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+            contentContainerStyle={styles.stepContent}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="handled"
           >
-            <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+            <Text style={styles.stepTitle}>
               {t("onboarding.stepWhoTitle")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 mb-8">{t("onboarding.stepWhoSubtitle")}</Text>
+            <Text style={styles.stepSubtitle}>{t("onboarding.stepWhoSubtitle")}</Text>
 
-            <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+            <Text style={styles.label}>
               {t("onboarding.name")}
             </Text>
             <TextInput
@@ -194,10 +204,10 @@ export default function Onboarding() {
               placeholderTextColor="#888"
               autoCapitalize="words"
               returnKeyType="next"
-              className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl px-4 py-3.5 mb-4 text-base text-gray-900 dark:text-white shadow-sm"
+              style={styles.input}
             />
 
-            <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+            <Text style={styles.label}>
               {t("onboarding.age")}
             </Text>
             <ScrollView
@@ -212,10 +222,16 @@ export default function Onboarding() {
                     <Pressable
                       key={a}
                       onPress={() => setAge(a)}
-                      className={`w-12 h-12 rounded-2xl items-center justify-center ${age === a ? "bg-brand" : "bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800"}`}
+                      style={[
+                        styles.ageButton,
+                        age === a && styles.optionActive,
+                      ]}
                     >
                       <Text
-                        className={`text-base font-semibold ${age === a ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
+                        style={[
+                          styles.optionText,
+                          age === a && styles.optionTextActive,
+                        ]}
                       >
                         {a}
                       </Text>
@@ -225,7 +241,7 @@ export default function Onboarding() {
               </View>
             </ScrollView>
 
-            <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
+            <Text style={styles.label}>
               {t("onboarding.gender")}
             </Text>
             <View className="flex-row gap-3 mb-8">
@@ -233,10 +249,16 @@ export default function Onboarding() {
                 <Pressable
                   key={g}
                   onPress={() => setGender(g)}
-                  className={`flex-1 py-3.5 rounded-2xl items-center ${gender === g ? "bg-brand" : "bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800"}`}
+                  style={[
+                    styles.segmentButton,
+                    gender === g && styles.optionActive,
+                  ]}
                 >
                   <Text
-                    className={`font-semibold ${gender === g ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
+                    style={[
+                      styles.optionText,
+                      gender === g && styles.optionTextActive,
+                    ]}
                   >
                     {g === "moški"
                       ? t("onboarding.genderMale")
@@ -250,26 +272,26 @@ export default function Onboarding() {
 
             <Pressable
               onPress={goNext}
-              className="bg-brand rounded-2xl py-4 items-center"
+              style={styles.primaryButton}
             >
-              <Text className="text-white font-bold text-base">{t("common.next")}</Text>
+              <Text style={styles.primaryButtonText}>{t("common.next")}</Text>
             </Pressable>
           </ScrollView>
 
           {/* Step 2: University & Faculty */}
           <ScrollView
             style={{ width }}
-            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+            contentContainerStyle={styles.stepContent}
             keyboardShouldPersistTaps="handled"
           >
-            <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+            <Text style={styles.stepTitle}>
               {t("onboarding.schoolTitle")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 mb-6">
+            <Text style={styles.stepSubtitle}>
               {t("onboarding.schoolSubtitle")}
             </Text>
 
-            <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
+            <Text style={styles.label}>
               {t("onboarding.university")}
             </Text>
             {UNIVERSITY_NAMES.map((u) => (
@@ -279,10 +301,16 @@ export default function Onboarding() {
                   setUniversity(u);
                   setFaculty("");
                 }}
-                className={`py-3.5 px-4 rounded-2xl mb-1.5 ${university === u ? "bg-brand" : "bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800"}`}
+                style={[
+                  styles.listOption,
+                  university === u && styles.optionActive,
+                ]}
               >
                 <Text
-                  className={`text-sm ${university === u ? "text-white font-semibold" : "text-gray-700 dark:text-gray-200"}`}
+                  style={[
+                    styles.listOptionText,
+                    university === u && styles.optionTextActive,
+                  ]}
                 >
                   {u}
                 </Text>
@@ -291,17 +319,23 @@ export default function Onboarding() {
 
             {faculties.length > 0 && (
               <>
-                <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 mt-4">
+                <Text style={[styles.label, styles.facultyLabel]}>
                   {t("onboarding.faculty")}
                 </Text>
                 {faculties.map((f) => (
                   <Pressable
                     key={f}
                     onPress={() => setFaculty(f)}
-                    className={`py-3.5 px-4 rounded-2xl mb-1.5 ${faculty === f ? "bg-brand" : "bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800"}`}
+                    style={[
+                      styles.listOption,
+                      faculty === f && styles.optionActive,
+                    ]}
                   >
                     <Text
-                      className={`text-sm ${faculty === f ? "text-white font-semibold" : "text-gray-700 dark:text-gray-200"}`}
+                      style={[
+                        styles.listOptionText,
+                        faculty === f && styles.optionTextActive,
+                      ]}
                     >
                       {f}
                     </Text>
@@ -312,18 +346,18 @@ export default function Onboarding() {
 
             <Pressable
               onPress={goNext}
-              className="bg-brand rounded-2xl py-4 items-center mt-4"
+              style={[styles.primaryButton, styles.buttonTop]}
             >
-              <Text className="text-white font-bold text-base">{t("common.next")}</Text>
+              <Text style={styles.primaryButtonText}>{t("common.next")}</Text>
             </Pressable>
           </ScrollView>
 
           {/* Step 3: Education Level */}
-          <View style={{ width }} className="px-6">
-            <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+          <View style={[styles.stepContent, { width }]}>
+            <Text style={styles.stepTitle}>
               {t("onboarding.educationTitle")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 mb-8">{t("onboarding.educationSubtitle")}</Text>
+            <Text style={styles.stepSubtitle}>{t("onboarding.educationSubtitle")}</Text>
 
             {(
               [
@@ -335,15 +369,21 @@ export default function Onboarding() {
               <Pressable
                 key={key}
                 onPress={() => setEducationLevel(key)}
-                className={`flex-row items-center py-4 px-5 rounded-2xl mb-2 ${educationLevel === key ? "bg-brand" : "bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800"}`}
+                style={[
+                  styles.iconOption,
+                  educationLevel === key && styles.optionActive,
+                ]}
               >
                 <EmojiIcon
                   name={icon}
                   size={22}
-                  color={educationLevel === key ? "#fff" : "#999"}
+                  color={educationLevel === key ? "#fff" : MUTED}
                 />
                 <Text
-                  className={`ml-3 text-base font-semibold ${educationLevel === key ? "text-white" : "text-gray-700 dark:text-gray-200"}`}
+                  style={[
+                    styles.iconOptionText,
+                    educationLevel === key && styles.optionTextActive,
+                  ]}
                 >
                   {label}
                 </Text>
@@ -352,27 +392,27 @@ export default function Onboarding() {
 
             <Pressable
               onPress={goNext}
-              className="bg-brand rounded-2xl py-4 items-center mt-6"
+              style={[styles.primaryButton, styles.buttonTopLarge]}
             >
-              <Text className="text-white font-bold text-base">{t("common.next")}</Text>
+              <Text style={styles.primaryButtonText}>{t("common.next")}</Text>
             </Pressable>
-            <Pressable onPress={goNext} className="py-4 items-center mt-1">
-              <Text className="text-gray-400 dark:text-gray-500 font-semibold">{t("common.skip")}</Text>
+            <Pressable onPress={goNext} style={styles.secondaryButton}>
+              <Text style={styles.secondaryButtonText}>{t("common.skip")}</Text>
             </Pressable>
           </View>
 
           {/* Step 4: Photo */}
-          <View style={{ width }} className="px-6">
-            <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+          <View style={[styles.stepContent, { width }]}>
+            <Text style={styles.stepTitle}>
               {t("onboarding.photoTitle")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 mb-8">
+            <Text style={styles.stepSubtitle}>
               {t("onboarding.photoSubtitle")}
             </Text>
 
             <Pressable
               onPress={pickPhoto}
-              className="items-center justify-center self-center w-48 h-48 rounded-full bg-white dark:bg-neutral-900 border-2 border-dashed border-gray-300 dark:border-neutral-700 mb-8 overflow-hidden"
+              style={styles.photoPicker}
             >
               {photoUri ? (
                 <Image
@@ -381,8 +421,8 @@ export default function Onboarding() {
                 />
               ) : (
                 <View className="items-center">
-                  <EmojiIcon name="camera" size={40} color="#888" />
-                  <Text className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+                  <EmojiIcon name="camera" size={40} color={MUTED} />
+                  <Text style={styles.photoPickerText}>
                     {t("onboarding.addPhoto")}
                   </Text>
                 </View>
@@ -391,26 +431,26 @@ export default function Onboarding() {
 
             <Pressable
               onPress={goNext}
-              className="bg-brand rounded-2xl py-4 items-center"
+              style={styles.primaryButton}
             >
-              <Text className="text-white font-bold text-base">{t("common.next")}</Text>
+              <Text style={styles.primaryButtonText}>{t("common.next")}</Text>
             </Pressable>
-            <Pressable onPress={goNext} className="py-4 items-center mt-1">
-              <Text className="text-gray-400 dark:text-gray-500 font-semibold">{t("common.skip")}</Text>
+            <Pressable onPress={goNext} style={styles.secondaryButton}>
+              <Text style={styles.secondaryButtonText}>{t("common.skip")}</Text>
             </Pressable>
           </View>
 
           {/* Step 5: Bio */}
           <ScrollView
             style={{ width }}
-            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+            contentContainerStyle={styles.stepContent}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="handled"
           >
-            <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+            <Text style={styles.stepTitle}>
               {t("onboarding.aboutTitle")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 mb-8">{t("onboarding.aboutSubtitle")}</Text>
+            <Text style={styles.stepSubtitle}>{t("onboarding.aboutSubtitle")}</Text>
 
             <TextInput
               value={bio}
@@ -421,27 +461,27 @@ export default function Onboarding() {
               numberOfLines={4}
               textAlignVertical="top"
               maxLength={300}
-              className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl px-4 py-4 text-base text-gray-900 dark:text-white min-h-32 mb-2 shadow-sm"
+              style={[styles.input, styles.bioInput]}
             />
-            <Text className="text-xs text-gray-300 dark:text-gray-600 text-right mb-6">
+            <Text style={styles.counterText}>
               {bio.length}/300
             </Text>
 
             <Pressable
               onPress={submit}
               disabled={loading}
-              className="bg-brand rounded-2xl py-4 items-center"
+              style={[styles.primaryButton, loading && styles.disabled]}
             >
-              <Text className="text-white font-bold text-base">
+              <Text style={styles.primaryButtonText}>
                 {loading ? t("common.saving") : t("onboarding.start")}
               </Text>
             </Pressable>
             <Pressable
               onPress={submit}
               disabled={loading}
-              className="py-4 items-center mt-1"
+              style={[styles.secondaryButton, loading && styles.disabled]}
             >
-              <Text className="text-gray-400 dark:text-gray-500 font-semibold">
+              <Text style={styles.secondaryButtonText}>
                 {t("onboarding.skipBio")}
               </Text>
             </Pressable>
@@ -451,3 +491,205 @@ export default function Onboarding() {
     </TouchableWithoutFeedback>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: PAGE_BG,
+  },
+  header: {
+    paddingTop: 64,
+    paddingHorizontal: 24,
+    paddingBottom: 18,
+    backgroundColor: PAGE_BG,
+  },
+  progressSegment: {
+    flex: 1,
+    height: 5,
+    borderRadius: 999,
+    backgroundColor: "#DDE3EB",
+  },
+  progressSegmentActive: {
+    backgroundColor: BRAND,
+  },
+  logoutText: {
+    color: MUTED,
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  stepContent: {
+    paddingHorizontal: 28,
+    paddingBottom: 40,
+  },
+  stepTitle: {
+    color: TEXT,
+    fontSize: 32,
+    fontWeight: "800",
+    letterSpacing: -0.4,
+    lineHeight: 38,
+    marginBottom: 8,
+  },
+  stepSubtitle: {
+    color: MUTED,
+    fontSize: 16,
+    lineHeight: 23,
+    marginBottom: 32,
+  },
+  label: {
+    color: MUTED,
+    fontSize: 12,
+    fontWeight: "800",
+    letterSpacing: 0.8,
+    marginBottom: 8,
+    textTransform: "uppercase",
+  },
+  input: {
+    minHeight: 56,
+    borderRadius: 18,
+    borderWidth: 1.5,
+    borderColor: FIELD_BORDER,
+    backgroundColor: FIELD_BG,
+    color: TEXT,
+    fontSize: 16,
+    fontWeight: "600",
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    marginBottom: 18,
+  },
+  bioInput: {
+    minHeight: 140,
+    paddingTop: 16,
+    marginBottom: 8,
+  },
+  counterText: {
+    color: "#C8D0DA",
+    fontSize: 12,
+    textAlign: "right",
+    marginBottom: 24,
+  },
+  ageButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: FIELD_BORDER,
+    backgroundColor: FIELD_BG,
+  },
+  segmentButton: {
+    flex: 1,
+    minHeight: 52,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: FIELD_BORDER,
+    backgroundColor: FIELD_BG,
+  },
+  listOption: {
+    minHeight: 52,
+    borderRadius: 16,
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: FIELD_BORDER,
+    backgroundColor: FIELD_BG,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 8,
+  },
+  listOptionText: {
+    color: "#374151",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  facultyLabel: {
+    marginTop: 18,
+  },
+  iconOption: {
+    minHeight: 58,
+    borderRadius: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: FIELD_BORDER,
+    backgroundColor: FIELD_BG,
+    paddingHorizontal: 18,
+    marginBottom: 10,
+  },
+  iconOptionText: {
+    color: "#374151",
+    fontSize: 16,
+    fontWeight: "700",
+    marginLeft: 12,
+  },
+  optionActive: {
+    borderColor: BRAND,
+    backgroundColor: BRAND,
+  },
+  optionText: {
+    color: "#374151",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  optionTextActive: {
+    color: "#FFFFFF",
+  },
+  photoPicker: {
+    alignSelf: "center",
+    width: 192,
+    height: 192,
+    borderRadius: 96,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    borderWidth: 1.5,
+    borderStyle: "dashed",
+    borderColor: FIELD_BORDER,
+    backgroundColor: FIELD_BG,
+    marginBottom: 32,
+  },
+  photoPickerText: {
+    color: MUTED,
+    fontSize: 14,
+    fontWeight: "700",
+    marginTop: 8,
+  },
+  primaryButton: {
+    minHeight: 58,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 22,
+    backgroundColor: BRAND,
+    shadowColor: BRAND,
+    shadowOpacity: 0.18,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "800",
+  },
+  secondaryButton: {
+    minHeight: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 6,
+  },
+  secondaryButtonText: {
+    color: MUTED,
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  buttonTop: {
+    marginTop: 18,
+  },
+  buttonTopLarge: {
+    marginTop: 24,
+  },
+  disabled: {
+    opacity: 0.7,
+  },
+});
