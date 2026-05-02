@@ -1,4 +1,5 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { design } from "../lib/design";
 import { useLanguage } from "../lib/i18n";
 
 export function LanguageSwitch() {
@@ -6,11 +7,9 @@ export function LanguageSwitch() {
   const isEnglish = language === "en";
 
   return (
-    <View className="flex-row items-center gap-2">
+    <View style={styles.row}>
       <Text
-        className={`text-xs font-semibold ${
-          !isEnglish ? "text-gray-800 dark:text-gray-100" : "text-gray-400 dark:text-gray-500"
-        }`}
+        style={[styles.label, !isEnglish ? styles.labelActive : styles.labelIdle]}
       >
         Slovenščina
       </Text>
@@ -21,24 +20,58 @@ export function LanguageSwitch() {
         onPress={() => {
           void setLanguage(isEnglish ? "sl" : "en");
         }}
-        className={`h-7 w-12 rounded-full p-1 ${
-          isEnglish ? "bg-brand" : "bg-gray-200 dark:bg-neutral-700"
-        }`}
+        style={[styles.track, isEnglish ? styles.trackActive : styles.trackIdle]}
       >
         <View
-          className="h-5 w-5 rounded-full bg-white shadow-sm"
-          style={{
-            transform: [{ translateX: isEnglish ? 20 : 0 }],
-          }}
+          style={[styles.thumb, { transform: [{ translateX: isEnglish ? 20 : 0 }] }]}
         />
       </Pressable>
       <Text
-        className={`text-xs font-semibold ${
-          isEnglish ? "text-gray-800 dark:text-gray-100" : "text-gray-400 dark:text-gray-500"
-        }`}
+        style={[styles.label, isEnglish ? styles.labelActive : styles.labelIdle]}
       >
         English
       </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  labelActive: {
+    color: design.colors.textSoft,
+  },
+  labelIdle: {
+    color: design.colors.muted,
+  },
+  track: {
+    height: 28,
+    width: 48,
+    borderRadius: design.radius.pill,
+    padding: 4,
+  },
+  trackActive: {
+    backgroundColor: design.colors.brand,
+  },
+  trackIdle: {
+    backgroundColor: design.colors.border,
+  },
+  thumb: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    backgroundColor: design.colors.white,
+    shadowColor: design.colors.brand,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.16,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+});

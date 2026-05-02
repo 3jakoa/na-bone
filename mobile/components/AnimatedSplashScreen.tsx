@@ -13,9 +13,10 @@ import {
   View,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { design } from "../lib/design";
 
-const BRAND = "#00A6F6";
-const SKY_BG = "#f5fcff";
+const BRAND = design.colors.brand;
+const SKY_BG = design.colors.page;
 
 export function AnimatedSplashScreen() {
   const [fontsLoaded] = useFonts({
@@ -261,11 +262,11 @@ const styles = StyleSheet.create({
     borderRadius: 56,
     overflow: "hidden",
     borderWidth: 3,
-    borderColor: "rgba(255,255,255,0.6)",
-    backgroundColor: "#FFFFFF",
+    borderColor: design.colors.white,
+    backgroundColor: design.colors.white,
     ...Platform.select({
       ios: {
-        shadowColor: "#000000",
+        shadowColor: design.colors.brand,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.1,
         shadowRadius: 20,
@@ -285,11 +286,11 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_700Bold",
     fontSize: 32,
     fontWeight: "700",
-    letterSpacing: -0.64,
+    letterSpacing: 0,
   },
   tagline: {
     marginTop: 8,
-    color: "#6b7280",
+    color: design.colors.muted,
     fontFamily: "OpenSans_400Regular",
     fontSize: 15,
     fontWeight: "400",

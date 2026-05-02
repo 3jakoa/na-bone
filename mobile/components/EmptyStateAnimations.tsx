@@ -10,14 +10,15 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
+import { design } from "../lib/design";
 
-const BRAND = "#00A6F6";
-const BRAND_LIGHT = "#E0F4FE";
-const BORDER = "#e5e7eb";
-const DANGER = "#ef4444";
-const GRAY_100 = "#f3f4f6";
-const GRAY_200 = "#e5e7eb";
-const GRAY_400 = "#9ca3af";
+const BRAND = design.colors.brand;
+const BRAND_LIGHT = design.colors.brandLight;
+const BORDER = design.colors.border;
+const DANGER = design.colors.danger;
+const GRAY_100 = design.colors.field;
+const GRAY_200 = design.colors.border;
+const GRAY_400 = design.colors.muted;
 
 function useLoop(duration: number, easing = Easing.inOut(Easing.ease)) {
   const progress = useSharedValue(0);
@@ -278,7 +279,7 @@ export function MatchesEmptyAnimation() {
 
       <Animated.View style={[styles.buddyRight, rightFaceStyle]}>
         <Animated.View style={[styles.rightBubble, rightBubbleStyle]}>
-          <TypingDots color="#ffffff" dotStyles={[dotOneStyle, dotTwoStyle, dotThreeStyle]} />
+          <TypingDots color={design.colors.white} dotStyles={[dotOneStyle, dotTwoStyle, dotThreeStyle]} />
         </Animated.View>
         <Text style={styles.buddyEmoji}>🥰</Text>
       </Animated.View>
@@ -356,14 +357,14 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    borderRadius: 16,
+    borderRadius: design.radius.control,
     borderWidth: 1.5,
     borderColor: BORDER,
-    backgroundColor: "#ffffff",
+    backgroundColor: design.colors.white,
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    shadowColor: "#000000",
+    shadowColor: BRAND,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07,
     shadowRadius: 8,
@@ -371,7 +372,7 @@ const styles = StyleSheet.create({
   },
   discoverTopCard: {
     borderWidth: 2,
-    borderColor: "#bfdbfe",
+    borderColor: BRAND_LIGHT,
     shadowColor: BRAND,
     shadowOpacity: 0.18,
     shadowRadius: 16,
@@ -400,7 +401,7 @@ const styles = StyleSheet.create({
     top: 8,
     left: 6,
     borderRadius: 999,
-    backgroundColor: "#fef2f2",
+    backgroundColor: design.colors.dangerBg,
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
@@ -477,10 +478,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1.5,
     borderColor: BORDER,
-    backgroundColor: "#ffffff",
+    backgroundColor: design.colors.white,
     paddingHorizontal: 8,
     paddingVertical: 5,
-    shadowColor: "#000000",
+    shadowColor: BRAND,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 6,

@@ -27,6 +27,7 @@ import {
   type Profile,
 } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
+import { design } from "../../lib/design";
 
 function sortMessages(a: Message, b: Message) {
   const timeDelta = Date.parse(a.created_at) - Date.parse(b.created_at);
@@ -459,8 +460,8 @@ export default function Chat() {
     composerHeight + 16 + (isAndroid ? androidKeyboardHeight : 0);
   const composer = (
     <View
-      className="bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800"
-      style={
+      className="bg-surface border-t border-line rounded-t-[32px] overflow-hidden"
+      style={[
         isAndroid
           ? {
               position: "absolute",
@@ -468,8 +469,8 @@ export default function Chat() {
               right: 0,
               bottom: composerBottom,
             }
-          : undefined
-      }
+          : null,
+      ]}
     >
       <View
         className="flex-row items-center gap-2 px-4 pt-3"
@@ -485,14 +486,14 @@ export default function Chat() {
             });
           }}
           placeholder={t("chat.messagePlaceholder")}
-          placeholderTextColor="#888"
-          className="flex-1 bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-2xl px-4 py-3 text-base text-gray-900 dark:text-white"
+          placeholderTextColor={design.colors.subtle}
+          className="flex-1 bg-field border border-line rounded-[22px] px-4 py-3 text-base text-ink"
         />
         <Pressable
           onPress={send}
           className="w-11 h-11 bg-brand rounded-full items-center justify-center"
         >
-          <EmojiIcon name="send" size={18} color="#fff" />
+          <EmojiIcon name="send" size={18} color={design.colors.white} />
         </Pressable>
       </View>
     </View>
@@ -501,12 +502,12 @@ export default function Chat() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-gray-50 dark:bg-neutral-950"
+      className="flex-1 bg-page"
     >
       {/* Header */}
-      <View className="flex-row items-center gap-3 px-5 pt-16 pb-3 bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-800">
+      <View className="flex-row items-center gap-3 px-5 pt-16 pb-3 bg-surface border-b border-line">
         <Pressable onPress={() => router.back()}>
-          <EmojiIcon name="chevron-back" size={24} color="#888" />
+          <EmojiIcon name="chevron-back" size={24} color={design.colors.muted} />
         </Pressable>
         {other && (
           <Pressable
@@ -519,25 +520,25 @@ export default function Chat() {
                 style={{ width: 36, height: 36, borderRadius: 18 }}
               />
             ) : (
-              <View className="w-9 h-9 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
-                <Text className="font-bold text-brand-dark dark:text-brand text-sm">
+              <View className="w-9 h-9 rounded-full bg-brand-light items-center justify-center">
+                <Text className="font-bold text-brand-dark text-sm">
                   {other.name[0]}
                 </Text>
               </View>
             )}
             <View className="ml-2.5">
-              <Text className="font-bold text-base text-gray-900 dark:text-white">
+              <Text className="font-bold text-base text-ink">
                 {other.name}
               </Text>
-              <Text className="text-xs text-gray-400 dark:text-gray-500">{other.faculty}</Text>
+              <Text className="text-xs text-muted">{other.faculty}</Text>
             </View>
           </Pressable>
         )}
         <Pressable
           onPress={() => setShowMenu(true)}
-          className="w-9 h-9 rounded-full bg-gray-100 dark:bg-neutral-800 items-center justify-center"
+          className="w-9 h-9 rounded-full bg-field items-center justify-center"
         >
-          <EmojiIcon name="ellipsis-vertical" size={18} color="#999" />
+          <EmojiIcon name="ellipsis-vertical" size={18} color={design.colors.muted} />
         </Pressable>
       </View>
 
@@ -576,28 +577,32 @@ export default function Chat() {
                   }}
                 >
                   <View
-                    className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-3xl p-4"
-                    style={{ width: "100%" }}
+                    className="rounded-[24px] p-4 border"
+                    style={{
+                      width: "100%",
+                      backgroundColor: design.colors.warningBg,
+                      borderColor: design.colors.warningBg,
+                    }}
                   >
                     <View className="flex-row items-start">
                       <EmojiIcon
                         name="flash-outline"
                         size={18}
-                        color="#D97706"
+                        color={design.colors.warning}
                         style={{ marginTop: 2 }}
                       />
                       <View className="ml-2 flex-1">
-                        <Text className="font-bold text-base text-gray-900 dark:text-white">
+                        <Text className="font-bold text-base text-ink">
                           {poke.prompt}
                         </Text>
-                        <Text className="text-xs text-amber-600 dark:text-amber-300 mt-1">
+                        <Text className="text-xs mt-1" style={{ color: design.colors.warning }}>
                           {t("chat.previousInvite")}
                         </Text>
                       </View>
                     </View>
                   </View>
                   {statusLabel ? (
-                    <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
+                    <Text className="text-[11px] text-muted mt-1 mr-2 self-end">
                       {statusLabel}
                     </Text>
                   ) : null}
@@ -617,10 +622,10 @@ export default function Chat() {
                   }}
                 >
                   <View
-                    className={`rounded-3xl px-4 py-3 ${
+                    className={`rounded-[24px] px-4 py-3 ${
                       mine
                         ? "bg-brand"
-                        : "bg-white dark:bg-neutral-900 shadow-sm"
+                        : "bg-surface"
                     }`}
                     style={{ width: "100%" }}
                   >
@@ -628,7 +633,7 @@ export default function Chat() {
                       className={`font-semibold ${
                         mine
                           ? "text-white"
-                          : "text-gray-900 dark:text-gray-100"
+                          : "text-ink"
                       }`}
                     >
                       {t("chat.bonInvite", { restaurant: invite.restaurant })}
@@ -637,7 +642,7 @@ export default function Chat() {
                       className={`mt-1 text-sm ${
                         mine
                           ? "text-white/80"
-                          : "text-gray-500 dark:text-gray-400"
+                          : "text-muted"
                       }`}
                     >
                       {formatScheduledDate(invite.scheduled_at, language)}
@@ -647,7 +652,7 @@ export default function Chat() {
                         className={`mt-1 text-sm ${
                           mine
                             ? "text-white/85"
-                            : "text-gray-600 dark:text-gray-300"
+                            : "text-soft"
                         }`}
                       >
                         {invite.note}
@@ -655,7 +660,7 @@ export default function Chat() {
                     )}
                   </View>
                   {statusLabel ? (
-                    <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
+                    <Text className="text-[11px] text-muted mt-1 mr-2 self-end">
                       {statusLabel}
                     </Text>
                   ) : null}
@@ -666,16 +671,16 @@ export default function Chat() {
             return (
               <View key={item.id} className={`max-w-[78%] ${mine ? "self-end" : "self-start"}`}>
                 <View
-                  className={`px-4 py-3 rounded-3xl ${
-                    mine ? "bg-brand" : "bg-white dark:bg-neutral-900 shadow-sm"
+                  className={`px-4 py-3 rounded-[24px] ${
+                    mine ? "bg-brand" : "bg-surface"
                   }`}
                 >
-                  <Text className={mine ? "text-white" : "text-gray-900 dark:text-gray-100"}>
+                  <Text className={mine ? "text-white" : "text-ink"}>
                     {item.content}
                   </Text>
                 </View>
                 {statusLabel ? (
-                  <Text className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mr-2 self-end">
+                  <Text className="text-[11px] text-muted mt-1 mr-2 self-end">
                     {statusLabel}
                   </Text>
                 ) : null}
@@ -701,9 +706,9 @@ export default function Chat() {
         >
           <Pressable
             onPress={() => {}}
-            className="bg-white dark:bg-neutral-900 rounded-t-3xl px-5 pt-3 pb-10"
+            className="bg-surface rounded-t-[32px] px-5 pt-3 pb-10"
           >
-            <View className="w-10 h-1 rounded-full bg-gray-300 dark:bg-neutral-700 self-center mb-5" />
+            <View className="w-10 h-1 rounded-full bg-line self-center mb-5" />
 
             {other && (
               <>
@@ -716,18 +721,18 @@ export default function Chat() {
                   ) : (
                     <View
                       style={{ width: 44, height: 44, borderRadius: 22 }}
-                      className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
+                      className="bg-brand-light items-center justify-center"
                     >
-                      <Text className="font-bold text-brand-dark dark:text-brand">
+                      <Text className="font-bold text-brand-dark">
                         {other.name[0]}
                       </Text>
                     </View>
                   )}
                   <View className="ml-3">
-                    <Text className="font-bold text-gray-900 dark:text-white text-base">
+                    <Text className="font-bold text-ink text-base">
                       {other.name}
                     </Text>
-                    <Text className="text-xs text-gray-400 dark:text-gray-500">
+                    <Text className="text-xs text-muted">
                       {other.faculty}
                     </Text>
                   </View>
@@ -738,30 +743,30 @@ export default function Chat() {
                     setShowMenu(false);
                     router.push(`/profile-detail?id=${other.id}`);
                   }}
-                  className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
+                  className="flex-row items-center py-4 px-2 rounded-[22px] active:bg-page"
                 >
                   <View
                     className="w-10 h-10 rounded-full items-center justify-center"
-                    style={{ backgroundColor: "#00A6F615" }}
+                    style={{ backgroundColor: `${design.colors.brand}15` }}
                   >
-                    <EmojiIcon name="person-outline" size={20} color="#00A6F6" />
+                    <EmojiIcon name="person-outline" size={20} color={design.colors.brand} />
                   </View>
-                  <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
+                  <Text className="ml-3 text-base text-soft font-medium">
                     {t("chat.viewProfile")}
                   </Text>
                 </Pressable>
 
                 <Pressable
                   onPress={removeBuddy}
-                  className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
+                  className="flex-row items-center py-4 px-2 rounded-[22px] active:bg-page"
                 >
                   <View
                     className="w-10 h-10 rounded-full items-center justify-center"
-                    style={{ backgroundColor: "#ef444415" }}
+                    style={{ backgroundColor: design.colors.dangerBg }}
                   >
-                    <EmojiIcon name="person-remove-outline" size={20} color="#ef4444" />
+                    <EmojiIcon name="person-remove-outline" size={20} color={design.colors.danger} />
                   </View>
-                  <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
+                  <Text className="ml-3 text-base text-soft font-medium">
                     {t("chat.removeBuddy")}
                   </Text>
                 </Pressable>
@@ -789,15 +794,15 @@ export default function Chat() {
                       ]
                     );
                   }}
-                  className="flex-row items-center py-4 px-2 rounded-2xl active:bg-gray-50 dark:active:bg-neutral-800"
+                  className="flex-row items-center py-4 px-2 rounded-[22px] active:bg-page"
                 >
                   <View
                     className="w-10 h-10 rounded-full items-center justify-center"
-                    style={{ backgroundColor: "#ef444415" }}
+                    style={{ backgroundColor: design.colors.dangerBg }}
                   >
-                    <EmojiIcon name="ban-outline" size={20} color="#ef4444" />
+                    <EmojiIcon name="ban-outline" size={20} color={design.colors.danger} />
                   </View>
-                  <Text className="ml-3 text-base text-gray-800 dark:text-gray-100 font-medium">
+                  <Text className="ml-3 text-base text-soft font-medium">
                     {t("chat.blockUser")}
                   </Text>
                 </Pressable>

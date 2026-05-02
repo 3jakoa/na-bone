@@ -20,17 +20,12 @@ import Animated, {
 import { supabase, type Profile } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
 import { DiscoverEmptyAnimation } from "../../components/EmptyStateAnimations";
+import { design } from "../../lib/design";
 
 const RIGHT_SWIPE_LIMIT_MESSAGE =
   "Porabil si vse današnje buddyje. Jutri lahko spet iščeš buddyja.";
 
-const cardShadow = {
-  shadowColor: "#0F172A",
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.08,
-  shadowRadius: 10,
-  elevation: 2,
-} as const;
+const cardShadow = design.shadow.card;
 
 function hasUploadedPhoto(profile: Profile | null) {
   return profile?.photos.some((photo) => photo.trim().length > 0) ?? false;
@@ -359,7 +354,7 @@ export default function Discover() {
   const cardGesture = Gesture.Exclusive(panGesture, tapGesture);
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
+    <View className="flex-1 bg-page pt-16">
       <View className="flex-1 items-center justify-center px-4">
         {!card ? (
           <View
@@ -368,10 +363,10 @@ export default function Discover() {
             style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
           >
             <DiscoverEmptyAnimation />
-            <Text className="text-gray-900 dark:text-white text-lg font-bold mt-3">
+            <Text className="text-brand text-lg font-bold mt-3">
               {t("discover.noProfiles")}
             </Text>
-            <Text className="text-gray-500 dark:text-gray-400 text-[13px] leading-5 mt-2 text-center">
+            <Text className="text-muted text-[13px] leading-5 mt-2 text-center">
               {t("discover.checkLater")}
             </Text>
           </View>
@@ -380,8 +375,8 @@ export default function Discover() {
             {/* Next card (behind) */}
             {behindCard && (
               <View
-                className="absolute w-full h-full bg-white dark:bg-neutral-900 rounded-3xl overflow-hidden"
-                style={[cardShadow, { transform: [{ scale: 0.95 }], top: 10 }]}
+                className="absolute w-full h-full bg-surface rounded-[24px] overflow-hidden"
+                style={[cardShadow, { transform: [{ scale: 0.95 }], top: 10, zIndex: 1 }]}
               >
                 <CardContent profile={behindCard} />
               </View>
@@ -395,16 +390,17 @@ export default function Discover() {
                     width: "100%",
                     height: "100%",
                     opacity: cardVisible ? 1 : 0,
+                    zIndex: 2,
                   },
                   cardAnimatedStyle,
                   cardShadow,
                 ]}
-                className="bg-white dark:bg-neutral-900 rounded-3xl overflow-hidden"
+                className="bg-surface rounded-[24px] overflow-hidden"
               >
                 <Animated.View
                   pointerEvents="none"
                   style={buddyFeedbackStyle}
-                  className="absolute top-6 left-6 z-10 rounded-full bg-brand px-4 py-2 shadow-sm"
+                  className="absolute top-6 left-6 z-10 rounded-full bg-brand px-4 py-2"
                 >
                   <Text className="text-white text-base font-bold">
                     {t("common.buddy")}
@@ -413,7 +409,7 @@ export default function Discover() {
                 <Animated.View
                   pointerEvents="none"
                   style={nextFeedbackStyle}
-                  className="absolute top-6 right-6 z-10 rounded-full bg-gray-500/90 px-4 py-2 shadow-sm dark:bg-neutral-600"
+                  className="absolute top-6 right-6 z-10 rounded-full bg-soft/90 px-4 py-2"
                 >
                   <Text className="text-white text-base font-bold">
                     {t("discover.nextBadge")}
@@ -426,11 +422,15 @@ export default function Discover() {
               </Animated.View>
             </GestureDetector>
 
-            <View className="items-center px-6 mt-4 mb-2">
-              <Text className="text-sm font-semibold text-gray-400 dark:text-gray-500 text-center">
+            <View
+              pointerEvents="none"
+              className="absolute left-0 right-0 items-center px-6"
+              style={{ bottom: -58, zIndex: 0 }}
+            >
+              <Text className="text-sm font-semibold text-muted text-center">
                 {t("discover.instructions")}
               </Text>
-              <Text className="text-xs text-gray-300 dark:text-gray-600 text-center mt-1">
+              <Text className="text-xs text-subtle text-center mt-1">
                 {t("discover.tapForMore")}
               </Text>
             </View>
@@ -451,22 +451,22 @@ const CardContent = memo(function CardContent({ profile }: { profile: Profile })
           resizeMode="cover"
         />
       ) : (
-        <View style={{ width: "100%", height: "75%" }} className="bg-brand-light dark:bg-neutral-800 items-center justify-center">
-          <Text className="text-7xl font-bold text-brand-dark dark:text-brand">
+        <View style={{ width: "100%", height: "75%" }} className="bg-brand-light items-center justify-center">
+          <Text className="text-7xl font-bold text-brand-dark">
             {profile.name[0]}
           </Text>
         </View>
       )}
       <View className="p-5 flex-1 justify-center">
-        <Text className="text-xl font-bold text-gray-900 dark:text-white">
+        <Text className="text-xl font-bold text-ink">
           {profile.name}, {profile.age}
         </Text>
         <View className="flex-row items-center mt-1">
-          <EmojiIcon name="school-outline" size={14} color="#999" />
-          <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1">{profile.faculty}</Text>
+          <EmojiIcon name="school-outline" size={14} color={design.colors.muted} />
+          <Text className="text-sm text-muted ml-1">{profile.faculty}</Text>
         </View>
         {profile.bio && (
-          <Text className="text-sm text-gray-600 dark:text-gray-300 mt-2" numberOfLines={2}>
+          <Text className="text-sm text-soft mt-2" numberOfLines={2}>
             {profile.bio}
           </Text>
         )}

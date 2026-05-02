@@ -4,6 +4,7 @@ import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
+import { design } from "./design";
 import { supabase } from "./supabase";
 
 // Foreground push notifications use our in-app toast path instead of OS UI.
@@ -36,7 +37,7 @@ export async function registerForPushNotifications(): Promise<string | null> {
         name: "Obvestila",
         importance: Notifications.AndroidImportance.DEFAULT,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#00A6F6",
+        lightColor: design.colors.brand,
       });
     }
 

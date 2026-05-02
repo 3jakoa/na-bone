@@ -26,6 +26,7 @@ import {
   type Language,
   type TranslationKey,
 } from "../lib/i18n";
+import { design } from "../lib/design";
 
 const HOURS = Array.from({ length: 16 }, (_, i) => {
   const h = 8 + i;
@@ -42,13 +43,7 @@ const LOCATION_SUGGESTIONS = [
   "BTC",
 ];
 
-const subtleCardShadow = {
-  shadowColor: "#0F172A",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.05,
-  shadowRadius: 8,
-  elevation: 1,
-} as const;
+const subtleCardShadow = design.shadow.card;
 
 type ComposerStep = "location" | "day" | "time" | "visibility" | "note" | null;
 
@@ -92,8 +87,8 @@ function BoneAvatarBadge({
   }
 
   return (
-    <View className="w-14 h-14 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
-      <Text className="font-bold text-lg text-brand-dark dark:text-brand">
+    <View className="w-14 h-14 rounded-full bg-brand-light items-center justify-center">
+      <Text className="font-bold text-lg text-brand-dark">
         {initial}
       </Text>
     </View>
@@ -120,6 +115,7 @@ export function BoneComposerCard({
   const [visibility, setVisibility] = useState<"public" | "private" | null>(null);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasWarning, setHasWarning] = useState(false);
   const [buddyMatchIds, setBuddyMatchIds] = useState<string[]>([]);
   const [loadingBuddies, setLoadingBuddies] = useState(false);
   const [meId, setMeId] = useState<string | null>(null);
@@ -275,6 +271,7 @@ export function BoneComposerCard({
   }, [selectedDate, selectedTime]);
 
   function openComposer(focusInput = false) {
+    if (!isOpen) setHasWarning(false);
     setIsOpen(true);
     setActiveStep(getNextIncompleteStep({ location, selectedDate, selectedTime, visibility }));
     if (!focusInput) return;
@@ -293,6 +290,7 @@ export function BoneComposerCard({
     setIsOpen(false);
     setActiveStep(null);
     setIsLocationFocused(false);
+    setHasWarning(false);
     createGuard.dirty = false;
   }
 
@@ -309,6 +307,7 @@ export function BoneComposerCard({
   }
 
   function handleSuggestionPress(suggestion: string) {
+    setHasWarning(false);
     setLocation(suggestion);
     setIsLocationFocused(false);
     inputRef.current?.blur();
@@ -322,19 +321,69 @@ export function BoneComposerCard({
   }
 
   function handleSelectDay(offset: number) {
+    setHasWarning(false);
     setSelectedDate(offset);
     setSelectedTime("");
     setActiveStep("time");
   }
 
   function handleSelectTime(timeSlot: string) {
+    setHasWarning(false);
     setSelectedTime(timeSlot);
     setActiveStep(visibility === null ? "visibility" : null);
   }
 
   function handleSelectVisibility(nextVisibility: "public" | "private") {
+    setHasWarning(false);
     setVisibility(nextVisibility);
     setActiveStep(null);
+  }
+
+  function handleNextPress() {
+    const nextStep = getNextIncompleteStep({
+      location,
+      selectedDate,
+      selectedTime,
+      visibility,
+    });
+
+    if (nextStep) {
+      setIsOpen(true);
+      setActiveStep(nextStep);
+      setHasWarning(activeStep === nextStep || nextStep === "location");
+
+      if (nextStep === "location") {
+        requestAnimationFrame(() => {
+          inputRef.current?.focus();
+        });
+      } else {
+        setIsLocationFocused(false);
+        inputRef.current?.blur();
+      }
+      return;
+    }
+
+    if (
+      selectedDate !== null &&
+      selectedTime &&
+      getScheduledDate(selectedDate, selectedTime).getTime() <= Date.now()
+    ) {
+      setHasWarning(true);
+      Toast.show({
+        type: "error",
+        text1: t("composer.timePast"),
+        text2: t("composer.chooseFuture"),
+      });
+      return;
+    }
+
+    if (visibility === "private" && buddyMatchIds.length === 0) {
+      setHasWarning(true);
+      Toast.show({
+        type: "error",
+        text1: t("composer.noBuddies"),
+      });
+    }
   }
 
   async function submit() {
@@ -428,12 +477,11 @@ export function BoneComposerCard({
 
   return (
     <View
-      style={subtleCardShadow}
-      className={`rounded-3xl px-4 py-3.5 mb-4 ${
-        isOpen
-          ? "bg-[#F8FCFF] dark:bg-neutral-900 border border-[#B7E2FA] dark:border-neutral-700"
-          : "bg-white dark:bg-neutral-900 border border-transparent"
-      }`}
+      style={[
+        subtleCardShadow,
+        { borderColor: hasWarning ? design.colors.danger : "transparent" },
+      ]}
+      className="rounded-[24px] px-4 py-3.5 mb-4 bg-surface border"
     >
       <View className="flex-row items-center">
         <Pressable onPress={() => openComposer(true)} className="shrink-0">
@@ -447,7 +495,7 @@ export function BoneComposerCard({
               className="flex-1 min-w-0"
             >
               <Text
-                className="font-bold text-base text-gray-900 dark:text-white"
+                className="font-bold text-base text-ink"
                 numberOfLines={1}
               >
                 {t("composer.createBon")}
@@ -460,7 +508,7 @@ export function BoneComposerCard({
             >
               {isOpen ? (
                 <Pressable onPress={resetComposer}>
-                  <Text className="text-[11px] font-semibold text-gray-400 dark:text-gray-500">
+                  <Text className="text-[11px] font-semibold text-muted">
                     {t("composer.cancel")}
                   </Text>
                 </Pressable>
@@ -472,7 +520,10 @@ export function BoneComposerCard({
                     openComposer(true);
                     return;
                   }
-                  if (!canSubmit) return;
+                  if (!canSubmit) {
+                    handleNextPress();
+                    return;
+                  }
                   void submit();
                 }}
                 disabled={loading}
@@ -481,9 +532,9 @@ export function BoneComposerCard({
                     ? `rounded-full px-3.5 py-1.5 ${
                         canSubmit
                           ? "bg-brand"
-                          : "bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
+                          : "bg-field border border-line"
                       }`
-                    : "w-8 h-8 rounded-full bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
+                    : "w-8 h-8 rounded-full bg-field border border-line"
                 }`}
               >
                 {isOpen ? (
@@ -491,13 +542,17 @@ export function BoneComposerCard({
                     className={`text-xs font-bold ${
                       canSubmit
                         ? "text-white"
-                        : "text-gray-400 dark:text-gray-500"
+                        : "text-muted"
                     }`}
                   >
-                    {loading ? t("common.loadingDots") : t("composer.publish")}
+                    {loading
+                      ? t("common.loadingDots")
+                      : canSubmit
+                        ? t("composer.publish")
+                        : t("common.next")}
                   </Text>
                 ) : (
-                  <EmojiIcon name="add" size={18} color="#9CA3AF" />
+                  <EmojiIcon name="add" size={18} color={design.colors.muted} />
                 )}
               </Pressable>
             </View>
@@ -507,6 +562,7 @@ export function BoneComposerCard({
             ref={inputRef}
             value={location}
             onChangeText={(nextValue) => {
+              setHasWarning(false);
               setLocation(nextValue);
               if (!isOpen) setIsOpen(true);
             }}
@@ -528,11 +584,11 @@ export function BoneComposerCard({
             }}
             onSubmitEditing={advanceAfterLocation}
             placeholder={t("composer.where")}
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={design.colors.muted}
             className={`mt-0.5 text-sm py-0 ${
               isOpen
-                ? "text-gray-700 dark:text-gray-200"
-                : "text-gray-500 dark:text-gray-400"
+                ? "text-soft"
+                : "text-muted"
             }`}
             autoCorrect={false}
             maxLength={80}
@@ -549,15 +605,16 @@ export function BoneComposerCard({
               showsHorizontalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               className="mb-3"
+              style={{ transform: [{ translateY: 8 }] }}
             >
               <View className="flex-row gap-2">
                 {LOCATION_SUGGESTIONS.map((suggestion) => (
                   <Pressable
                     key={suggestion}
                     onPress={() => handleSuggestionPress(suggestion)}
-                    className="bg-white dark:bg-neutral-800 rounded-full px-4 py-2 border border-gray-100 dark:border-neutral-700"
+                    className="bg-surface rounded-full px-4 py-2 border border-line"
                   >
-                    <Text className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    <Text className="text-sm font-medium text-soft">
                       {suggestion}
                     </Text>
                   </Pressable>
@@ -609,9 +666,9 @@ export function BoneComposerCard({
           {visibility === "private" ? (
             <View className="mb-3 px-1">
               {loadingBuddies ? (
-                <ActivityIndicator color="#00A6F6" />
+                <ActivityIndicator color={design.colors.brand} />
               ) : (
-                <Text className="text-xs text-gray-500 dark:text-gray-400">
+                <Text className="text-xs text-muted">
                   {buddyMatchIds.length > 0
                     ? buddyMatchIds.length === 1
                       ? t("composer.privateOne")
@@ -634,17 +691,17 @@ export function BoneComposerCard({
                     <Pressable
                       key={dayOption.offset}
                       onPress={() => handleSelectDay(dayOption.offset)}
-                      className={`py-2.5 px-4 rounded-2xl items-center min-w-[72px] ${
+                      className={`py-2.5 px-4 rounded-[22px] items-center min-w-[72px] ${
                         selectedDate === dayOption.offset
                           ? "bg-brand"
-                          : "bg-white dark:bg-neutral-800 border border-gray-100 dark:border-neutral-700"
+                          : "bg-surface border border-line"
                       }`}
                     >
                       <Text
                         className={`font-semibold ${
                           selectedDate === dayOption.offset
                             ? "text-white"
-                            : "text-gray-700 dark:text-gray-200"
+                            : "text-soft"
                         }`}
                       >
                         {dayOption.label}
@@ -652,8 +709,8 @@ export function BoneComposerCard({
                       <Text
                         className={`text-xs mt-0.5 ${
                           selectedDate === dayOption.offset
-                            ? "text-blue-100"
-                            : "text-gray-400 dark:text-gray-500"
+                            ? "text-white/80"
+                            : "text-muted"
                         }`}
                       >
                         {dayOption.sublabel}
@@ -678,17 +735,17 @@ export function BoneComposerCard({
                       <Pressable
                         key={timeSlot}
                         onPress={() => handleSelectTime(timeSlot)}
-                        className={`px-4 py-2.5 rounded-xl ${
+                        className={`px-4 py-2.5 rounded-[18px] ${
                           selectedTime === timeSlot
                             ? "bg-brand"
-                            : "bg-white dark:bg-neutral-800 border border-gray-100 dark:border-neutral-700"
+                            : "bg-surface border border-line"
                         }`}
                       >
                         <Text
                           className={`text-sm font-semibold ${
                             selectedTime === timeSlot
                               ? "text-white"
-                              : "text-gray-700 dark:text-gray-200"
+                              : "text-soft"
                           }`}
                         >
                           {timeSlot}
@@ -698,7 +755,7 @@ export function BoneComposerCard({
                   </View>
                 </ScrollView>
               ) : (
-                <Text className="text-xs text-gray-500 dark:text-gray-400">
+                <Text className="text-xs text-muted">
                   {t("composer.noTimes")}
                 </Text>
               )}
@@ -710,17 +767,17 @@ export function BoneComposerCard({
               <View className="flex-row gap-3">
                 <Pressable
                   onPress={() => handleSelectVisibility("public")}
-                  className={`flex-1 py-3 rounded-2xl items-center ${
+                  className={`flex-1 py-3 rounded-[22px] items-center ${
                     visibility === "public"
                       ? "bg-brand"
-                      : "bg-white dark:bg-neutral-800 border border-gray-100 dark:border-neutral-700"
+                      : "bg-surface border border-line"
                   }`}
                 >
                   <Text
                     className={`font-semibold ${
                       visibility === "public"
                         ? "text-white"
-                        : "text-gray-700 dark:text-gray-200"
+                        : "text-soft"
                     }`}
                   >
                     {t("common.public")}
@@ -728,8 +785,8 @@ export function BoneComposerCard({
                   <Text
                     className={`text-xs mt-0.5 ${
                       visibility === "public"
-                        ? "text-blue-100"
-                        : "text-gray-400 dark:text-gray-500"
+                        ? "text-white/80"
+                        : "text-muted"
                     }`}
                   >
                     {t("composer.everyoneSees")}
@@ -737,17 +794,17 @@ export function BoneComposerCard({
                 </Pressable>
                 <Pressable
                   onPress={() => handleSelectVisibility("private")}
-                  className={`flex-1 py-3 rounded-2xl items-center ${
+                  className={`flex-1 py-3 rounded-[22px] items-center ${
                     visibility === "private"
                       ? "bg-brand"
-                      : "bg-white dark:bg-neutral-800 border border-gray-100 dark:border-neutral-700"
+                      : "bg-surface border border-line"
                   }`}
                 >
                   <Text
                     className={`font-semibold ${
                       visibility === "private"
                         ? "text-white"
-                        : "text-gray-700 dark:text-gray-200"
+                        : "text-soft"
                     }`}
                   >
                     {t("common.private")}
@@ -755,8 +812,8 @@ export function BoneComposerCard({
                   <Text
                     className={`text-xs mt-0.5 ${
                       visibility === "private"
-                        ? "text-blue-100"
-                        : "text-gray-400 dark:text-gray-500"
+                        ? "text-white/80"
+                        : "text-muted"
                     }`}
                   >
                     {t("composer.onlyBuddies")}
@@ -772,11 +829,11 @@ export function BoneComposerCard({
                 value={note}
                 onChangeText={setNote}
                 placeholder={t("composer.notePlaceholder")}
-                placeholderTextColor="#888"
+                placeholderTextColor={design.colors.subtle}
                 multiline
                 numberOfLines={3}
                 textAlignVertical="top"
-                className="text-base text-gray-900 dark:text-white min-h-16 bg-white dark:bg-neutral-800 rounded-2xl px-4 py-3 border border-gray-100 dark:border-neutral-700"
+                className="text-base text-ink min-h-16 bg-surface rounded-[22px] px-4 py-3 border border-line"
               />
             </StepBlock>
           ) : null}
@@ -795,7 +852,7 @@ function StepBlock({
 }) {
   return (
     <View className="pt-1">
-      <Text className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2 px-1">
+      <Text className="text-xs font-semibold text-muted mb-2 px-1">
         {title}
       </Text>
       {children}
@@ -818,12 +875,12 @@ function SummaryChip({
       className={`rounded-full px-3 py-1.5 ${
         active
           ? "bg-brand"
-          : "bg-white dark:bg-neutral-800 border border-gray-100 dark:border-neutral-700"
+          : "bg-surface border border-line"
       }`}
     >
       <Text
         className={`text-xs font-semibold ${
-          active ? "text-white" : "text-gray-700 dark:text-gray-200"
+          active ? "text-white" : "text-soft"
         }`}
       >
         {label}

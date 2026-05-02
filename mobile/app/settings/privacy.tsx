@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, Pressable, Switch, Alert } from "react-native";
 import { router } from "expo-router";
 import { EmojiIcon } from "../../components/EmojiIcon";
+import { design } from "../../lib/design";
 import { supabase } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
 
@@ -30,15 +31,15 @@ export default function Privacy() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
+    <View className="flex-1 bg-page">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <EmojiIcon name="chevron-back" size={28} color="#888" />
+          <EmojiIcon name="chevron-back" size={28} color={design.colors.muted} />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">{t("settings.privacyTitle")}</Text>
+        <Text className="text-lg font-bold text-ink ml-3">{t("settings.privacyTitle")}</Text>
       </View>
 
-      <View className="bg-white dark:bg-neutral-900 mx-4 rounded-3xl overflow-hidden shadow-sm">
+      <View className="bg-surface mx-4 rounded-[24px] overflow-hidden border border-line">
         <ToggleRow
           icon="calendar-outline"
           label={t("settings.showAge")}
@@ -63,14 +64,14 @@ export default function Privacy() {
 
       <Pressable
         onPress={signOut}
-        className="bg-white dark:bg-neutral-900 mx-4 mt-6 rounded-3xl py-4 items-center shadow-sm"
+        className="bg-surface mx-4 mt-6 rounded-[24px] py-4 items-center border border-line"
       >
-        <Text className="text-red-500 font-semibold text-base">
+        <Text className="font-semibold text-base" style={{ color: design.colors.danger }}>
           {t("common.logout")}
         </Text>
       </Pressable>
 
-      <Text className="text-xs text-gray-400 dark:text-gray-500 text-center mt-4 px-8">
+      <Text className="text-xs text-muted text-center mt-4 px-8">
         {t("settings.privacyHint")}
       </Text>
     </View>
@@ -90,17 +91,17 @@ function ToggleRow({
 }) {
   return (
     <View className="flex-row items-center px-5 py-4">
-      <EmojiIcon name={icon as any} size={20} color="#888" />
-      <Text className="flex-1 ml-3 text-base text-gray-800 dark:text-gray-100">{label}</Text>
+      <EmojiIcon name={icon as any} size={20} color={design.colors.muted} />
+      <Text className="flex-1 ml-3 text-base text-soft">{label}</Text>
       <Switch
         value={value}
         onValueChange={onToggle}
-        trackColor={{ true: "#00A6F6", false: "#e5e5e5" }}
+        trackColor={{ true: design.colors.brand, false: design.colors.border }}
       />
     </View>
   );
 }
 
 function Sep() {
-  return <View className="h-px bg-gray-100 dark:bg-neutral-800 ml-14" />;
+  return <View className="h-px bg-divider ml-14" />;
 }

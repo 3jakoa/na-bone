@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { EmojiIcon } from "../../components/EmojiIcon";
+import { design } from "../../lib/design";
 import { supabase, type Profile } from "../../lib/supabase";
 import { useLanguage } from "../../lib/i18n";
 
@@ -70,18 +71,18 @@ export default function BlockedUsers() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950">
+    <View className="flex-1 bg-page">
       <View className="flex-row items-center px-6 pt-16 pb-4">
         <Pressable onPress={() => router.back()}>
-          <EmojiIcon name="chevron-back" size={28} color="#888" />
+          <EmojiIcon name="chevron-back" size={28} color={design.colors.muted} />
         </Pressable>
-        <Text className="text-lg font-bold text-gray-900 dark:text-white ml-3">
+        <Text className="text-lg font-bold text-ink ml-3">
           {t("settings.blockedTitle")}
         </Text>
       </View>
 
       {loading ? (
-        <ActivityIndicator color="#00A6F6" className="mt-10" />
+        <ActivityIndicator color={design.colors.brand} className="mt-10" />
       ) : (
         <FlatList
           data={blocked}
@@ -89,14 +90,14 @@ export default function BlockedUsers() {
           contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 32 }}
           ListEmptyComponent={
             <View className="items-center mt-16">
-              <EmojiIcon name="shield-checkmark-outline" size={48} color="#888" />
-              <Text className="text-gray-400 dark:text-gray-500 text-lg mt-4">
+              <EmojiIcon name="shield-checkmark-outline" size={48} color={design.colors.muted} />
+              <Text className="text-muted text-lg mt-4">
                 {t("settings.noBlocked")}
               </Text>
             </View>
           }
           renderItem={({ item }) => (
-            <View className="bg-white dark:bg-neutral-900 rounded-3xl p-4 flex-row items-center shadow-sm">
+            <View className="bg-surface rounded-[24px] p-4 flex-row items-center border border-line">
               <Pressable
                 onPress={() =>
                   router.push(`/profile-detail?id=${item.profile.id}`)
@@ -110,27 +111,27 @@ export default function BlockedUsers() {
                 ) : (
                   <View
                     style={{ width: 48, height: 48, borderRadius: 24 }}
-                    className="bg-brand-light dark:bg-neutral-800 items-center justify-center"
+                    className="bg-brand-light items-center justify-center"
                   >
-                    <Text className="font-bold text-brand-dark dark:text-brand">
+                    <Text className="font-bold text-brand-dark">
                       {item.profile.name[0]}
                     </Text>
                   </View>
                 )}
               </Pressable>
               <View className="flex-1 ml-3">
-                <Text className="font-bold text-gray-900 dark:text-white">
+                <Text className="font-bold text-ink">
                   {item.profile.name}
                 </Text>
-                <Text className="text-xs text-gray-400 dark:text-gray-500">
+                <Text className="text-xs text-muted">
                   {item.profile.faculty}
                 </Text>
               </View>
               <Pressable
                 onPress={() => unblock(item)}
-                className="bg-gray-100 dark:bg-neutral-800 rounded-full px-4 py-2"
+                className="bg-field rounded-full px-4 py-2"
               >
-                <Text className="text-sm font-semibold text-gray-600 dark:text-gray-200">
+                <Text className="text-sm font-semibold text-soft">
                   {t("common.unblock")}
                 </Text>
               </Pressable>

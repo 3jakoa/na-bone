@@ -14,6 +14,7 @@ import { getChatMessagePreview } from "../../lib/chatContent";
 import { supabase, type Message, type Profile } from "../../lib/supabase";
 import { useLanguage, WEEKDAYS, type Language } from "../../lib/i18n";
 import { MatchesEmptyAnimation } from "../../components/EmptyStateAnimations";
+import { design } from "../../lib/design";
 
 const INVITE_BASE_URL = "https://bonibuddy.app/invite";
 
@@ -42,13 +43,7 @@ type BuddyMatchRow = {
   user2_last_read_at: string | null;
 };
 
-const subtleCardShadow = {
-  shadowColor: "#0F172A",
-  shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.03,
-  shadowRadius: 4,
-  elevation: 0,
-} as const;
+const subtleCardShadow = design.shadow.card;
 
 function sortItems(items: Item[]) {
   return [...items].sort((a, b) => {
@@ -360,9 +355,9 @@ export default function Matches() {
       <Pressable
         onPress={inviteBuddy}
         disabled={inviteLoading}
-        className="bg-brand-light dark:bg-brand/20 rounded-full px-4 py-2 flex-row items-center"
+        className="bg-brand-light rounded-full px-4 py-2 flex-row items-center"
       >
-        <EmojiIcon name="person-add-outline" size={16} color="#00A6F6" />
+        <EmojiIcon name="person-add-outline" size={16} color={design.colors.brand} />
         <Text className="text-brand font-bold text-sm ml-1.5">
           {inviteLoading ? t("common.loadingDots") : t("matches.addBuddy")}
         </Text>
@@ -371,18 +366,18 @@ export default function Matches() {
   );
 
   return (
-    <View className="flex-1 bg-gray-50 dark:bg-neutral-950 pt-16">
+    <View className="flex-1 bg-page pt-16">
       {header}
       {loaded && loadError ? (
         <View
           className="items-center justify-center px-6"
           style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
         >
-          <EmojiIcon name="warning-outline" size={52} color="#9CA3AF" />
-          <Text className="text-gray-900 dark:text-white text-xl font-bold mt-5 text-center">
+          <EmojiIcon name="warning-outline" size={52} color={design.colors.muted} />
+          <Text className="text-ink text-xl font-bold mt-5 text-center">
             {loadError}
           </Text>
-          <Text className="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center">
+          <Text className="text-muted text-sm mt-2 text-center">
             {t("matches.tryAgainLater")}
           </Text>
         </View>
@@ -394,10 +389,10 @@ export default function Matches() {
           style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
         >
           <MatchesEmptyAnimation />
-          <Text className="text-gray-900 dark:text-white text-lg font-bold mt-3">
+          <Text className="text-brand text-lg font-bold mt-3">
             {t("matches.noMatches")}
           </Text>
-          <Text className="text-gray-500 dark:text-gray-400 text-[13px] leading-5 mt-2 text-center">
+          <Text className="text-muted text-[13px] leading-5 mt-2 text-center">
             {t("matches.noMatchesBody")}
           </Text>
         </View>
@@ -408,13 +403,13 @@ export default function Matches() {
         contentContainerStyle={{ padding: 16, gap: 8, paddingBottom: 32 }}
         renderItem={({ item }) => {
           const cardClassName = item.hasUnread
-            ? "rounded-3xl px-4 py-3.5 flex-row items-center bg-white border border-blue-200 dark:bg-neutral-900 dark:border-blue-500/40 active:bg-blue-50 dark:active:bg-blue-500/10"
-            : "rounded-3xl px-4 py-3.5 flex-row items-center bg-white dark:bg-neutral-900 active:bg-gray-50 dark:active:bg-neutral-800";
+            ? "rounded-[24px] px-4 py-3.5 flex-row items-center bg-surface border border-brand/20 active:bg-brand-light"
+            : "rounded-[24px] px-4 py-3.5 flex-row items-center bg-surface active:bg-page";
 
           return (
             <Pressable
               onPress={() => handleRowPress(item)}
-              style={subtleCardShadow}
+              style={item.hasUnread ? subtleCardShadow : undefined}
               className={cardClassName}
             >
               <Pressable onPress={() => handleAvatarPress(item)}>
@@ -424,8 +419,8 @@ export default function Matches() {
                     style={{ width: 56, height: 56, borderRadius: 28 }}
                   />
                 ) : (
-                  <View className="w-14 h-14 rounded-full bg-brand-light dark:bg-neutral-800 items-center justify-center">
-                    <Text className="font-bold text-lg text-brand-dark dark:text-brand">
+                  <View className="w-14 h-14 rounded-full bg-brand-light items-center justify-center">
+                    <Text className="font-bold text-lg text-brand-dark">
                       {item.other.name[0]}
                     </Text>
                   </View>
@@ -435,7 +430,7 @@ export default function Matches() {
               <View className="flex-1 ml-3 min-w-0">
                 <View className="flex-row items-center">
                   <Text
-                    className={`flex-1 text-base text-gray-900 dark:text-white ${
+                    className={`flex-1 text-base text-ink ${
                       item.hasUnread ? "font-extrabold" : "font-bold"
                     }`}
                     numberOfLines={1}
@@ -444,17 +439,17 @@ export default function Matches() {
                   </Text>
                   {item.streak > 0 ? (
                     <View
-                      className="flex-row items-center bg-orange-50 dark:bg-orange-500/20 rounded-full px-2 py-0.5 ml-2 shrink-0"
-                      style={{ gap: 2 }}
+                      className="flex-row items-center rounded-full px-2 py-0.5 ml-2 shrink-0"
+                      style={{ gap: 2, backgroundColor: design.colors.warningBg }}
                     >
-                      <EmojiIcon name="flame" size={11} color="#F97316" />
-                      <Text className="text-xs font-bold text-orange-500">
+                      <EmojiIcon name="flame" size={11} color={design.colors.warning} />
+                      <Text className="text-xs font-bold" style={{ color: design.colors.warning }}>
                         {item.streak}
                       </Text>
                     </View>
                   ) : null}
                   {item.last ? (
-                    <Text className="text-xs text-gray-400 dark:text-gray-500 ml-2 shrink-0">
+                    <Text className="text-xs text-muted ml-2 shrink-0">
                       {item.last.time}
                     </Text>
                   ) : null}
@@ -464,8 +459,8 @@ export default function Matches() {
                   <Text
                     className={`flex-1 text-sm ${
                       item.hasUnread
-                        ? "text-gray-800 dark:text-gray-200 font-semibold"
-                        : "text-gray-500 dark:text-gray-400"
+                        ? "text-soft font-semibold"
+                        : "text-muted"
                     }`}
                     numberOfLines={1}
                   >
