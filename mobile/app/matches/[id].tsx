@@ -64,6 +64,12 @@ type LastOwnMessageStatus = {
   label: string;
 };
 
+const CHAT_INPUT_LINE_HEIGHT = 22;
+const CHAT_INPUT_VERTICAL_PADDING = 22;
+const CHAT_INPUT_MIN_HEIGHT = CHAT_INPUT_LINE_HEIGHT + CHAT_INPUT_VERTICAL_PADDING;
+const CHAT_INPUT_MAX_HEIGHT =
+  CHAT_INPUT_LINE_HEIGHT * 4 + CHAT_INPUT_VERTICAL_PADDING;
+
 export default function Chat() {
   const { id: matchId, prefill } = useLocalSearchParams<{
     id: string;
@@ -76,6 +82,7 @@ export default function Chat() {
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [androidKeyboardHeight, setAndroidKeyboardHeight] = useState(0);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [composerHeight, setComposerHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
@@ -231,16 +238,25 @@ export default function Chat() {
   }, [prefill]);
 
   useEffect(() => {
-    if (Platform.OS !== "android") return;
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
-    const showSubscription = Keyboard.addListener("keyboardDidShow", (event) => {
-      setAndroidKeyboardHeight(Math.max(0, event.endCoordinates.height));
+    const showSubscription = Keyboard.addListener(showEvent, (event) => {
+      setKeyboardVisible(true);
+      if (Platform.OS === "android") {
+        setAndroidKeyboardHeight(Math.max(0, event.endCoordinates.height));
+      }
       requestAnimationFrame(() => {
         scrollRef.current?.scrollToEnd({ animated: true });
       });
     });
-    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      setAndroidKeyboardHeight(0);
+    const hideSubscription = Keyboard.addListener(hideEvent, () => {
+      setKeyboardVisible(false);
+      if (Platform.OS === "android") {
+        setAndroidKeyboardHeight(0);
+      }
     });
 
     return () => {
@@ -454,13 +470,19 @@ export default function Chat() {
     }
   }
 
+  function handleComposerTextChange(nextText: string) {
+    setText(nextText);
+  }
+
   const isAndroid = Platform.OS === "android";
   const composerBottom = isAndroid ? androidKeyboardHeight : 0;
+  const composerBottomPadding = keyboardVisible ? 6 : Math.max(insets.bottom, 12);
   const scrollBottomPadding =
     composerHeight + 16 + (isAndroid ? androidKeyboardHeight : 0);
   const composer = (
     <View
       className="bg-surface border-t border-line rounded-t-[32px] overflow-hidden"
+      onLayout={(event) => setComposerHeight(event.nativeEvent.layout.height)}
       style={[
         isAndroid
           ? {
@@ -473,22 +495,37 @@ export default function Chat() {
       ]}
     >
       <View
-        className="flex-row items-center gap-2 px-4 pt-3"
-        style={{ paddingBottom: Math.max(insets.bottom, 12) }}
-        onLayout={(event) => setComposerHeight(event.nativeEvent.layout.height)}
+        className="flex-row items-end gap-2 px-4 pt-3"
+        style={{ paddingBottom: composerBottomPadding }}
       >
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          onFocus={() => {
-            requestAnimationFrame(() => {
-              scrollRef.current?.scrollToEnd({ animated: true });
-            });
-          }}
-          placeholder={t("chat.messagePlaceholder")}
-          placeholderTextColor={design.colors.subtle}
-          className="flex-1 bg-field border border-line rounded-[22px] px-4 py-3 text-base text-ink"
-        />
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <TextInput
+            value={text}
+            onChangeText={handleComposerTextChange}
+            onFocus={() => {
+              requestAnimationFrame(() => {
+                scrollRef.current?.scrollToEnd({ animated: true });
+              });
+            }}
+            placeholder={t("chat.messagePlaceholder")}
+            placeholderTextColor={design.colors.subtle}
+            multiline
+            scrollEnabled
+            textAlignVertical="top"
+            blurOnSubmit={false}
+            className="bg-field border border-line rounded-[22px] text-ink"
+            style={{
+              width: "100%",
+              minHeight: CHAT_INPUT_MIN_HEIGHT,
+              maxHeight: CHAT_INPUT_MAX_HEIGHT,
+              paddingHorizontal: 16,
+              paddingTop: 11,
+              paddingBottom: 11,
+              fontSize: 16,
+              lineHeight: CHAT_INPUT_LINE_HEIGHT,
+            }}
+          />
+        </View>
         <Pressable
           onPress={send}
           className="w-11 h-11 bg-brand rounded-full items-center justify-center"
@@ -496,6 +533,20 @@ export default function Chat() {
           <EmojiIcon name="send" size={18} color={design.colors.white} />
         </Pressable>
       </View>
+      {keyboardVisible ? (
+        <View className="items-center px-4 pb-2">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Skrij tipkovnico"
+            hitSlop={8}
+            onPress={Keyboard.dismiss}
+          >
+            <Text style={{ color: design.colors.brand, fontWeight: "700" }}>
+              Skrij tipkovnico
+            </Text>
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 
