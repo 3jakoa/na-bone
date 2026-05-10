@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Tabs, router, usePathname } from "expo-router";
 import { EmojiIcon } from "../../components/EmojiIcon";
 import {
+  Keyboard,
   Platform,
   View,
   Modal,
@@ -17,6 +18,7 @@ import { design } from "../../lib/design";
 
 export default function TabsLayout() {
   const [leaveRoute, setLeaveRoute] = useState<string | null>(null);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const { t } = useLanguage();
   const pathname = usePathname();
   const activeTab = pathname.split("?")[0].split("/").filter(Boolean)[0] ?? "feed";
@@ -38,6 +40,22 @@ export default function TabsLayout() {
     })();
   }, []);
 
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <Tabs
@@ -56,7 +74,7 @@ export default function TabsLayout() {
           },
           sceneStyle:
             Platform.OS === "android"
-              ? { paddingBottom: androidTabBarHeight }
+              ? { paddingBottom: keyboardVisible ? 0 : androidTabBarHeight }
               : undefined,
           tabBarLabelStyle: {
             fontSize: 11,
@@ -120,7 +138,7 @@ export default function TabsLayout() {
         />
       </Tabs>
 
-      {Platform.OS === "android" ? (
+      {Platform.OS === "android" && !keyboardVisible ? (
         <AndroidTabBar
           bottomPadding={androidBottomPadding}
           height={androidTabBarHeight}
