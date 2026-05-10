@@ -81,7 +81,6 @@ export default function Chat() {
   const [matchReadState, setMatchReadState] = useState<BuddyMatch | null>(null);
   const [text, setText] = useState("");
   const [showMenu, setShowMenu] = useState(false);
-  const [androidKeyboardHeight, setAndroidKeyboardHeight] = useState(0);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [composerHeight, setComposerHeight] = useState(0);
   const insets = useSafeAreaInsets();
@@ -243,20 +242,14 @@ export default function Chat() {
     const hideEvent =
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
-    const showSubscription = Keyboard.addListener(showEvent, (event) => {
+    const showSubscription = Keyboard.addListener(showEvent, () => {
       setKeyboardVisible(true);
-      if (Platform.OS === "android") {
-        setAndroidKeyboardHeight(Math.max(0, event.endCoordinates.height));
-      }
       requestAnimationFrame(() => {
         scrollRef.current?.scrollToEnd({ animated: true });
       });
     });
     const hideSubscription = Keyboard.addListener(hideEvent, () => {
       setKeyboardVisible(false);
-      if (Platform.OS === "android") {
-        setAndroidKeyboardHeight(0);
-      }
     });
 
     return () => {
@@ -475,10 +468,8 @@ export default function Chat() {
   }
 
   const isAndroid = Platform.OS === "android";
-  const composerBottom = isAndroid ? androidKeyboardHeight : 0;
   const composerBottomPadding = keyboardVisible ? 6 : Math.max(insets.bottom, 12);
-  const scrollBottomPadding =
-    composerHeight + 16 + (isAndroid ? androidKeyboardHeight : 0);
+  const scrollBottomPadding = composerHeight + 16;
   const composer = (
     <View
       className="bg-surface border-t border-line rounded-t-[32px] overflow-hidden"
@@ -489,7 +480,7 @@ export default function Chat() {
               position: "absolute",
               left: 0,
               right: 0,
-              bottom: composerBottom,
+              bottom: 0,
             }
           : null,
       ]}
