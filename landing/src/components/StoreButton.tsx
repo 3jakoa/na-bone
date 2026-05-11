@@ -2,6 +2,10 @@ import type { ReactNode } from "react";
 
 export const APP_URL = import.meta.env.VITE_APP_URL ?? "https://bonibuddy.app";
 export const TESTFLIGHT_URL = "https://testflight.apple.com/join/Rg3cxFsT";
+export const IOS_STORE_URL =
+  import.meta.env.VITE_IOS_STORE_URL ?? TESTFLIGHT_URL;
+export const ANDROID_STORE_URL =
+  import.meta.env.VITE_ANDROID_STORE_URL ?? APP_URL;
 
 export function StoreButton({
   href = APP_URL,

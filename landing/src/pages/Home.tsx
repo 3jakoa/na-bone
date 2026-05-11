@@ -1,9 +1,10 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
+  ANDROID_STORE_URL,
   AppleStoreIcon,
   GooglePlayIcon,
+  IOS_STORE_URL,
   StoreButton,
-  TESTFLIGHT_URL,
 } from "../components/StoreButton";
 import {
   supabase,
@@ -61,12 +62,13 @@ export default function Home() {
 
               <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
                 <StoreButton
-                  href={TESTFLIGHT_URL}
+                  href={IOS_STORE_URL}
                   icon={<AppleStoreIcon />}
                   label="Naloži beta verzijo"
                   fixed
                 />
                 <StoreButton
+                  href={ANDROID_STORE_URL}
                   icon={<GooglePlayIcon />}
                   label="Naloži na google play"
                   fixed
@@ -124,11 +126,15 @@ export default function Home() {
           </h2>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
             <StoreButton
-              href={TESTFLIGHT_URL}
+              href={IOS_STORE_URL}
               icon={<AppleStoreIcon />}
               label="Naloži beta verzijo"
             />
-            <StoreButton icon={<GooglePlayIcon />} label="Naloži na google play" />
+            <StoreButton
+              href={ANDROID_STORE_URL}
+              icon={<GooglePlayIcon />}
+              label="Naloži na google play"
+            />
           </div>
         </div>
 

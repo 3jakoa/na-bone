@@ -1,8 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-const appJson = require("./app.json");
-
 function readEnvFile(filePath) {
   if (!fs.existsSync(filePath)) {
     return {};
@@ -41,11 +39,11 @@ function getEnv(name) {
   return process.env[name] ?? localEnv[name] ?? sharedEnv[name];
 }
 
-module.exports = {
-  ...appJson.expo,
+module.exports = ({ config }) => ({
+  ...config,
   extra: {
-    ...appJson.expo.extra,
+    ...config.extra,
     supabaseUrl: getEnv("EXPO_PUBLIC_SUPABASE_URL"),
     supabaseAnonKey: getEnv("EXPO_PUBLIC_SUPABASE_ANON_KEY"),
   },
-};
+});
