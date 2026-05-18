@@ -1,10 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import {
+  ANDROID_STORE_URL,
   AppleStoreIcon,
   GooglePlayIcon,
+  IOS_STORE_URL,
   StoreButton,
-  TESTFLIGHT_URL,
 } from "../components/StoreButton";
 
 export default function Invite() {
@@ -50,12 +51,13 @@ export default function Invite() {
               <>
                 <div className="mt-8 flex flex-col items-center gap-4">
                   <StoreButton
-                    href={TESTFLIGHT_URL}
+                    href={IOS_STORE_URL}
                     icon={<AppleStoreIcon />}
                     label="Naloži beta verzijo"
                     fixed
                   />
                   <StoreButton
+                    href={ANDROID_STORE_URL}
                     icon={<GooglePlayIcon />}
                     label="Naloži na google play"
                     fixed
