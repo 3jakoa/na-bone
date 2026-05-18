@@ -1,9 +1,8 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import {
-  ANDROID_STORE_URL,
+  AndroidBetaRequest,
   AppleStoreIcon,
-  GooglePlayIcon,
   IOS_STORE_URL,
   StoreButton,
 } from "../components/StoreButton";
@@ -56,12 +55,7 @@ export default function Invite() {
                     label="Naloži beta verzijo"
                     fixed
                   />
-                  <StoreButton
-                    href={ANDROID_STORE_URL}
-                    icon={<GooglePlayIcon />}
-                    label="Naloži na google play"
-                    fixed
-                  />
+                  <AndroidBetaRequest fixed inviteToken={token} />
                 </div>
 
                 <div className="mt-7 border-t border-gray-100 pt-5">

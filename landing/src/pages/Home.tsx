@@ -1,8 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
-  ANDROID_STORE_URL,
+  AndroidBetaRequest,
   AppleStoreIcon,
-  GooglePlayIcon,
   IOS_STORE_URL,
   StoreButton,
 } from "../components/StoreButton";
@@ -60,19 +59,14 @@ export default function Home() {
                 <HeroCards />
               </div>
 
-              <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
+              <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-5">
                 <StoreButton
                   href={IOS_STORE_URL}
                   icon={<AppleStoreIcon />}
                   label="Naloži beta verzijo"
                   fixed
                 />
-                <StoreButton
-                  href={ANDROID_STORE_URL}
-                  icon={<GooglePlayIcon />}
-                  label="Naloži na google play"
-                  fixed
-                />
+                <AndroidBetaRequest fixed />
               </div>
             </div>
 
@@ -124,17 +118,13 @@ export default function Home() {
           <h2 className="w-full font-['Poppins'] text-[42px] font-semibold leading-[1.18] sm:text-[56px] sm:leading-[76px]">
             Prenesi app in najdi svojega buddyja.
           </h2>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
             <StoreButton
               href={IOS_STORE_URL}
               icon={<AppleStoreIcon />}
               label="Naloži beta verzijo"
             />
-            <StoreButton
-              href={ANDROID_STORE_URL}
-              icon={<GooglePlayIcon />}
-              label="Naloži na google play"
-            />
+            <AndroidBetaRequest />
           </div>
         </div>
 
