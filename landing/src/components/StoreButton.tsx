@@ -1,11 +1,25 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 export const APP_URL = import.meta.env.VITE_APP_URL ?? "https://bonibuddy.app";
 export const TESTFLIGHT_URL = "https://testflight.apple.com/join/Rg3cxFsT";
 export const IOS_STORE_URL =
   import.meta.env.VITE_IOS_STORE_URL ?? TESTFLIGHT_URL;
-export const ANDROID_STORE_URL =
-  import.meta.env.VITE_ANDROID_STORE_URL ?? APP_URL;
+export const ANDROID_BETA_EMAIL = "jaka@bonibuddy.app";
+export const ANDROID_BETA_HELPER_TEXT =
+  "Android verzija je trenutno v zaprtem testiranju. Pošlji nam e-mail svojega Google računa, s katerim uporabljaš Google Play na Android telefonu.";
+
+export function getAndroidBetaMailto(inviteToken?: string) {
+  const subject = "Android beta dostop";
+  const body = [
+    "Živjo, rad/a bi dostop do Android beta verzije Boni Buddy.",
+    "\n\nMoj Google račun/e-mail, s katerim uporabljam Google Play na Android telefonu, je:",
+    inviteToken ? `\n\nInvite token: ${inviteToken}` : "",
+  ].join("");
+
+  return `mailto:${ANDROID_BETA_EMAIL}?subject=${encodeURIComponent(
+    subject
+  )}&body=${encodeURIComponent(body)}`;
+}
 
 export function StoreButton({
   href = APP_URL,
@@ -33,6 +47,70 @@ export function StoreButton({
       </span>
       <span className="whitespace-nowrap">{label}</span>
     </a>
+  );
+}
+
+export function AndroidBetaRequest({
+  fixed = false,
+  inviteToken,
+}: {
+  fixed?: boolean;
+  inviteToken?: string;
+}) {
+  const [didClick, setDidClick] = useState(false);
+  const [didCopy, setDidCopy] = useState(false);
+  const mailto = getAndroidBetaMailto(inviteToken);
+
+  async function handleClick() {
+    setDidClick(true);
+
+    if (!navigator.clipboard?.writeText) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(ANDROID_BETA_EMAIL);
+      setDidCopy(true);
+    } catch {
+      setDidCopy(false);
+    }
+  }
+
+  return (
+    <div
+      className={`flex flex-col items-center gap-2 text-center ${
+        fixed ? "w-[315px] max-w-[calc(100vw-40px)]" : "max-w-[315px]"
+      }`}
+    >
+      <a
+        href={mailto}
+        onClick={handleClick}
+        className={`inline-flex h-[50px] items-center justify-center gap-3 rounded-[20px] bg-white px-4 text-[16px] font-medium shadow-[0_2px_4px_#47bdef] transition hover:-translate-y-0.5 hover:shadow-[0_5px_10px_rgba(71,189,239,0.45)] sm:text-[18px] ${
+          fixed ? "w-full" : "w-[315px] max-w-full"
+        }`}
+      >
+        <span
+          aria-hidden="true"
+          className="flex h-6 w-6 shrink-0 items-center justify-center"
+        >
+          <GooglePlayIcon />
+        </span>
+        <span className="whitespace-nowrap">Prosi za Android beta dostop</span>
+      </a>
+      <p className="text-[13px] leading-[1.35] text-black/60">
+        {ANDROID_BETA_HELPER_TEXT}
+      </p>
+      {didClick ? (
+        <p className="text-[13px] font-medium leading-[1.35] text-[#0191d7]">
+          {didCopy ? "E-mail je kopiran. " : ""}
+          Če se mail ne odpre, piši na{" "}
+          <a className="underline" href={mailto}>
+            {ANDROID_BETA_EMAIL}
+          </a>
+          .
+        </p>
+      ) : null}
+    </div>
   );
 }
 
